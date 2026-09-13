@@ -158,10 +158,8 @@ export default function JoinSACPage() {
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
-      {/* GLOBAL NAVBAR SPACING */}
       <div className="h-[76px]" />
 
-      {/* HERO */}
       <section className="relative overflow-hidden bg-slate-950">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(59,130,246,0.25),_transparent_40%),radial-gradient(circle_at_bottom_left,_rgba(168,85,247,0.18),_transparent_40%)]" />
 
@@ -181,7 +179,6 @@ export default function JoinSACPage() {
         </div>
       </section>
 
-      {/* FORM SECTION */}
       <section className="px-5 py-14 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-4xl">
           <div className="mb-10 text-center">
@@ -199,7 +196,6 @@ export default function JoinSACPage() {
             </p>
           </div>
 
-          {/* SUCCESS */}
           {success && (
             <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-800">
               <div className="flex gap-3">
@@ -215,7 +211,6 @@ export default function JoinSACPage() {
             </div>
           )}
 
-          {/* ERROR */}
           {error && (
             <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-5 text-red-800">
               <div className="flex gap-3">
@@ -235,7 +230,6 @@ export default function JoinSACPage() {
             onSubmit={handleSubmit}
             className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl"
           >
-            {/* PERSONAL INFORMATION */}
             <div className="border-b border-slate-200 p-6 sm:p-8">
               <SectionTitle
                 number="01"
@@ -318,7 +312,6 @@ export default function JoinSACPage() {
               </div>
             </div>
 
-            {/* SAC PREFERENCE */}
             <div className="border-b border-slate-200 p-6 sm:p-8">
               <SectionTitle
                 number="02"
@@ -362,16 +355,8 @@ export default function JoinSACPage() {
                     updateField("position_interested", value)
                   }
                   options={[
-                    "Club Head",
-                    "Club Coordinator",
-                    "Core Team Member",
                     "Club Member",
                     "Volunteer",
-                    "Civil Engineering with Computer Applications",
-                    "Content / Media Team",
-                    "Technical Team",
-                    "Event Management Team",
-                    "Any Position",
                   ]}
                 />
 
@@ -387,7 +372,6 @@ export default function JoinSACPage() {
               </div>
             </div>
 
-            {/* MOTIVATION */}
             <div className="border-b border-slate-200 p-6 sm:p-8">
               <SectionTitle
                 number="03"
@@ -443,7 +427,6 @@ export default function JoinSACPage() {
               </div>
             </div>
 
-            {/* DECLARATION */}
             <div className="p-6 sm:p-8">
               <SectionTitle
                 number="04"
@@ -493,7 +476,6 @@ export default function JoinSACPage() {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer className="bg-slate-950 px-5 py-12 text-white lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-10 md:grid-cols-3">
@@ -576,8 +558,6 @@ export default function JoinSACPage() {
     </main>
   );
 }
-
-/* ---------------- COMPONENTS ---------------- */
 
 function SectionTitle({
   number,
