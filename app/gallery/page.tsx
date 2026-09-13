@@ -131,6 +131,11 @@ export default function GalleryPage() {
     );
   }, [events, activeCategory]);
 
+  /*
+    ALL PHOTOS
+    No 20-photo limit.
+    Every poster + every event image is included.
+  */
   const latestPhotos = useMemo<GalleryPhoto[]>(() => {
     const photos: GalleryPhoto[] = [];
 
@@ -176,7 +181,7 @@ export default function GalleryPage() {
         }
       });
 
-    return photos.slice(0, 20);
+    return photos;
   }, [events]);
 
   function getEventPhotos(event: EventItem): GalleryPhoto[] {
@@ -256,7 +261,10 @@ export default function GalleryPage() {
   function openEvent(event: EventItem, photo?: string) {
     setSelectedEvent(event);
     setSelectedPhoto(
-      photo || event.poster || getEventPhotos(event)[0]?.url || null
+      photo ||
+        event.poster ||
+        getEventPhotos(event)[0]?.url ||
+        null
     );
   }
 
@@ -267,11 +275,9 @@ export default function GalleryPage() {
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
-
-      {/* ================= TOP SPACING FOR COMMON NAVBAR ================= */}
       <div className="h-[76px]" />
 
-      {/* ================= HERO ================= */}
+      {/* HERO */}
       <section className="relative overflow-hidden bg-slate-950 pb-20 pt-28 text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.35),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(14,165,233,0.2),transparent_35%)]" />
 
@@ -291,10 +297,9 @@ export default function GalleryPage() {
         </div>
       </section>
 
-      {/* ================= LATEST PHOTOS ================= */}
+      {/* ALL PHOTOS SLIDER */}
       <section className="overflow-hidden bg-white py-16">
         <div className="mx-auto max-w-7xl px-6">
-
           <div className="mb-8 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
             <div>
               <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
@@ -306,8 +311,8 @@ export default function GalleryPage() {
               </h2>
 
               <p className="mt-2 max-w-2xl text-slate-500">
-                A glimpse of the latest memories, achievements and
-                celebrations at GEC Sheohar.
+                All memories, achievements and celebrations from
+                GEC Sheohar.
               </p>
             </div>
 
@@ -328,11 +333,14 @@ export default function GalleryPage() {
             </div>
           ) : (
             <div className="group relative overflow-hidden rounded-3xl">
-              <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-20 bg-gradient-to-r from-white to-transparent" />
+              {/* LEFT FADE */}
+              <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-white via-white/70 to-transparent" />
 
-              <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-20 bg-gradient-to-l from-white to-transparent" />
+              {/* RIGHT FADE */}
+              <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-white via-white/70 to-transparent" />
 
-              <div className="latest-photo-track flex w-max gap-5 py-4 group-hover:[animation-play-state:paused]">
+              {/* INFINITE SLIDER */}
+              <div className="latest-photo-track flex w-max gap-5 py-5 group-hover:[animation-play-state:paused]">
                 {[...latestPhotos, ...latestPhotos].map(
                   (photo, index) => (
                     <button
@@ -346,6 +354,7 @@ export default function GalleryPage() {
                       <img
                         src={photo.url}
                         alt={photo.event.title}
+                        loading="lazy"
                         className="h-full w-full object-cover transition duration-500 group-hover/photo:scale-110"
                       />
 
@@ -366,14 +375,12 @@ export default function GalleryPage() {
               </div>
             </div>
           )}
-
         </div>
       </section>
 
-      {/* ================= EXPLORE BY EVENT ================= */}
+      {/* EXPLORE BY EVENT */}
       <section className="bg-slate-50 py-20">
         <div className="mx-auto max-w-7xl px-6">
-
           <div className="text-center">
             <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
               Explore
@@ -453,6 +460,7 @@ export default function GalleryPage() {
                         <img
                           src={cover}
                           alt={event.title}
+                          loading="lazy"
                           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                         />
                       ) : (
@@ -536,11 +544,10 @@ export default function GalleryPage() {
               })}
             </div>
           )}
-
         </div>
       </section>
 
-      {/* ================= EVENT MODAL ================= */}
+      {/* EVENT MODAL */}
       {selectedEvent && (
         <div
           className="fixed inset-0 z-[100] overflow-y-auto bg-black/80 p-4 backdrop-blur-sm"
@@ -551,7 +558,6 @@ export default function GalleryPage() {
               className="w-full max-w-6xl overflow-hidden rounded-3xl bg-white shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-
               {/* MODAL HEADER */}
               <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 sm:px-7">
                 <div>
@@ -574,7 +580,6 @@ export default function GalleryPage() {
               </div>
 
               <div className="max-h-[80vh] overflow-y-auto p-5 sm:p-7">
-
                 {/* MAIN IMAGE */}
                 {selectedPhoto && (
                   <div className="relative mb-8 overflow-hidden rounded-2xl bg-slate-100">
@@ -596,14 +601,12 @@ export default function GalleryPage() {
 
                 {/* DETAILS */}
                 <div className="grid gap-8 lg:grid-cols-[1fr_2fr]">
-
                   <div>
                     <h3 className="text-lg font-black">
                       Event Details
                     </h3>
 
                     <div className="mt-4 space-y-3 text-sm text-slate-600">
-
                       {selectedEvent.event_date && (
                         <p>
                           <span className="font-bold text-slate-900">
@@ -677,13 +680,11 @@ export default function GalleryPage() {
                           </span>
                         </p>
                       )}
-
                     </div>
 
                     {selectedEvent.collaborating_clubs &&
                       selectedEvent.collaborating_clubs.length > 0 && (
                         <div className="mt-6">
-
                           <h4 className="font-bold">
                             Collaborating Clubs
                           </h4>
@@ -700,13 +701,11 @@ export default function GalleryPage() {
                               )
                             )}
                           </div>
-
                         </div>
                       )}
 
                     {selectedEvent.collaboration_details && (
                       <div className="mt-6">
-
                         <h4 className="font-bold">
                           Collaboration Details
                         </h4>
@@ -714,7 +713,6 @@ export default function GalleryPage() {
                         <p className="mt-2 text-sm leading-6 text-slate-600">
                           {selectedEvent.collaboration_details}
                         </p>
-
                       </div>
                     )}
 
@@ -728,14 +726,11 @@ export default function GalleryPage() {
                         Register for Event
                       </a>
                     )}
-
                   </div>
 
                   <div>
-
                     {selectedEvent.description && (
                       <div>
-
                         <h3 className="text-lg font-black">
                           About the Event
                         </h3>
@@ -743,15 +738,12 @@ export default function GalleryPage() {
                         <p className="mt-3 whitespace-pre-line text-sm leading-7 text-slate-600">
                           {selectedEvent.description}
                         </p>
-
                       </div>
                     )}
 
                     {/* ALL EVENT PHOTOS */}
                     <div className="mt-8">
-
                       <div className="flex items-center justify-between">
-
                         <h3 className="text-lg font-black">
                           Event Photos
                         </h3>
@@ -760,11 +752,9 @@ export default function GalleryPage() {
                           {getEventPhotos(selectedEvent).length}{" "}
                           photos
                         </span>
-
                       </div>
 
                       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-
                         {getEventPhotos(selectedEvent).map(
                           (photo, index) => (
                             <button
@@ -784,6 +774,7 @@ export default function GalleryPage() {
                                 alt={`${selectedEvent.title} ${
                                   index + 1
                                 }`}
+                                loading="lazy"
                                 className="h-full w-full object-cover transition duration-300 hover:scale-105"
                               />
 
@@ -795,26 +786,19 @@ export default function GalleryPage() {
                             </button>
                           )
                         )}
-
                       </div>
-
                     </div>
-
                   </div>
-
                 </div>
               </div>
-
             </div>
           </div>
         </div>
       )}
 
-      {/* ================= FOOTER ================= */}
+      {/* FOOTER */}
       <footer className="bg-slate-950 px-6 py-12 text-white">
-
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-6 md:flex-row">
-
           <div>
             <h3 className="text-lg font-black">
               Student Activity Council
@@ -828,7 +812,6 @@ export default function GalleryPage() {
           </div>
 
           <div className="flex flex-wrap gap-5 text-sm text-slate-400">
-
             <a href="/" className="hover:text-white">
               Home
             </a>
@@ -851,7 +834,6 @@ export default function GalleryPage() {
             >
               Feedback
             </a>
-
           </div>
         </div>
 
@@ -859,9 +841,9 @@ export default function GalleryPage() {
           © {new Date().getFullYear()} Government Engineering
           College Sheohar — Student Activity Council
         </div>
-
       </footer>
 
+      {/* SLIDER ANIMATION */}
       <style jsx global>{`
         @keyframes latestPhotoMarquee {
           from {
@@ -874,12 +856,13 @@ export default function GalleryPage() {
         }
 
         .latest-photo-track {
-          animation: latestPhotoMarquee 45s linear infinite;
+          animation: latestPhotoMarquee 60s linear infinite;
+          will-change: transform;
         }
 
         @media (max-width: 640px) {
           .latest-photo-track {
-            animation-duration: 35s;
+            animation-duration: 45s;
           }
         }
 
@@ -889,7 +872,6 @@ export default function GalleryPage() {
           }
         }
       `}</style>
-
     </main>
   );
 }
