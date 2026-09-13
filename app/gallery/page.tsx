@@ -36,15 +36,16 @@ type GalleryPhoto = {
 
 export default function GalleryPage() {
   const [events, setEvents] = useState<EventItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
   const [selectedEvent, setSelectedEvent] =
     useState<EventItem | null>(null);
   const [selectedPhoto, setSelectedPhoto] =
     useState<string | null>(null);
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeCategory, setActiveCategory] =
+    useState<string>("All");
 
-  async function loadEvents() {
+  async function loadEvents(): Promise<void> {
     setLoading(true);
     setError("");
 
@@ -109,7 +110,7 @@ export default function GalleryPage() {
     };
   }, []);
 
-  const categories = useMemo(() => {
+  const categories = useMemo<string[]>(() => {
     const unique = new Set<string>();
 
     events.forEach((event) => {
@@ -121,7 +122,7 @@ export default function GalleryPage() {
     return ["All", ...Array.from(unique)];
   }, [events]);
 
-  const filteredEvents = useMemo(() => {
+  const filteredEvents = useMemo<EventItem[]>(() => {
     if (activeCategory === "All") {
       return events;
     }
@@ -134,7 +135,6 @@ export default function GalleryPage() {
   /*
     ALL PHOTOS
     No 20-photo limit.
-    Every poster + every event image is included.
   */
   const latestPhotos = useMemo<GalleryPhoto[]>(() => {
     const photos: GalleryPhoto[] = [];
@@ -154,11 +154,11 @@ export default function GalleryPage() {
           });
         }
 
-        const eventImages = Array.isArray(event.images)
+        const eventImages: string[] = Array.isArray(event.images)
           ? event.images
           : [];
 
-        eventImages.forEach((url) => {
+        eventImages.forEach((url: string) => {
           if (url && url !== event.poster) {
             photos.push({
               url,
@@ -195,11 +195,11 @@ export default function GalleryPage() {
       });
     }
 
-    const images = Array.isArray(event.images)
+    const images: string[] = Array.isArray(event.images)
       ? event.images
       : [];
 
-    images.forEach((url) => {
+    images.forEach((url: string) => {
       if (url && url !== event.poster) {
         photos.push({
           url,
@@ -224,8 +224,10 @@ export default function GalleryPage() {
     return photos;
   }
 
-  function formatDate(date: string | null) {
-    if (!date) return "Date not specified";
+  function formatDate(date: string | null): string {
+    if (!date) {
+      return "Date not specified";
+    }
 
     const parsed = new Date(date);
 
@@ -240,7 +242,7 @@ export default function GalleryPage() {
     });
   }
 
-  function getStatusClass(status: string | null) {
+  function getStatusClass(status: string | null): string {
     const value = status?.toLowerCase();
 
     if (value === "completed") {
@@ -258,8 +260,12 @@ export default function GalleryPage() {
     return "bg-blue-100 text-blue-700";
   }
 
-  function openEvent(event: EventItem, photo?: string) {
+  function openEvent(
+    event: EventItem,
+    photo?: string
+  ): void {
     setSelectedEvent(event);
+
     setSelectedPhoto(
       photo ||
         event.poster ||
@@ -268,7 +274,7 @@ export default function GalleryPage() {
     );
   }
 
-  function closeModal() {
+  function closeModal(): void {
     setSelectedEvent(null);
     setSelectedPhoto(null);
   }
@@ -300,23 +306,19 @@ export default function GalleryPage() {
       {/* ALL PHOTOS SLIDER */}
       <section className="overflow-hidden bg-white py-16">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-8 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
-                From Campus Life
-              </p>
+          <div className="mb-8">
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
+              From Campus Life
+            </p>
 
-              <h2 className="mt-2 text-3xl font-black sm:text-4xl">
-                Moments That Matter
-              </h2>
+            <h2 className="mt-2 text-3xl font-black sm:text-4xl">
+              Moments That Matter
+            </h2>
 
-              <p className="mt-2 max-w-2xl text-slate-500">
-                All memories, achievements and celebrations from
-                GEC Sheohar.
-              </p>
-            </div>
-
-            
+            <p className="mt-2 max-w-2xl text-slate-500">
+              All memories, achievements and celebrations from
+              GEC Sheohar.
+            </p>
           </div>
 
           {loading ? (
@@ -331,16 +333,13 @@ export default function GalleryPage() {
             </div>
           ) : (
             <div className="group relative overflow-hidden rounded-3xl">
-              {/* LEFT FADE */}
               <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-white via-white/70 to-transparent" />
 
-              {/* RIGHT FADE */}
               <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-white via-white/70 to-transparent" />
 
-              {/* INFINITE SLIDER */}
               <div className="latest-photo-track flex w-max gap-5 py-5 group-hover:[animation-play-state:paused]">
                 {[...latestPhotos, ...latestPhotos].map(
-                  (photo, index) => (
+                  (photo: GalleryPhoto, index: number) => (
                     <button
                       key={`${photo.url}-${index}`}
                       type="button"
@@ -394,9 +393,8 @@ export default function GalleryPage() {
             </p>
           </div>
 
-          {/* CATEGORIES */}
           <div className="mt-10 flex flex-wrap justify-center gap-3">
-            {categories.map((category) => (
+            {categories.map((category: string) => (
               <button
                 key={category}
                 type="button"
@@ -420,7 +418,7 @@ export default function GalleryPage() {
 
           {loading ? (
             <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3].map((item) => (
+              {[1, 2, 3].map((item: number) => (
                 <div
                   key={item}
                   className="h-96 animate-pulse rounded-3xl bg-slate-200"
@@ -440,7 +438,7 @@ export default function GalleryPage() {
             </div>
           ) : (
             <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredEvents.map((event) => {
+              {filteredEvents.map((event: EventItem) => {
                 const photos = getEventPhotos(event);
                 const cover = event.poster || photos[0]?.url;
 
@@ -554,9 +552,10 @@ export default function GalleryPage() {
           <div className="flex min-h-full items-center justify-center py-8">
             <div
               className="w-full max-w-6xl overflow-hidden rounded-3xl bg-white shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e: React.MouseEvent<HTMLDivElement>) =>
+                e.stopPropagation()
+              }
             >
-              {/* MODAL HEADER */}
               <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 sm:px-7">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest text-blue-600">
@@ -578,7 +577,6 @@ export default function GalleryPage() {
               </div>
 
               <div className="max-h-[80vh] overflow-y-auto p-5 sm:p-7">
-                {/* MAIN IMAGE */}
                 {selectedPhoto && (
                   <div className="relative mb-8 overflow-hidden rounded-2xl bg-slate-100">
                     <div className="flex h-[280px] items-center justify-center sm:h-[480px]">
@@ -597,7 +595,6 @@ export default function GalleryPage() {
                   </div>
                 )}
 
-                {/* DETAILS */}
                 <div className="grid gap-8 lg:grid-cols-[1fr_2fr]">
                   <div>
                     <h3 className="text-lg font-black">
@@ -689,7 +686,7 @@ export default function GalleryPage() {
 
                           <div className="mt-3 flex flex-wrap gap-2">
                             {selectedEvent.collaborating_clubs.map(
-                              (club) => (
+                              (club: string) => (
                                 <span
                                   key={club}
                                   className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700"
@@ -739,7 +736,6 @@ export default function GalleryPage() {
                       </div>
                     )}
 
-                    {/* ALL EVENT PHOTOS */}
                     <div className="mt-8">
                       <div className="flex items-center justify-between">
                         <h3 className="text-lg font-black">
@@ -754,7 +750,10 @@ export default function GalleryPage() {
 
                       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
                         {getEventPhotos(selectedEvent).map(
-                          (photo, index) => (
+                          (
+                            photo: GalleryPhoto,
+                            index: number
+                          ) => (
                             <button
                               key={`${photo.url}-${index}`}
                               type="button"
@@ -841,7 +840,7 @@ export default function GalleryPage() {
         </div>
       </footer>
 
-      {/* SLIDER ANIMATION */}
+      {/* SLOW SLIDER ANIMATION */}
       <style jsx global>{`
         @keyframes latestPhotoMarquee {
           from {
@@ -854,13 +853,13 @@ export default function GalleryPage() {
         }
 
         .latest-photo-track {
-          animation: latestPhotoMarquee 60s linear infinite;
+          animation: latestPhotoMarquee 120s linear infinite;
           will-change: transform;
         }
 
         @media (max-width: 640px) {
           .latest-photo-track {
-            animation-duration: 45s;
+            animation-duration: 90s;
           }
         }
 
@@ -872,3 +871,4 @@ export default function GalleryPage() {
       `}</style>
     </main>
   );
+}
