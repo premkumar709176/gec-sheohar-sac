@@ -1,22 +1,22 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 type GalleryPhoto = {
   id: string;
-  image_url: string;
-  title?: string | null;
-  description?: string | null;
+  imageUrl: string;
+  title: string;
+  description: string;
 };
 
 type EventItem = {
   id: string;
   title: string;
-  description?: string | null;
-  event_date?: string | null;
-  location?: string | null;
-  image_url?: string | null;
+  description: string;
+  event_date: string | null;
+  location: string | null;
+  imageUrl: string;
 };
 
 export default function GalleryPage() {
@@ -24,18 +24,14 @@ export default function GalleryPage() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedPhoto, setSelectedPhoto] = useState<GalleryPhoto | null>(null);
+  const [selectedPhoto, setSelectedPhoto] =
+    useState<GalleryPhoto | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  useEffect(() => {
-    loadGallery();
-  }, []);
-
   async function loadGallery() {
-    setLoading(true);
-    setError("");
-
     try {
+      setError("");
+
       const { data: galleryData, error: galleryError } = await supabase
         .from("gallery")
         .select("*")
@@ -45,6 +41,28 @@ export default function GalleryPage() {
         throw galleryError;
       }
 
+      const formattedPhotos: GalleryPhoto[] = (galleryData || [])
+        .map((item: any) => {
+          const imageUrl =
+            item.image_url ||
+            item.photo_url ||
+            item.image ||
+            item.photo ||
+            item.url ||
+            item.src ||
+            "";
+
+          return {
+            id: String(item.id),
+            imageUrl,
+            title: item.title || item.name || "",
+            description: item.description || "",
+          };
+        })
+        .filter((photo) => photo.imageUrl);
+
+      setPhotos(formattedPhotos);
+
       const { data: eventData, error: eventError } = await supabase
         .from("events")
         .select("*")
@@ -52,10 +70,26 @@ export default function GalleryPage() {
 
       if (eventError) {
         console.error("Events loading error:", eventError);
-      }
+        setEvents([]);
+      } else {
+        const formattedEvents: EventItem[] = (eventData || []).map(
+          (item: any) => ({
+            id: String(item.id),
+            title: item.title || item.name || "Event",
+            description: item.description || "",
+            event_date: item.event_date || item.date || null,
+            location: item.location || null,
+            imageUrl:
+              item.image_url ||
+              item.photo_url ||
+              item.image ||
+              item.photo ||
+              "",
+          })
+        );
 
-      setPhotos((galleryData || []) as GalleryPhoto[]);
-      setEvents((eventData || []) as EventItem[]);
+        setEvents(formattedEvents);
+      }
     } catch (err) {
       console.error("Gallery loading error:", err);
       setError("Unable to load gallery photos.");
@@ -65,6 +99,8 @@ export default function GalleryPage() {
   }
 
   useEffect(() => {
+    loadGallery();
+
     const channel = supabase
       .channel("gallery-live-updates")
       .on(
@@ -85,21 +121,15 @@ export default function GalleryPage() {
     };
   }, []);
 
-  /*
-    One photo moves every 1 second.
-    When the last photo is reached, it starts again from the first.
-  */
   useEffect(() => {
-    if (photos.length <= 1) return;
+    if (photos.length <= 1) {
+      return;
+    }
 
     const timer = window.setInterval(() => {
-      setCurrentIndex((previous) => {
-        if (previous >= photos.length - 1) {
-          return 0;
-        }
-
-        return previous + 1;
-      });
+      setCurrentIndex((previous) =>
+        previous >= photos.length - 1 ? 0 : previous + 1
+      );
     }, 1000);
 
     return () => {
@@ -107,26 +137,18 @@ export default function GalleryPage() {
     };
   }, [photos.length]);
 
-  const sliderPhotos = useMemo(() => {
-    if (photos.length === 0) return [];
+  function formatDate(date: string | null) {
+    if (!date) {
+      return "";
+    }
 
-    /*
-      Duplicate the photos so the transition has a continuous
-      horizontal strip instead of showing an empty space.
-    */
-    return [...photos, ...photos];
-  }, [photos]);
+    const parsedDate = new Date(date);
 
-  function formatDate(date?: string | null) {
-    if (!date) return "";
-
-    const parsed = new Date(date);
-
-    if (Number.isNaN(parsed.getTime())) {
+    if (Number.isNaN(parsedDate.getTime())) {
       return date;
     }
 
-    return parsed.toLocaleDateString("en-IN", {
+    return parsedDate.toLocaleDateString("en-IN", {
       day: "numeric",
       month: "long",
       year: "numeric",
@@ -147,7 +169,7 @@ export default function GalleryPage() {
             </h1>
 
             <p className="mt-2 text-sm text-slate-400">
-              Please wait
+              Please wait while the gallery is loading.
             </p>
           </div>
         </section>
@@ -159,7 +181,7 @@ export default function GalleryPage() {
     <main className="min-h-screen bg-slate-950 text-white">
       <div className="h-[76px]" />
 
-      {/* HERO */}
+      {/* HERO SECTION */}
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="absolute inset-0 bg-gradient-to-b from-blue-950/40 via-slate-950 to-slate-950" />
 
@@ -173,14 +195,15 @@ export default function GalleryPage() {
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400 sm:text-lg">
-            Moments, memories and highlights from activities, workshops,
-            competitions and events at Government Engineering College
-            Sheohar.
+            A collection of photographs highlighting activities,
+            workshops, competitions, events and memorable moments
+            of the Student Activity Council at Government Engineering
+            College Sheohar.
           </p>
         </div>
       </section>
 
-      {/* ERROR */}
+      {/* ERROR MESSAGE */}
       {error && (
         <section className="mx-auto max-w-7xl px-6 pt-8 lg:px-8">
           <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-300">
@@ -189,22 +212,21 @@ export default function GalleryPage() {
         </section>
       )}
 
-      {/* ALL PHOTOS SLIDER */}
+      {/* PHOTO SLIDER */}
       <section className="py-14">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mb-8 flex items-end justify-between gap-5">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-400">
-                Memories
-              </p>
+          <div className="mb-8">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-400">
+              Memories
+            </p>
 
-              <h2 className="mt-2 text-3xl font-bold text-white">
-                Latest Moments
-              </h2>
-            </div>
+            <h2 className="mt-2 text-3xl font-bold text-white">
+              Latest Moments
+            </h2>
 
-            <p className="hidden text-sm text-slate-500 sm:block">
-              One photo every second
+            <p className="mt-2 text-sm text-slate-500">
+              Photographs are displayed sequentially, with one photo
+              advancing every second.
             </p>
           </div>
         </div>
@@ -215,47 +237,44 @@ export default function GalleryPage() {
               <div className="text-5xl">🖼️</div>
 
               <h3 className="mt-5 text-xl font-bold">
-                No photos yet
+                No Gallery Photos Available
               </h3>
 
               <p className="mt-2 text-sm text-slate-400">
-                Gallery photos will appear here once they are added.
+                Photographs uploaded through the administration panel
+                will appear here.
               </p>
             </div>
           </div>
         ) : (
           <div className="relative w-full overflow-hidden">
-            {/* Left fade */}
-            <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-16 bg-gradient-to-r from-slate-950 to-transparent" />
+            <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-20 bg-gradient-to-r from-slate-950 to-transparent" />
 
-            {/* Right fade */}
-            <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-16 bg-gradient-to-l from-slate-950 to-transparent" />
+            <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-20 bg-gradient-to-l from-slate-950 to-transparent" />
 
             <div
-              className="flex transition-transform duration-700 ease-in-out"
+              className="flex gap-4 transition-transform duration-700 ease-in-out"
               style={{
-                transform: `translateX(calc(-${currentIndex} * (min(75vw, 520px) + 16px)))`,
+                transform: `translateX(-${
+                  currentIndex * 420
+                }px)`,
               }}
             >
-              {sliderPhotos.map((photo, index) => (
+              {photos.map((photo) => (
                 <button
-                  key={`${photo.id}-${index}`}
+                  key={photo.id}
                   type="button"
                   onClick={() => setSelectedPhoto(photo)}
-                  className="group mr-4 flex-shrink-0 text-left"
-                  style={{
-                    width: "min(75vw, 520px)",
-                  }}
+                  className="group w-[85vw] max-w-[420px] flex-shrink-0 text-left sm:w-[420px]"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl">
                     <img
-                      src={photo.image_url}
-                      alt={photo.title || "SAC Gallery Photo"}
+                      src={photo.imageUrl}
+                      alt={photo.title || "SAC Gallery Photograph"}
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                      loading={index < 3 ? "eager" : "lazy"}
                     />
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-70" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
 
                     {photo.title && (
                       <div className="absolute bottom-0 left-0 right-0 p-5">
@@ -272,7 +291,7 @@ export default function GalleryPage() {
                     )}
 
                     <div className="absolute right-4 top-4 rounded-full bg-black/50 px-3 py-1.5 text-xs font-medium text-white opacity-0 backdrop-blur transition group-hover:opacity-100">
-                      View
+                      View Photograph
                     </div>
                   </div>
                 </button>
@@ -282,19 +301,19 @@ export default function GalleryPage() {
         )}
       </section>
 
-      {/* PHOTO GRID */}
+      {/* ALL PHOTOGRAPHS */}
       <section className="mx-auto max-w-7xl px-6 pb-20 lg:px-8">
         <div className="mb-8">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-400">
-            Explore
+            Gallery
           </p>
 
           <h2 className="mt-2 text-3xl font-bold">
-            All Gallery Photos
+            All Photographs
           </h2>
 
           <p className="mt-2 text-sm text-slate-400">
-            Browse every photo uploaded to the SAC gallery.
+            Browse all photographs uploaded to the SAC gallery.
           </p>
         </div>
 
@@ -309,8 +328,8 @@ export default function GalleryPage() {
               >
                 <div className="relative aspect-square overflow-hidden rounded-xl border border-white/10 bg-slate-900">
                   <img
-                    src={photo.image_url}
-                    alt={photo.title || "SAC Gallery Photo"}
+                    src={photo.imageUrl}
+                    alt={photo.title || "SAC Gallery Photograph"}
                     className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                     loading="lazy"
                   />
@@ -318,7 +337,7 @@ export default function GalleryPage() {
                   <div className="absolute inset-0 bg-black/0 transition group-hover:bg-black/20" />
 
                   {photo.title && (
-                    <div className="absolute bottom-0 left-0 right-0 translate-y-full bg-gradient-to-t from-black/80 to-transparent p-4 pt-8 transition duration-300 group-hover:translate-y-0">
+                    <div className="absolute bottom-0 left-0 right-0 translate-y-full bg-gradient-to-t from-black/90 to-transparent p-4 pt-10 transition duration-300 group-hover:translate-y-0">
                       <p className="text-sm font-semibold text-white">
                         {photo.title}
                       </p>
@@ -331,7 +350,7 @@ export default function GalleryPage() {
         )}
       </section>
 
-      {/* EVENTS */}
+      {/* EVENTS AND ACTIVITIES */}
       {events.length > 0 && (
         <section className="border-t border-white/10 bg-slate-900/40 py-20">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -345,8 +364,8 @@ export default function GalleryPage() {
               </h2>
 
               <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-                Explore events and activities organized by the Student
-                Activity Council and its clubs.
+                Events and activities organized by the Student Activity
+                Council and its affiliated clubs.
               </p>
             </div>
 
@@ -356,10 +375,10 @@ export default function GalleryPage() {
                   key={event.id}
                   className="overflow-hidden rounded-2xl border border-white/10 bg-slate-950"
                 >
-                  {event.image_url ? (
+                  {event.imageUrl ? (
                     <div className="aspect-video overflow-hidden">
                       <img
-                        src={event.image_url}
+                        src={event.imageUrl}
                         alt={event.title}
                         className="h-full w-full object-cover"
                         loading="lazy"
@@ -408,7 +427,7 @@ export default function GalleryPage() {
             <div className="flex items-center gap-3">
               <img
                 src="/sac-logo.jpg"
-                alt="SAC GEC Sheohar"
+                alt="Student Activity Council"
                 className="h-12 w-12 rounded-full object-cover"
               />
 
@@ -447,15 +466,18 @@ export default function GalleryPage() {
 
           <div
             className="relative max-h-full max-w-6xl"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
           >
             <img
-              src={selectedPhoto.image_url}
-              alt={selectedPhoto.title || "SAC Gallery Photo"}
+              src={selectedPhoto.imageUrl}
+              alt={
+                selectedPhoto.title || "SAC Gallery Photograph"
+              }
               className="max-h-[80vh] max-w-full rounded-2xl object-contain shadow-2xl"
             />
 
-            {(selectedPhoto.title || selectedPhoto.description) && (
+            {(selectedPhoto.title ||
+              selectedPhoto.description) && (
               <div className="mt-4 rounded-xl border border-white/10 bg-slate-900/95 p-5">
                 {selectedPhoto.title && (
                   <h3 className="text-xl font-bold text-white">
