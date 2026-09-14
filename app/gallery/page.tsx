@@ -157,25 +157,24 @@ export default function GalleryPage() {
           </div>
         ) : photos.length === 0 ? (
           <div className="flex min-h-[60vh] items-center justify-center">
-            <p className="text-slate-400">
-              No event photos yet.
-            </p>
+            <p className="text-slate-400">No event photos yet.</p>
           </div>
         ) : (
           <>
             {/* SLIDESHOW */}
-
             <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black">
-              <div className="relative aspect-[16/9] w-full">
+              <div className="relative aspect-[16/9] w-full overflow-hidden">
                 {photos.map((photo, index) => (
                   <button
                     key={photo.id}
                     type="button"
                     onClick={() => setSelectedPhoto(photo)}
-                    className={`absolute inset-0 h-full w-full transition-opacity duration-300 ${
+                    className={`absolute inset-0 h-full w-full transform transition-all duration-700 ease-in-out ${
                       index === currentIndex
-                        ? "z-10 opacity-100"
-                        : "z-0 opacity-0"
+                        ? "translate-x-0 opacity-100"
+                        : index < currentIndex
+                          ? "-translate-x-full opacity-0"
+                          : "translate-x-full opacity-0"
                     }`}
                   >
                     <img
@@ -204,8 +203,7 @@ export default function GalleryPage() {
               </div>
             </div>
 
-            {/* ALL PHOTOS */}
-
+            {/* PHOTO GRID */}
             <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
               {photos.map((photo) => (
                 <button
@@ -226,8 +224,7 @@ export default function GalleryPage() {
         )}
       </section>
 
-      {/* FULLSCREEN */}
-
+      {/* FULLSCREEN PHOTO */}
       {selectedPhoto && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4"
