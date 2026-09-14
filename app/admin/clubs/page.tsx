@@ -149,7 +149,9 @@ export default function AdminClubsPage() {
       "club-logo"
     ) as HTMLInputElement | null;
 
-    if (input) input.value = "";
+    if (input) {
+      input.value = "";
+    }
 
     if (clearFeedback) {
       setMessage("");
@@ -158,10 +160,16 @@ export default function AdminClubsPage() {
   }
 
   async function uploadLogo(): Promise<string | null> {
-    if (!logoFile) return existingLogo;
+    if (!logoFile) {
+      return existingLogo;
+    }
 
     if (!logoFile.type.startsWith("image/")) {
       throw new Error("Please select a valid image file.");
+    }
+
+    if (logoFile.size > 5 * 1024 * 1024) {
+      throw new Error("Club logo must be smaller than 5 MB.");
     }
 
     const extension =
@@ -185,7 +193,7 @@ export default function AdminClubsPage() {
       });
 
     if (uploadError) {
-      throw new Error(`Club photo upload failed: ${uploadError.message}`);
+      throw new Error(`Club logo upload failed: ${uploadError.message}`);
     }
 
     const { data } = supabase.storage
@@ -215,16 +223,16 @@ export default function AdminClubsPage() {
         description: form.description.trim(),
         activities: form.activities.trim(),
         head: form.head.trim(),
-        head_email: form.head_email.trim(),
-        head_phone: form.head_phone.trim(),
+        head_email: form.head_email.trim() || null,
+        head_phone: form.head_phone.trim() || null,
         coordinator: form.coordinator.trim(),
-        coordinator_email: form.coordinator_email.trim(),
-        coordinator_phone: form.coordinator_phone.trim(),
+        coordinator_email: form.coordinator_email.trim() || null,
+        coordinator_phone: form.coordinator_phone.trim() || null,
         contact_name: form.contact_name.trim(),
         contact_email: form.contact_email.trim(),
         contact_phone: form.contact_phone.trim(),
-        display_order: Number(form.display_order) || 0,
         logo: logoUrl,
+        display_order: Number(form.display_order) || 0,
         updated_at: new Date().toISOString(),
       };
 
@@ -378,7 +386,7 @@ export default function AdminClubsPage() {
             </h1>
 
             <p className="mt-3 max-w-2xl text-slate-600">
-              Manage club photos, heads, coordinators and contact information
+              Manage club logos, heads, coordinators and contact information
               from one place.
             </p>
           </div>
@@ -406,7 +414,7 @@ export default function AdminClubsPage() {
                   </h2>
 
                   <p className="mt-1 text-sm text-slate-500">
-                    Upload a club photo and manage club leadership details.
+                    Add the club logo and complete leadership contact details.
                   </p>
                 </div>
               </div>
@@ -415,7 +423,7 @@ export default function AdminClubsPage() {
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="grid gap-5 md:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-sm font-bold text-[#172033]">
+                  <label className="mb-2 block text-sm font-bold">
                     Club Name *
                   </label>
 
@@ -430,7 +438,7 @@ export default function AdminClubsPage() {
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm font-bold text-[#172033]">
+                  <label className="mb-2 block text-sm font-bold">
                     Category
                   </label>
 
@@ -446,7 +454,7 @@ export default function AdminClubsPage() {
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm font-bold text-[#172033]">
+                  <label className="mb-2 block text-sm font-bold">
                     Display Order
                   </label>
 
@@ -462,31 +470,37 @@ export default function AdminClubsPage() {
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm font-bold text-[#172033]">
-                    Club Photo
+                  <label className="mb-2 block text-sm font-bold">
+                    Club Logo
                   </label>
 
                   <input
                     id="club-logo"
                     type="file"
-                    accept="image/*"
+                    accept="image/png,image/jpeg,image/webp,image/svg+xml"
                     onChange={(e) =>
                       setLogoFile(e.target.files?.[0] || null)
                     }
                     className="block w-full rounded-xl border border-[#e4e7ec] bg-white p-3 text-sm text-slate-500 file:mr-4 file:rounded-lg file:border-0 file:bg-[#eaf1ff] file:px-4 file:py-2 file:font-semibold file:text-[#1746a2]"
                   />
 
+                  <p className="mt-2 text-xs text-slate-500">
+                    PNG, JPG, WEBP or SVG • Maximum 5 MB
+                  </p>
+
                   {existingLogo && (
                     <div className="mt-4 flex items-center gap-4 rounded-xl border border-[#e4e7ec] bg-[#f8f6f0] p-3">
-                      <img
-                        src={existingLogo}
-                        alt="Current club photo"
-                        className="h-24 w-32 rounded-xl object-cover shadow-sm"
-                      />
+                      <div className="flex h-24 w-24 items-center justify-center rounded-xl bg-white p-2 shadow-sm">
+                        <img
+                          src={existingLogo}
+                          alt="Current club logo"
+                          className="h-full w-full object-contain"
+                        />
+                      </div>
 
                       <div>
-                        <p className="text-sm font-bold text-[#172033]">
-                          Current photo
+                        <p className="text-sm font-bold">
+                          Current logo
                         </p>
 
                         <p className="mt-1 text-xs text-slate-500">
@@ -508,6 +522,7 @@ export default function AdminClubsPage() {
                     <h3 className="text-xl font-black text-[#1746a2]">
                       Club Head
                     </h3>
+
                     <p className="text-xs text-slate-500">
                       Faculty or designated club head
                     </p>
@@ -575,6 +590,7 @@ export default function AdminClubsPage() {
                     <h3 className="text-xl font-black text-[#d96512]">
                       Student Coordinator
                     </h3>
+
                     <p className="text-xs text-slate-500">
                       Student leadership contact
                     </p>
@@ -639,7 +655,7 @@ export default function AdminClubsPage() {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-bold text-[#172033]">
+                <label className="mb-2 block text-sm font-bold">
                   Description
                 </label>
 
@@ -655,7 +671,7 @@ export default function AdminClubsPage() {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-bold text-[#172033]">
+                <label className="mb-2 block text-sm font-bold">
                   Activities
                 </label>
 
@@ -676,7 +692,7 @@ export default function AdminClubsPage() {
 
               <div className="rounded-2xl border border-[#e4e7ec] bg-[#f8f6f0] p-5 sm:p-6">
                 <div className="mb-5">
-                  <h3 className="text-lg font-black text-[#172033]">
+                  <h3 className="text-lg font-black">
                     Additional Contact
                   </h3>
 
@@ -769,7 +785,7 @@ export default function AdminClubsPage() {
                   Database
                 </p>
 
-                <h2 className="text-2xl font-black text-[#172033]">
+                <h2 className="text-2xl font-black">
                   All Clubs
                 </h2>
 
@@ -790,6 +806,7 @@ export default function AdminClubsPage() {
             {loading ? (
               <div className="college-card p-10 text-center">
                 <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-[#e4e7ec] border-t-[#1746a2]" />
+
                 <p className="text-sm font-medium text-slate-500">
                   Loading clubs...
                 </p>
@@ -800,7 +817,7 @@ export default function AdminClubsPage() {
                   +
                 </div>
 
-                <h3 className="mt-5 text-xl font-black text-[#172033]">
+                <h3 className="mt-5 text-xl font-black">
                   No clubs added yet.
                 </h3>
 
@@ -815,32 +832,30 @@ export default function AdminClubsPage() {
                     key={club.id}
                     className="college-card overflow-hidden"
                   >
-                    {club.logo ? (
-                      <div className="image-hover">
+                    <div className="flex min-h-56 items-center justify-center bg-[#eaf1ff] p-6">
+                      {club.logo ? (
                         <img
                           src={club.logo}
-                          alt={club.name}
-                          className="h-56 w-full object-cover"
+                          alt={`${club.name} logo`}
+                          className="h-44 w-44 rounded-2xl bg-white object-contain p-3 shadow-md"
                         />
-                      </div>
-                    ) : (
-                      <div className="flex h-56 items-center justify-center bg-[#eaf1ff]">
+                      ) : (
                         <div className="text-center">
                           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-white text-3xl font-black text-[#1746a2] shadow-sm">
                             {club.name.charAt(0).toUpperCase()}
                           </div>
 
                           <p className="mt-4 text-sm font-medium text-slate-500">
-                            No club photo uploaded
+                            No logo uploaded
                           </p>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
 
                     <div className="p-6">
                       <div className="flex justify-between gap-3">
                         <div>
-                          <h3 className="text-xl font-black text-[#172033]">
+                          <h3 className="text-xl font-black">
                             {club.name}
                           </h3>
 
@@ -869,15 +884,16 @@ export default function AdminClubsPage() {
                               Club Head
                             </p>
 
-                            <p className="mt-1 font-bold text-[#172033]">
+                            <p className="mt-1 font-bold">
                               {club.head}
                             </p>
 
                             {club.head_email && (
                               <a
                                 href={`mailto:${club.head_email}`}
-                                className="mt-2 block text-sm font-medium text-[#1746a2] hover:underline"
+                                className="mt-2 flex items-center gap-2 text-sm font-medium text-[#1746a2] hover:underline"
                               >
+                                <span>✉</span>
                                 {club.head_email}
                               </a>
                             )}
@@ -885,8 +901,9 @@ export default function AdminClubsPage() {
                             {club.head_phone && (
                               <a
                                 href={`tel:${club.head_phone}`}
-                                className="mt-1 block text-sm font-medium text-[#1746a2] hover:underline"
+                                className="mt-1 flex items-center gap-2 text-sm font-medium text-[#1746a2] hover:underline"
                               >
+                                <span>☎</span>
                                 {club.head_phone}
                               </a>
                             )}
@@ -899,15 +916,16 @@ export default function AdminClubsPage() {
                               Student Coordinator
                             </p>
 
-                            <p className="mt-1 font-bold text-[#172033]">
+                            <p className="mt-1 font-bold">
                               {club.coordinator}
                             </p>
 
                             {club.coordinator_email && (
                               <a
                                 href={`mailto:${club.coordinator_email}`}
-                                className="mt-2 block text-sm font-medium text-[#d96512] hover:underline"
+                                className="mt-2 flex items-center gap-2 text-sm font-medium text-[#d96512] hover:underline"
                               >
+                                <span>✉</span>
                                 {club.coordinator_email}
                               </a>
                             )}
@@ -915,8 +933,9 @@ export default function AdminClubsPage() {
                             {club.coordinator_phone && (
                               <a
                                 href={`tel:${club.coordinator_phone}`}
-                                className="mt-1 block text-sm font-medium text-[#d96512] hover:underline"
+                                className="mt-1 flex items-center gap-2 text-sm font-medium text-[#d96512] hover:underline"
                               >
+                                <span>☎</span>
                                 {club.coordinator_phone}
                               </a>
                             )}
