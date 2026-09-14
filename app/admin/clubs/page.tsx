@@ -139,7 +139,7 @@ export default function AdminClubsPage() {
     }));
   }
 
-  function resetForm() {
+  function resetForm(clearFeedback = true) {
     setForm(emptyForm);
     setEditingId(null);
     setLogoFile(null);
@@ -150,6 +150,11 @@ export default function AdminClubsPage() {
     ) as HTMLInputElement | null;
 
     if (input) input.value = "";
+
+    if (clearFeedback) {
+      setMessage("");
+      setError("");
+    }
   }
 
   async function uploadLogo(): Promise<string | null> {
@@ -209,24 +214,23 @@ export default function AdminClubsPage() {
         category: form.category.trim(),
         description: form.description.trim(),
         activities: form.activities.trim(),
-
         head: form.head.trim(),
         head_email: form.head_email.trim(),
         head_phone: form.head_phone.trim(),
-
         coordinator: form.coordinator.trim(),
         coordinator_email: form.coordinator_email.trim(),
         coordinator_phone: form.coordinator_phone.trim(),
-
         contact_name: form.contact_name.trim(),
         contact_email: form.contact_email.trim(),
         contact_phone: form.contact_phone.trim(),
-
         display_order: Number(form.display_order) || 0,
         logo: logoUrl,
-
         updated_at: new Date().toISOString(),
       };
+
+      const successMessage = editingId
+        ? "Club updated successfully."
+        : "Club added successfully.";
 
       if (editingId) {
         const { error: updateError } = await supabase
@@ -237,8 +241,6 @@ export default function AdminClubsPage() {
         if (updateError) {
           throw new Error(updateError.message);
         }
-
-        setMessage("Club updated successfully.");
       } else {
         const { error: insertError } = await supabase
           .from("clubs")
@@ -250,11 +252,10 @@ export default function AdminClubsPage() {
         if (insertError) {
           throw new Error(insertError.message);
         }
-
-        setMessage("Club added successfully.");
       }
 
-      resetForm();
+      resetForm(false);
+      setMessage(successMessage);
       await loadClubs();
     } catch (err) {
       setError(
@@ -273,24 +274,22 @@ export default function AdminClubsPage() {
       category: club.category || "",
       description: club.description || "",
       activities: club.activities || "",
-
       head: club.head || "",
       head_email: club.head_email || "",
       head_phone: club.head_phone || "",
-
       coordinator: club.coordinator || "",
       coordinator_email: club.coordinator_email || "",
       coordinator_phone: club.coordinator_phone || "",
-
       contact_name: club.contact_name || "",
       contact_email: club.contact_email || "",
       contact_phone: club.contact_phone || "",
-
       display_order: String(club.display_order ?? 0),
     });
 
     setExistingLogo(club.logo || null);
     setLogoFile(null);
+    setMessage("");
+    setError("");
 
     window.scrollTo({
       top: 0,
@@ -753,7 +752,7 @@ export default function AdminClubsPage() {
                 {editingId && (
                   <button
                     type="button"
-                    onClick={resetForm}
+                    onClick={() => resetForm()}
                     className="rounded-full border border-[#e4e7ec] bg-white px-6 py-3 font-semibold text-slate-700 transition hover:border-[#1746a2]/30 hover:bg-[#eaf1ff] hover:text-[#1746a2]"
                   >
                     Cancel
