@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -75,13 +74,17 @@ export default function AdminLogin() {
 
   if (checking) {
     return (
-      <main className="min-h-screen bg-slate-950 flex items-center justify-center px-6">
+      <main className="flex min-h-screen items-center justify-center bg-[#f8f6f0] px-6">
         <div className="text-center">
-          <div className="text-white text-lg font-semibold">
-            Checking login...
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eaf1ff]">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1746a2]/20 border-t-[#1746a2]" />
           </div>
 
-          <p className="text-slate-400 text-sm mt-2">
+          <h1 className="text-lg font-bold text-[#172033]">
+            Checking login...
+          </h1>
+
+          <p className="mt-2 text-sm text-[#667085]">
             Please wait
           </p>
         </div>
@@ -90,53 +93,61 @@ export default function AdminLogin() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 flex items-center justify-center px-6 py-12">
+    <main className="college-pattern flex min-h-screen items-center justify-center bg-[#f8f6f0] px-5 py-12">
       <div className="w-full max-w-md">
+        <div className="mb-8 text-center">
+          <div className="relative mx-auto mb-5 flex h-20 w-20 items-center justify-center">
+            <div className="absolute inset-0 rounded-3xl bg-[#f47b20]/20 blur-xl" />
 
-        {/* Logo / Heading */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600 text-white text-3xl shadow-lg mb-5">
-            🔐
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-[#1746a2] text-3xl text-white shadow-xl">
+              🔐
+            </div>
           </div>
 
-          <h1 className="text-3xl font-bold text-white">
+          <h1 className="text-3xl font-black text-[#1746a2]">
             SAC Admin Login
           </h1>
 
-          <p className="text-slate-400 mt-2">
+          <div className="mx-auto mt-3 h-1 w-12 rounded-full bg-[#f47b20]" />
+
+          <p className="mt-3 font-medium text-[#667085]">
             Government Engineering College Sheohar
           </p>
         </div>
 
-        {/* Login Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
-
+        <div className="college-card blue-glow p-7 sm:p-8">
           <div className="mb-6">
-            <h2 className="text-xl font-bold text-slate-900">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#eaf1ff] px-3 py-1.5 text-xs font-bold text-[#1746a2]">
+              <span className="h-2 w-2 rounded-full bg-[#f47b20]" />
+              Secure Access
+            </div>
+
+            <h2 className="text-xl font-black text-[#172033]">
               Administrator Access
             </h2>
 
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="mt-1 text-sm text-[#667085]">
               Login to manage the SAC website.
             </p>
           </div>
 
-          {/* Error */}
           {error && (
-            <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
-              <p className="text-sm text-red-700">
-                {error}
-              </p>
+            <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+              <div className="flex gap-3">
+                <span className="text-lg">⚠️</span>
+
+                <p className="text-sm leading-5 text-red-700">
+                  {error}
+                </p>
+              </div>
             </div>
           )}
 
           <form onSubmit={handleLogin} className="space-y-5">
-
-            {/* Email */}
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-semibold text-slate-700 mb-2"
+                className="mb-2 block text-sm font-bold text-[#172033]"
               >
                 Email Address
               </label>
@@ -149,15 +160,14 @@ export default function AdminLogin() {
                 placeholder="Enter admin email"
                 required
                 autoComplete="email"
-                className="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-xl border border-[#e4e7ec] bg-white px-4 py-3.5 text-[#172033] outline-none transition placeholder:text-[#98a2b3] focus:border-[#1746a2] focus:ring-4 focus:ring-[#1746a2]/10"
               />
             </div>
 
-            {/* Password */}
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-semibold text-slate-700 mb-2"
+                className="mb-2 block text-sm font-bold text-[#172033]"
               >
                 Password
               </label>
@@ -170,38 +180,46 @@ export default function AdminLogin() {
                 placeholder="Enter password"
                 required
                 autoComplete="current-password"
-                className="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-xl border border-[#e4e7ec] bg-white px-4 py-3.5 text-[#172033] outline-none transition placeholder:text-[#98a2b3] focus:border-[#1746a2] focus:ring-4 focus:ring-[#1746a2]/10"
               />
             </div>
 
-            {/* Login Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 rounded-lg font-semibold transition"
+              className="w-full rounded-xl bg-[#1746a2] px-5 py-3.5 font-bold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#103575] hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {loading ? "Signing in..." : "Login to Admin Panel"}
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  Signing in...
+                </span>
+              ) : (
+                "Login to Admin Panel"
+              )}
             </button>
-
           </form>
 
-          {/* Back to Website */}
           <button
             type="button"
             onClick={() => {
               window.location.href = "/";
             }}
-            className="w-full mt-4 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold transition"
+            className="mt-4 w-full rounded-xl border border-[#e4e7ec] bg-white px-5 py-3.5 font-bold text-[#1746a2] transition hover:border-[#1746a2]/30 hover:bg-[#eaf1ff]"
           >
             ← Back to Website
           </button>
         </div>
 
-        {/* Security Note */}
-        <p className="text-center text-xs text-slate-500 mt-6">
-          Authorized administrators only.
-        </p>
+        <div className="mt-6 text-center">
+          <p className="text-xs font-semibold text-[#667085]">
+            Authorized administrators only.
+          </p>
 
+          <p className="mt-1 text-xs text-[#98a2b3]">
+            SAC • GEC Sheohar
+          </p>
+        </div>
       </div>
     </main>
   );
