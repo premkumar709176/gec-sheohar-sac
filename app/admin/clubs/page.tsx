@@ -59,6 +59,9 @@ const emptyForm: ClubForm = {
   display_order: "0",
 };
 
+const inputClass =
+  "w-full rounded-xl border border-[#e4e7ec] bg-white px-4 py-3 text-[#172033] outline-none transition placeholder:text-slate-400 focus:border-[#1746a2] focus:ring-4 focus:ring-[#1746a2]/10";
+
 export default function AdminClubsPage() {
   const [clubs, setClubs] = useState<Club[]>([]);
   const [form, setForm] = useState<ClubForm>(emptyForm);
@@ -327,25 +330,36 @@ export default function AdminClubsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <nav className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <Link href="/admin" className="text-xl font-bold">
-            SAC Admin
+    <main className="min-h-screen bg-[#f8f6f0] text-[#172033]">
+      <nav className="sticky top-0 z-50 border-b border-[#e4e7ec] bg-[#f8f6f0]/95 shadow-sm backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
+          <Link href="/admin" className="group flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#1746a2] text-lg font-black text-white shadow-md">
+              SAC
+            </div>
+
+            <div>
+              <p className="text-lg font-extrabold leading-tight text-[#1746a2]">
+                SAC Admin
+              </p>
+              <p className="text-xs font-semibold text-slate-500">
+                GEC Sheohar
+              </p>
+            </div>
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/clubs"
               target="_blank"
-              className="rounded-lg border border-white/10 px-4 py-2 text-sm text-slate-300 hover:bg-white/10"
+              className="rounded-xl border border-[#e4e7ec] bg-white px-4 py-2.5 text-sm font-semibold text-[#1746a2] shadow-sm transition hover:border-[#1746a2]/30 hover:bg-[#eaf1ff]"
             >
               View Clubs
             </Link>
 
             <button
               onClick={logout}
-              className="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold hover:bg-red-600"
+              className="rounded-xl bg-[#f47b20] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#d96512]"
             >
               Logout
             </button>
@@ -353,553 +367,613 @@ export default function AdminClubsPage() {
         </div>
       </nav>
 
-      <div className="mx-auto max-w-7xl px-6 py-10">
-        <div className="mb-8">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-cyan-400">
-            Student Activity Council
-          </p>
+      <div className="college-pattern min-h-[calc(100vh-76px)]">
+        <div className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
+          <div className="mb-8">
+            <p className="mb-2 text-sm font-bold uppercase tracking-[0.18em] text-[#f47b20]">
+              Student Activity Council
+            </p>
 
-          <h1 className="text-4xl font-black">Club Management</h1>
+            <h1 className="text-4xl font-black tracking-tight text-[#172033] sm:text-5xl">
+              Club Management
+            </h1>
 
-          <p className="mt-3 text-slate-400">
-            Manage club photos, heads, coordinators and contact information.
-          </p>
-        </div>
-
-        {message && (
-          <div className="mb-6 rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-5 py-4 text-sm text-emerald-300">
-            {message}
+            <p className="mt-3 max-w-2xl text-slate-600">
+              Manage club photos, heads, coordinators and contact information
+              from one place.
+            </p>
           </div>
-        )}
 
-        {error && (
-          <div className="mb-6 rounded-xl border border-red-400/20 bg-red-400/10 px-5 py-4 text-sm text-red-300">
-            {error}
-          </div>
-        )}
+          {message && (
+            <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-medium text-emerald-700">
+              {message}
+            </div>
+          )}
 
-        <section className="mb-12 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
-          <h2 className="mb-1 text-2xl font-bold">
-            {editingId ? "Edit Club" : "Add Club"}
-          </h2>
+          {error && (
+            <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-medium text-red-700">
+              {error}
+            </div>
+          )}
 
-          <p className="mb-6 text-sm text-slate-400">
-            Upload a club photo and manage the club head and coordinator details.
-          </p>
+          <section className="college-card mb-12 p-6 sm:p-8">
+            <div className="mb-7">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-1.5 rounded-full bg-[#f47b20]" />
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="grid gap-5 md:grid-cols-2">
-              <div>
-                <label className="mb-2 block text-sm font-medium">
-                  Club Name *
-                </label>
+                <div>
+                  <h2 className="text-2xl font-black text-[#172033]">
+                    {editingId ? "Edit Club" : "Add Club"}
+                  </h2>
 
-                <input
-                  type="text"
-                  required
-                  value={form.name}
-                  onChange={(e) => updateField("name", e.target.value)}
-                  placeholder="Club name"
-                  className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium">
-                  Category
-                </label>
-
-                <input
-                  type="text"
-                  value={form.category}
-                  onChange={(e) =>
-                    updateField("category", e.target.value)
-                  }
-                  placeholder="e.g. Science Club"
-                  className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium">
-                  Display Order
-                </label>
-
-                <input
-                  type="number"
-                  min="0"
-                  value={form.display_order}
-                  onChange={(e) =>
-                    updateField("display_order", e.target.value)
-                  }
-                  className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium">
-                  Club Photo
-                </label>
-
-                <input
-                  id="club-logo"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) =>
-                    setLogoFile(e.target.files?.[0] || null)
-                  }
-                  className="block w-full rounded-xl border border-white/10 bg-slate-900 p-3 text-sm text-slate-400"
-                />
-
-                {existingLogo && (
-                  <div className="mt-4 flex items-center gap-4">
-                    <img
-                      src={existingLogo}
-                      alt="Current club photo"
-                      className="h-24 w-32 rounded-xl object-cover"
-                    />
-
-                    <div>
-                      <p className="text-sm font-semibold">
-                        Current photo
-                      </p>
-
-                      <p className="text-xs text-slate-500">
-                        Choose another image to replace it.
-                      </p>
-                    </div>
-                  </div>
-                )}
+                  <p className="mt-1 text-sm text-slate-500">
+                    Upload a club photo and manage club leadership details.
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-cyan-400/10 bg-cyan-400/[0.03] p-5">
-              <h3 className="mb-5 text-xl font-bold text-cyan-300">
-                Club Head
-              </h3>
-
-              <div className="grid gap-5 md:grid-cols-3">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="grid gap-5 md:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-sm font-medium">
-                    Name
+                  <label className="mb-2 block text-sm font-bold text-[#172033]">
+                    Club Name *
                   </label>
 
                   <input
                     type="text"
-                    value={form.head}
-                    onChange={(e) =>
-                      updateField("head", e.target.value)
-                    }
-                    placeholder="Club head name"
-                    className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
+                    required
+                    value={form.name}
+                    onChange={(e) => updateField("name", e.target.value)}
+                    placeholder="Club name"
+                    className={inputClass}
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium">
-                    Email
-                  </label>
-
-                  <input
-                    type="email"
-                    value={form.head_email}
-                    onChange={(e) =>
-                      updateField("head_email", e.target.value)
-                    }
-                    placeholder="head@example.com"
-                    className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium">
-                    Phone
-                  </label>
-
-                  <input
-                    type="tel"
-                    value={form.head_phone}
-                    onChange={(e) =>
-                      updateField("head_phone", e.target.value)
-                    }
-                    placeholder="+91 XXXXX XXXXX"
-                    className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-blue-400/10 bg-blue-400/[0.03] p-5">
-              <h3 className="mb-5 text-xl font-bold text-blue-300">
-                Student Coordinator
-              </h3>
-
-              <div className="grid gap-5 md:grid-cols-3">
-                <div>
-                  <label className="mb-2 block text-sm font-medium">
-                    Name
+                  <label className="mb-2 block text-sm font-bold text-[#172033]">
+                    Category
                   </label>
 
                   <input
                     type="text"
-                    value={form.coordinator}
+                    value={form.category}
                     onChange={(e) =>
-                      updateField("coordinator", e.target.value)
+                      updateField("category", e.target.value)
                     }
-                    placeholder="Coordinator name"
-                    className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-blue-400"
+                    placeholder="e.g. Science Club"
+                    className={inputClass}
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium">
-                    Email
+                  <label className="mb-2 block text-sm font-bold text-[#172033]">
+                    Display Order
                   </label>
 
                   <input
-                    type="email"
-                    value={form.coordinator_email}
+                    type="number"
+                    min="0"
+                    value={form.display_order}
                     onChange={(e) =>
-                      updateField(
-                        "coordinator_email",
-                        e.target.value
-                      )
+                      updateField("display_order", e.target.value)
                     }
-                    placeholder="coordinator@example.com"
-                    className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-blue-400"
+                    className={inputClass}
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium">
-                    Phone
+                  <label className="mb-2 block text-sm font-bold text-[#172033]">
+                    Club Photo
                   </label>
 
                   <input
-                    type="tel"
-                    value={form.coordinator_phone}
+                    id="club-logo"
+                    type="file"
+                    accept="image/*"
                     onChange={(e) =>
-                      updateField(
-                        "coordinator_phone",
-                        e.target.value
-                      )
+                      setLogoFile(e.target.files?.[0] || null)
                     }
-                    placeholder="+91 XXXXX XXXXX"
-                    className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-blue-400"
+                    className="block w-full rounded-xl border border-[#e4e7ec] bg-white p-3 text-sm text-slate-500 file:mr-4 file:rounded-lg file:border-0 file:bg-[#eaf1ff] file:px-4 file:py-2 file:font-semibold file:text-[#1746a2]"
                   />
-                </div>
-              </div>
-            </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                Description
-              </label>
+                  {existingLogo && (
+                    <div className="mt-4 flex items-center gap-4 rounded-xl border border-[#e4e7ec] bg-[#f8f6f0] p-3">
+                      <img
+                        src={existingLogo}
+                        alt="Current club photo"
+                        className="h-24 w-32 rounded-xl object-cover shadow-sm"
+                      />
 
-              <textarea
-                rows={4}
-                value={form.description}
-                onChange={(e) =>
-                  updateField("description", e.target.value)
-                }
-                placeholder="Club description"
-                className="w-full resize-none rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
-              />
-            </div>
+                      <div>
+                        <p className="text-sm font-bold text-[#172033]">
+                          Current photo
+                        </p>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                Activities
-              </label>
-
-              <textarea
-                rows={4}
-                value={form.activities}
-                onChange={(e) =>
-                  updateField("activities", e.target.value)
-                }
-                placeholder="Workshops, competitions, events"
-                className="w-full resize-none rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
-              />
-
-              <p className="mt-2 text-xs text-slate-500">
-                Separate activities with commas.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-5">
-              <h3 className="mb-5 text-lg font-bold">
-                Additional Contact
-              </h3>
-
-              <div className="grid gap-5 md:grid-cols-3">
-                <div>
-                  <label className="mb-2 block text-sm font-medium">
-                    Contact Person
-                  </label>
-
-                  <input
-                    type="text"
-                    value={form.contact_name}
-                    onChange={(e) =>
-                      updateField("contact_name", e.target.value)
-                    }
-                    placeholder="Contact person"
-                    className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 outline-none focus:border-cyan-400"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium">
-                    Contact Email
-                  </label>
-
-                  <input
-                    type="email"
-                    value={form.contact_email}
-                    onChange={(e) =>
-                      updateField("contact_email", e.target.value)
-                    }
-                    placeholder="contact@example.com"
-                    className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 outline-none focus:border-cyan-400"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium">
-                    Contact Phone
-                  </label>
-
-                  <input
-                    type="tel"
-                    value={form.contact_phone}
-                    onChange={(e) =>
-                      updateField("contact_phone", e.target.value)
-                    }
-                    placeholder="+91 XXXXX XXXXX"
-                    className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 outline-none focus:border-cyan-400"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                type="submit"
-                disabled={saving}
-                className="rounded-xl bg-cyan-500 px-6 py-3 font-bold text-slate-950 hover:bg-cyan-400 disabled:opacity-50"
-              >
-                {saving
-                  ? "Saving..."
-                  : editingId
-                    ? "Update Club"
-                    : "Add Club"}
-              </button>
-
-              {editingId && (
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="rounded-xl border border-white/10 px-6 py-3 font-semibold text-slate-300 hover:bg-white/10"
-                >
-                  Cancel
-                </button>
-              )}
-            </div>
-          </form>
-        </section>
-
-        <section>
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold">All Clubs</h2>
-
-              <p className="mt-1 text-sm text-slate-400">
-                {clubs.length}{" "}
-                {clubs.length === 1 ? "club" : "clubs"} in database
-              </p>
-            </div>
-
-            <button
-              onClick={loadClubs}
-              className="rounded-xl border border-white/10 px-5 py-2.5 text-sm font-semibold text-slate-300 hover:bg-white/10"
-            >
-              Refresh
-            </button>
-          </div>
-
-          {loading ? (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-10 text-center text-slate-400">
-              Loading clubs...
-            </div>
-          ) : clubs.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-white/10 p-12 text-center">
-              <h3 className="text-xl font-bold">
-                No clubs added yet.
-              </h3>
-            </div>
-          ) : (
-            <div className="grid gap-6 lg:grid-cols-2">
-              {clubs.map((club) => (
-                <article
-                  key={club.id}
-                  className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]"
-                >
-                  {club.logo ? (
-                    <img
-                      src={club.logo}
-                      alt={club.name}
-                      className="h-56 w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-56 items-center justify-center bg-slate-900">
-                      <div className="text-center">
-                        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-3xl font-black text-cyan-400">
-                          {club.name.charAt(0).toUpperCase()}
-                        </div>
-
-                        <p className="mt-4 text-sm text-slate-500">
-                          No club photo uploaded
+                        <p className="mt-1 text-xs text-slate-500">
+                          Choose another image to replace it.
                         </p>
                       </div>
                     </div>
                   )}
+                </div>
+              </div>
 
-                  <div className="p-6">
-                    <div className="flex justify-between gap-3">
-                      <div>
-                        <h3 className="text-xl font-bold">
-                          {club.name}
-                        </h3>
+              <div className="rounded-2xl border border-[#1746a2]/15 bg-[#eaf1ff]/60 p-5 sm:p-6">
+                <div className="mb-5 flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1746a2] text-white">
+                    👤
+                  </div>
 
-                        {club.category && (
-                          <p className="mt-1 text-sm text-cyan-400">
-                            {club.category}
+                  <div>
+                    <h3 className="text-xl font-black text-[#1746a2]">
+                      Club Head
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      Faculty or designated club head
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid gap-5 md:grid-cols-3">
+                  <div>
+                    <label className="mb-2 block text-sm font-bold">
+                      Name
+                    </label>
+
+                    <input
+                      type="text"
+                      value={form.head}
+                      onChange={(e) =>
+                        updateField("head", e.target.value)
+                      }
+                      placeholder="Club head name"
+                      className={inputClass}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-bold">
+                      Email
+                    </label>
+
+                    <input
+                      type="email"
+                      value={form.head_email}
+                      onChange={(e) =>
+                        updateField("head_email", e.target.value)
+                      }
+                      placeholder="head@example.com"
+                      className={inputClass}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-bold">
+                      Phone
+                    </label>
+
+                    <input
+                      type="tel"
+                      value={form.head_phone}
+                      onChange={(e) =>
+                        updateField("head_phone", e.target.value)
+                      }
+                      placeholder="+91 XXXXX XXXXX"
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-[#f47b20]/20 bg-[#fff1e6]/70 p-5 sm:p-6">
+                <div className="mb-5 flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f47b20] text-white">
+                    🎓
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-black text-[#d96512]">
+                      Student Coordinator
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      Student leadership contact
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid gap-5 md:grid-cols-3">
+                  <div>
+                    <label className="mb-2 block text-sm font-bold">
+                      Name
+                    </label>
+
+                    <input
+                      type="text"
+                      value={form.coordinator}
+                      onChange={(e) =>
+                        updateField("coordinator", e.target.value)
+                      }
+                      placeholder="Coordinator name"
+                      className={inputClass}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-bold">
+                      Email
+                    </label>
+
+                    <input
+                      type="email"
+                      value={form.coordinator_email}
+                      onChange={(e) =>
+                        updateField(
+                          "coordinator_email",
+                          e.target.value
+                        )
+                      }
+                      placeholder="coordinator@example.com"
+                      className={inputClass}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-bold">
+                      Phone
+                    </label>
+
+                    <input
+                      type="tel"
+                      value={form.coordinator_phone}
+                      onChange={(e) =>
+                        updateField(
+                          "coordinator_phone",
+                          e.target.value
+                        )
+                      }
+                      placeholder="+91 XXXXX XXXXX"
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-[#172033]">
+                  Description
+                </label>
+
+                <textarea
+                  rows={4}
+                  value={form.description}
+                  onChange={(e) =>
+                    updateField("description", e.target.value)
+                  }
+                  placeholder="Club description"
+                  className={`${inputClass} resize-none`}
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-[#172033]">
+                  Activities
+                </label>
+
+                <textarea
+                  rows={4}
+                  value={form.activities}
+                  onChange={(e) =>
+                    updateField("activities", e.target.value)
+                  }
+                  placeholder="Workshops, competitions, events"
+                  className={`${inputClass} resize-none`}
+                />
+
+                <p className="mt-2 text-xs text-slate-500">
+                  Separate activities with commas.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-[#e4e7ec] bg-[#f8f6f0] p-5 sm:p-6">
+                <div className="mb-5">
+                  <h3 className="text-lg font-black text-[#172033]">
+                    Additional Contact
+                  </h3>
+
+                  <p className="mt-1 text-xs text-slate-500">
+                    Optional contact information for the club.
+                  </p>
+                </div>
+
+                <div className="grid gap-5 md:grid-cols-3">
+                  <div>
+                    <label className="mb-2 block text-sm font-bold">
+                      Contact Person
+                    </label>
+
+                    <input
+                      type="text"
+                      value={form.contact_name}
+                      onChange={(e) =>
+                        updateField("contact_name", e.target.value)
+                      }
+                      placeholder="Contact person"
+                      className={inputClass}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-bold">
+                      Contact Email
+                    </label>
+
+                    <input
+                      type="email"
+                      value={form.contact_email}
+                      onChange={(e) =>
+                        updateField("contact_email", e.target.value)
+                      }
+                      placeholder="contact@example.com"
+                      className={inputClass}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-bold">
+                      Contact Phone
+                    </label>
+
+                    <input
+                      type="tel"
+                      value={form.contact_phone}
+                      onChange={(e) =>
+                        updateField("contact_phone", e.target.value)
+                      }
+                      placeholder="+91 XXXXX XXXXX"
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="btn-primary disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {saving
+                    ? "Saving..."
+                    : editingId
+                      ? "Update Club"
+                      : "Add Club"}
+                </button>
+
+                {editingId && (
+                  <button
+                    type="button"
+                    onClick={resetForm}
+                    className="rounded-full border border-[#e4e7ec] bg-white px-6 py-3 font-semibold text-slate-700 transition hover:border-[#1746a2]/30 hover:bg-[#eaf1ff] hover:text-[#1746a2]"
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
+            </form>
+          </section>
+
+          <section>
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="mb-1 text-sm font-bold uppercase tracking-wider text-[#f47b20]">
+                  Database
+                </p>
+
+                <h2 className="text-2xl font-black text-[#172033]">
+                  All Clubs
+                </h2>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  {clubs.length}{" "}
+                  {clubs.length === 1 ? "club" : "clubs"} in database
+                </p>
+              </div>
+
+              <button
+                onClick={loadClubs}
+                className="rounded-xl border border-[#e4e7ec] bg-white px-5 py-2.5 text-sm font-bold text-[#1746a2] shadow-sm transition hover:border-[#1746a2]/30 hover:bg-[#eaf1ff]"
+              >
+                Refresh
+              </button>
+            </div>
+
+            {loading ? (
+              <div className="college-card p-10 text-center">
+                <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-[#e4e7ec] border-t-[#1746a2]" />
+                <p className="text-sm font-medium text-slate-500">
+                  Loading clubs...
+                </p>
+              </div>
+            ) : clubs.length === 0 ? (
+              <div className="college-card border-dashed p-12 text-center">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eaf1ff] text-2xl text-[#1746a2]">
+                  +
+                </div>
+
+                <h3 className="mt-5 text-xl font-black text-[#172033]">
+                  No clubs added yet.
+                </h3>
+
+                <p className="mt-2 text-sm text-slate-500">
+                  Add your first club using the form above.
+                </p>
+              </div>
+            ) : (
+              <div className="grid gap-6 lg:grid-cols-2">
+                {clubs.map((club) => (
+                  <article
+                    key={club.id}
+                    className="college-card overflow-hidden"
+                  >
+                    {club.logo ? (
+                      <div className="image-hover">
+                        <img
+                          src={club.logo}
+                          alt={club.name}
+                          className="h-56 w-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex h-56 items-center justify-center bg-[#eaf1ff]">
+                        <div className="text-center">
+                          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-white text-3xl font-black text-[#1746a2] shadow-sm">
+                            {club.name.charAt(0).toUpperCase()}
+                          </div>
+
+                          <p className="mt-4 text-sm font-medium text-slate-500">
+                            No club photo uploaded
                           </p>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="p-6">
+                      <div className="flex justify-between gap-3">
+                        <div>
+                          <h3 className="text-xl font-black text-[#172033]">
+                            {club.name}
+                          </h3>
+
+                          {club.category && (
+                            <p className="mt-1 text-sm font-bold text-[#1746a2]">
+                              {club.category}
+                            </p>
+                          )}
+                        </div>
+
+                        <span className="rounded-full bg-[#fff1e6] px-3 py-1 text-xs font-bold text-[#d96512]">
+                          #{club.display_order}
+                        </span>
+                      </div>
+
+                      {club.description && (
+                        <p className="mt-5 text-sm leading-6 text-slate-600">
+                          {club.description}
+                        </p>
+                      )}
+
+                      <div className="mt-5 grid gap-4">
+                        {club.head && (
+                          <div className="rounded-xl border border-[#1746a2]/10 bg-[#eaf1ff]/60 p-4">
+                            <p className="text-xs font-bold uppercase tracking-wider text-[#1746a2]">
+                              Club Head
+                            </p>
+
+                            <p className="mt-1 font-bold text-[#172033]">
+                              {club.head}
+                            </p>
+
+                            {club.head_email && (
+                              <a
+                                href={`mailto:${club.head_email}`}
+                                className="mt-2 block text-sm font-medium text-[#1746a2] hover:underline"
+                              >
+                                {club.head_email}
+                              </a>
+                            )}
+
+                            {club.head_phone && (
+                              <a
+                                href={`tel:${club.head_phone}`}
+                                className="mt-1 block text-sm font-medium text-[#1746a2] hover:underline"
+                              >
+                                {club.head_phone}
+                              </a>
+                            )}
+                          </div>
+                        )}
+
+                        {club.coordinator && (
+                          <div className="rounded-xl border border-[#f47b20]/10 bg-[#fff1e6]/70 p-4">
+                            <p className="text-xs font-bold uppercase tracking-wider text-[#d96512]">
+                              Student Coordinator
+                            </p>
+
+                            <p className="mt-1 font-bold text-[#172033]">
+                              {club.coordinator}
+                            </p>
+
+                            {club.coordinator_email && (
+                              <a
+                                href={`mailto:${club.coordinator_email}`}
+                                className="mt-2 block text-sm font-medium text-[#d96512] hover:underline"
+                              >
+                                {club.coordinator_email}
+                              </a>
+                            )}
+
+                            {club.coordinator_phone && (
+                              <a
+                                href={`tel:${club.coordinator_phone}`}
+                                className="mt-1 block text-sm font-medium text-[#d96512] hover:underline"
+                              >
+                                {club.coordinator_phone}
+                              </a>
+                            )}
+                          </div>
                         )}
                       </div>
 
-                      <span className="text-xs text-slate-500">
-                        #{club.display_order}
-                      </span>
-                    </div>
-
-                    {club.description && (
-                      <p className="mt-5 text-sm leading-6 text-slate-400">
-                        {club.description}
-                      </p>
-                    )}
-
-                    <div className="mt-5 grid gap-4">
-                      {club.head && (
-                        <div className="rounded-xl bg-slate-900/70 p-4">
-                          <p className="text-xs uppercase tracking-wider text-slate-500">
-                            Club Head
+                      {club.activities && (
+                        <div className="mt-4 rounded-xl border border-[#e4e7ec] bg-[#f8f6f0] p-4">
+                          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+                            Activities
                           </p>
 
-                          <p className="mt-1 font-semibold">
-                            {club.head}
-                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {club.activities
+                              .split(",")
+                              .map((activity, index) => {
+                                const item = activity.trim();
 
-                          {club.head_email && (
-                            <a
-                              href={`mailto:${club.head_email}`}
-                              className="mt-2 block text-sm text-cyan-400 hover:underline"
-                            >
-                              {club.head_email}
-                            </a>
-                          )}
+                                if (!item) return null;
 
-                          {club.head_phone && (
-                            <a
-                              href={`tel:${club.head_phone}`}
-                              className="mt-1 block text-sm text-cyan-400 hover:underline"
-                            >
-                              {club.head_phone}
-                            </a>
-                          )}
+                                return (
+                                  <span
+                                    key={`${club.id}-${index}`}
+                                    className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-[#1746a2] shadow-sm ring-1 ring-[#1746a2]/10"
+                                  >
+                                    {item}
+                                  </span>
+                                );
+                              })}
+                          </div>
                         </div>
                       )}
 
-                      {club.coordinator && (
-                        <div className="rounded-xl bg-slate-900/70 p-4">
-                          <p className="text-xs uppercase tracking-wider text-slate-500">
-                            Student Coordinator
-                          </p>
+                      <div className="mt-6 flex gap-3 border-t border-[#e4e7ec] pt-5">
+                        <button
+                          onClick={() => editClub(club)}
+                          className="rounded-xl bg-[#1746a2] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#103575]"
+                        >
+                          Edit
+                        </button>
 
-                          <p className="mt-1 font-semibold">
-                            {club.coordinator}
-                          </p>
-
-                          {club.coordinator_email && (
-                            <a
-                              href={`mailto:${club.coordinator_email}`}
-                              className="mt-2 block text-sm text-blue-400 hover:underline"
-                            >
-                              {club.coordinator_email}
-                            </a>
-                          )}
-
-                          {club.coordinator_phone && (
-                            <a
-                              href={`tel:${club.coordinator_phone}`}
-                              className="mt-1 block text-sm text-blue-400 hover:underline"
-                            >
-                              {club.coordinator_phone}
-                            </a>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {club.activities && (
-                      <div className="mt-4 rounded-xl bg-slate-900/70 p-4">
-                        <p className="mb-2 text-xs uppercase text-slate-500">
-                          Activities
-                        </p>
-
-                        <div className="flex flex-wrap gap-2">
-                          {club.activities
-                            .split(",")
-                            .map((activity, index) => {
-                              const item = activity.trim();
-
-                              if (!item) return null;
-
-                              return (
-                                <span
-                                  key={`${club.id}-${index}`}
-                                  className="rounded-full bg-white/5 px-3 py-1.5 text-xs text-slate-300"
-                                >
-                                  {item}
-                                </span>
-                              );
-                            })}
-                        </div>
+                        <button
+                          onClick={() => deleteClub(club.id)}
+                          className="rounded-xl border border-red-200 bg-red-50 px-5 py-2.5 text-sm font-bold text-red-600 transition hover:bg-red-100"
+                        >
+                          Delete
+                        </button>
                       </div>
-                    )}
-
-                    <div className="mt-6 flex gap-3 border-t border-white/10 pt-5">
-                      <button
-                        onClick={() => editClub(club)}
-                        className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-400"
-                      >
-                        Edit
-                      </button>
-
-                      <button
-                        onClick={() => deleteClub(club.id)}
-                        className="rounded-lg bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-300 hover:bg-red-500/20"
-                      >
-                        Delete
-                      </button>
                     </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-        </section>
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
       </div>
     </main>
   );
