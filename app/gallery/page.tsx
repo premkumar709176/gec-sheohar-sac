@@ -1,59 +1,89 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
-type Photo = {
+type EventItem = {
   id: string;
-  imageUrl: string;
   title: string;
-  description: string;
+  event_date: string | null;
+  images: unknown;
+  image: string | null;
 };
 
+type GalleryPhoto = {
+  id: string;
+  url: string;
+  title: string;
+  date: string | null;
+};
+
+function getImageUrls(images: unknown, image: string | null): string[] {
+  if (Array.isArray(images)) {
+    return images.filter(
+      (item): item is string =>
+        typeof item === "string" && item.trim().length > 0
+    );
+  }
+
+  if (typeof images === "string" && images.trim()) {
+    try {
+      const parsed = JSON.parse(images);
+
+      if (Array.isArray(parsed)) {
+        return parsed.filter(
+          (item): item is string =>
+            typeof item === "string" && item.trim().length > 0
+        );
+      }
+    } catch {
+      return [images];
+    }
+  }
+
+  if (image && image.trim()) {
+    return [image];
+  }
+
+  return [];
+}
+
 export default function GalleryPage() {
-  const [photos, setPhotos] = useState<Photo[]>([]);
-  const [current, setCurrent] = useState(0);
+  const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedPhoto, setSelectedPhoto] =
+    useState<GalleryPhoto | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<Photo | null>(null);
 
   async function loadGallery() {
     const { data, error } = await supabase
-      .from("gallery")
-      .select("*")
-      .order("created_at", { ascending: false });
+      .from("events")
+      .select("id,title,event_date,images,image")
+      .order("event_date", { ascending: false });
 
     if (error) {
-      console.error(error);
+      console.error("Gallery error:", error);
       setLoading(false);
       return;
     }
 
-    const list: Photo[] = [];
+    const galleryPhotos: GalleryPhoto[] = [];
 
-    for (const item of data || []) {
-      const image =
-        item.image_url ||
-        item.photo_url ||
-        item.imageUrl ||
-        item.photoUrl ||
-        item.image ||
-        item.photo ||
-        item.url ||
-        item.src ||
-        "";
+    (data as EventItem[] | null)?.forEach((event) => {
+      const urls = getImageUrls(event.images, event.image);
 
-      if (!image) continue;
-
-      list.push({
-        id: String(item.id),
-        imageUrl: String(image),
-        title: String(item.title || item.name || ""),
-        description: String(item.description || ""),
+      urls.forEach((url, index) => {
+        galleryPhotos.push({
+          id: `${event.id}-${index}`,
+          url,
+          title: event.title,
+          date: event.event_date,
+        });
       });
-    }
+    });
 
-    setPhotos(list);
+    setPhotos(galleryPhotos);
+    setCurrentIndex(0);
     setLoading(false);
   }
 
@@ -61,13 +91,13 @@ export default function GalleryPage() {
     loadGallery();
 
     const channel = supabase
-      .channel("gallery-live")
+      .channel("gallery-events")
       .on(
         "postgres_changes",
         {
           event: "*",
           schema: "public",
-          table: "gallery",
+          table: "events",
         },
         () => {
           loadGallery();
@@ -83,144 +113,146 @@ export default function GalleryPage() {
   useEffect(() => {
     if (photos.length <= 1) return;
 
-    const timer = setInterval(() => {
-      setCurrent((value) => (value + 1) % photos.length);
+    const interval = setInterval(() => {
+      setCurrentIndex((index) => (index + 1) % photos.length);
     }, 1000);
 
-    return () => clearInterval(timer);
+    return () => clearInterval(interval);
   }, [photos.length]);
 
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-slate-950 text-white">
-        <div className="h-[76px]" />
+  useEffect(() => {
+    if (!selectedPhoto) return;
 
-        <div className="flex min-h-[70vh] items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-slate-700 border-t-blue-500" />
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedPhoto(null);
+      }
+    };
 
-            <p className="text-lg font-semibold">
-              Loading Gallery...
-            </p>
-          </div>
-        </div>
-      </main>
-    );
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedPhoto]);
+
+  function formatDate(date: string | null) {
+    if (!date) return "";
+
+    return new Date(date).toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
   }
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       <div className="h-[76px]" />
 
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-
-        <h1 className="mb-8 text-center text-4xl font-bold sm:text-5xl">
-          Gallery
-        </h1>
-
-        {photos.length === 0 ? (
-          <div className="rounded-2xl border border-white/10 bg-slate-900 p-12 text-center">
-            <p className="text-lg font-semibold">
-              No photos yet
-            </p>
-
-            <p className="mt-2 text-sm text-slate-400">
-              Photos added from the Admin Gallery will appear here.
+      <section className="mx-auto max-w-7xl px-5 py-8 lg:px-8">
+        {loading ? (
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <p className="text-slate-400">Loading gallery...</p>
+          </div>
+        ) : photos.length === 0 ? (
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <p className="text-slate-400">
+              No event photos yet.
             </p>
           </div>
         ) : (
           <>
-            <div className="mx-auto mb-12 max-w-5xl">
-              <div
-                className="relative aspect-video overflow-hidden rounded-2xl bg-slate-900"
-                onClick={() => setSelected(photos[current])}
-              >
-                <img
-                  src={photos[current].imageUrl}
-                  alt={photos[current].title || "SAC Gallery"}
-                  className="h-full w-full cursor-pointer object-cover"
-                />
+            {/* SLIDESHOW */}
 
-                {photos[current].title && (
-                  <div className="absolute bottom-0 left-0 right-0 bg-black/60 px-6 py-4">
-                    <h2 className="text-xl font-bold">
-                      {photos[current].title}
-                    </h2>
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black">
+              <div className="relative aspect-[16/9] w-full">
+                {photos.map((photo, index) => (
+                  <button
+                    key={photo.id}
+                    type="button"
+                    onClick={() => setSelectedPhoto(photo)}
+                    className={`absolute inset-0 h-full w-full transition-opacity duration-300 ${
+                      index === currentIndex
+                        ? "z-10 opacity-100"
+                        : "z-0 opacity-0"
+                    }`}
+                  >
+                    <img
+                      src={photo.url}
+                      alt={photo.title}
+                      className="h-full w-full object-cover"
+                    />
 
-                    {photos[current].description && (
-                      <p className="mt-1 text-sm text-slate-200">
-                        {photos[current].description}
-                      </p>
-                    )}
-                  </div>
-                )}
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-6 pb-6 pt-20 text-left">
+                      <h2 className="text-xl font-bold sm:text-2xl">
+                        {photo.title}
+                      </h2>
 
-                <div className="absolute right-4 top-4 rounded-full bg-black/60 px-3 py-1 text-sm">
-                  {current + 1} / {photos.length}
-                </div>
+                      {photo.date && (
+                        <p className="mt-1 text-sm text-slate-300">
+                          {formatDate(photo.date)}
+                        </p>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              <div className="absolute bottom-4 right-5 z-20 rounded-full bg-black/60 px-3 py-1 text-xs backdrop-blur">
+                {currentIndex + 1} / {photos.length}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-              {photos.map((photo, index) => (
+            {/* ALL PHOTOS */}
+
+            <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+              {photos.map((photo) => (
                 <button
-                  key={photo.id}
+                  key={`grid-${photo.id}`}
                   type="button"
-                  onClick={() => setSelected(photo)}
-                  className="group aspect-square overflow-hidden rounded-xl bg-slate-900"
+                  onClick={() => setSelectedPhoto(photo)}
+                  className="group relative overflow-hidden rounded-xl border border-white/10 bg-slate-900"
                 >
                   <img
-                    src={photo.imageUrl}
-                    alt={photo.title || "SAC Gallery Photo"}
-                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                    loading="lazy"
+                    src={photo.url}
+                    alt={photo.title}
+                    className="aspect-square w-full object-cover transition duration-300 group-hover:scale-105"
                   />
                 </button>
               ))}
             </div>
           </>
         )}
-      </div>
+      </section>
 
-      <footer className="mt-16 border-t border-white/10 bg-slate-950">
-        <div className="mx-auto max-w-7xl px-6 py-10 text-center">
-          <img
-            src="/sac-logo.jpg"
-            alt="Student Activity Council"
-            className="mx-auto h-12 w-12 rounded-full object-cover"
-          />
+      {/* FULLSCREEN */}
 
-          <p className="mt-3 font-bold">
-            Student Activity Council
-          </p>
-
-          <p className="mt-1 text-sm text-slate-500">
-            Government Engineering College Sheohar
-          </p>
-        </div>
-      </footer>
-
-      {selected && (
+      {selectedPhoto && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4"
-          onClick={() => setSelected(null)}
+          onClick={() => setSelectedPhoto(null)}
         >
           <button
             type="button"
-            onClick={() => setSelected(null)}
-            className="absolute right-5 top-5 text-4xl text-white"
+            onClick={() => setSelectedPhoto(null)}
+            className="absolute right-5 top-5 z-20 rounded-full bg-white/10 px-4 py-2 text-3xl text-white hover:bg-white/20"
           >
             ×
           </button>
 
           <img
-            src={selected.imageUrl}
-            alt={selected.title || "SAC Gallery Photo"}
-            className="max-h-[90vh] max-w-[95vw] rounded-xl object-contain"
+            src={selectedPhoto.url}
+            alt={selectedPhoto.title}
+            className="max-h-[90vh] max-w-full rounded-xl object-contain"
             onClick={(event) => event.stopPropagation()}
           />
         </div>
       )}
+
+      <footer className="mt-12 border-t border-white/10 bg-slate-950 px-5 py-8 text-center text-sm text-slate-500">
+        Government Engineering College Sheohar — Student Activity Council
+      </footer>
     </main>
   );
 }
