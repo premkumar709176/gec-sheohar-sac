@@ -182,10 +182,24 @@ export default function ComplaintsPage() {
             </Link>
 
             <Link
+              href="/admin/clubs"
+              className="rounded-full px-4 py-2 text-sm font-semibold text-[#667085] transition hover:bg-[#eaf1ff] hover:text-[#1746a2]"
+            >
+              Clubs
+            </Link>
+
+            <Link
               href="/admin/events"
               className="rounded-full px-4 py-2 text-sm font-semibold text-[#667085] transition hover:bg-[#eaf1ff] hover:text-[#1746a2]"
             >
               Events
+            </Link>
+
+            <Link
+              href="/admin/registrations"
+              className="rounded-full px-4 py-2 text-sm font-semibold text-[#667085] transition hover:bg-[#eaf1ff] hover:text-[#1746a2]"
+            >
+              Registrations
             </Link>
 
             <Link
@@ -253,7 +267,7 @@ export default function ComplaintsPage() {
           />
         </div>
 
-        <div className="mt-8 rounded-2xl border border-[#e4e7ec] bg-white p-5 shadow-sm">
+        <div className="mt-8 college-card p-5 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex-1">
               <input
@@ -289,7 +303,7 @@ export default function ComplaintsPage() {
         </div>
 
         {loading && (
-          <div className="mt-8 rounded-2xl border border-[#e4e7ec] bg-white p-12 text-center shadow-sm">
+          <div className="mt-8 college-card p-12 text-center shadow-sm">
             <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-[#eaf1ff] border-t-[#1746a2]" />
             <p className="mt-4 text-sm font-medium text-[#667085]">
               Loading tickets...
@@ -315,7 +329,7 @@ export default function ComplaintsPage() {
         )}
 
         {!loading && !error && filteredComplaints.length === 0 && (
-          <div className="mt-8 rounded-2xl border border-dashed border-[#d8dce4] bg-white p-12 text-center shadow-sm">
+          <div className="mt-8 college-card border-dashed p-12 text-center shadow-sm">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eaf1ff] text-3xl">
               📭
             </div>
