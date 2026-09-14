@@ -28,10 +28,11 @@ function getClubImage(name: string) {
     "Yoga & Mental Wellness Club": "/clubs/yoga.jpg",
     "Pixel & Frame – Photography and Videography Club":
       "/clubs/photography.jpg",
-    "DigiCrafters – Digital Art & Craft Club": "/clubs/digital-art.jpg",
+    "DigiCrafters – Digital Art & Craft Club":
+      "/clubs/digital-art.jpg",
   };
 
-  return images[name] || "/sac-campus.jpg";
+  return images[name] || null;
 }
 
 export default function ClubsPage() {
@@ -127,70 +128,90 @@ export default function ClubsPage() {
           </div>
         ) : (
           <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-            {clubs.map((club) => (
-              <article
-                key={club.id}
-                className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] transition duration-300 hover:-translate-y-1 hover:border-blue-400/30 hover:bg-white/[0.06]"
-              >
-                {/* IMAGE */}
-                <div className="relative aspect-[16/10] overflow-hidden">
-                  <img
-                    src={getClubImage(club.name)}
-                    alt={club.name}
-                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                  />
+            {clubs.map((club) => {
+              const clubImage = getClubImage(club.name);
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+              return (
+                <article
+                  key={club.id}
+                  className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] transition duration-300 hover:-translate-y-1 hover:border-blue-400/30 hover:bg-white/[0.06]"
+                >
+                  {/* CLUB IMAGE */}
+                  <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
+                    {clubImage ? (
+                      <>
+                        <img
+                          src={clubImage}
+                          alt={club.name}
+                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                        />
 
-                  <div className="absolute bottom-4 left-4 right-4">
-                    {club.short_name && (
-                      <span className="inline-flex rounded-full border border-white/20 bg-slate-950/70 px-3 py-1 text-xs font-semibold text-blue-300 backdrop-blur">
-                        {club.short_name}
-                      </span>
-                    )}
-                  </div>
-                </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                      </>
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+                        <div className="text-center">
+                          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-3xl font-black text-blue-400">
+                            {club.name.charAt(0).toUpperCase()}
+                          </div>
 
-                {/* CONTENT */}
-                <div className="p-6">
-                  <h2 className="text-xl font-bold leading-snug">
-                    {club.name}
-                  </h2>
-
-                  {club.description && (
-                    <p className="mt-3 line-clamp-4 text-sm leading-6 text-slate-400">
-                      {club.description}
-                    </p>
-                  )}
-
-                  <div className="mt-6 space-y-3 border-t border-white/10 pt-5">
-                    {club.faculty_incharge && (
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                          Faculty In-Charge
-                        </p>
-
-                        <p className="mt-1 text-sm text-slate-200">
-                          {club.faculty_incharge}
-                        </p>
+                          <p className="mt-4 text-sm font-medium text-slate-500">
+                            Club photo will be added soon
+                          </p>
+                        </div>
                       </div>
                     )}
 
-                    {club.student_coordinator && (
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                          Student Coordinator
-                        </p>
-
-                        <p className="mt-1 text-sm text-slate-200">
-                          {club.student_coordinator}
-                        </p>
-                      </div>
-                    )}
+                    <div className="absolute bottom-4 left-4 right-4">
+                      {club.short_name && (
+                        <span className="inline-flex rounded-full border border-white/20 bg-slate-950/70 px-3 py-1 text-xs font-semibold text-blue-300 backdrop-blur">
+                          {club.short_name}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
+
+                  {/* CLUB DETAILS */}
+                  <div className="p-6">
+                    <h2 className="text-xl font-bold leading-snug">
+                      {club.name}
+                    </h2>
+
+                    {club.description && (
+                      <p className="mt-3 line-clamp-4 text-sm leading-6 text-slate-400">
+                        {club.description}
+                      </p>
+                    )}
+
+                    <div className="mt-6 space-y-3 border-t border-white/10 pt-5">
+                      {club.faculty_incharge && (
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Faculty In-Charge
+                          </p>
+
+                          <p className="mt-1 text-sm text-slate-200">
+                            {club.faculty_incharge}
+                          </p>
+                        </div>
+                      )}
+
+                      {club.student_coordinator && (
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Student Coordinator
+                          </p>
+
+                          <p className="mt-1 text-sm text-slate-200">
+                            {club.student_coordinator}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         )}
       </section>
