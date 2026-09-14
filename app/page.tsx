@@ -149,7 +149,7 @@ export default function Home() {
               key={club.title}
               className="college-card group p-7"
             >
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eaf1ff] text-3xl transition group-hover:bg-[#1746a2] group-hover:scale-105">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eaf1ff] text-3xl transition group-hover:scale-105 group-hover:bg-[#1746a2]">
                 {club.icon}
               </div>
 
@@ -383,33 +383,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* JOIN CTA */}
-      <section className="section-container pb-20 sm:pb-24">
-        <div className="relative overflow-hidden rounded-[28px] bg-[#172033] px-7 py-14 text-center text-white shadow-xl sm:px-12 sm:py-16">
-          <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-[#1746a2]/40 blur-3xl" />
-          <div className="absolute -bottom-20 -left-20 h-60 w-60 rounded-full bg-[#f47b20]/20 blur-3xl" />
-
-          <div className="relative mx-auto max-w-3xl">
-            <p className="text-sm font-extrabold uppercase tracking-[0.2em] text-[#f47b20]">
-              Get Involved
-            </p>
-
-            <h2 className="mt-4 text-4xl font-black sm:text-5xl">
-              Be a part of SAC
-            </h2>
-
-            <p className="mx-auto mt-5 max-w-2xl leading-7 text-slate-300">
-              Join a club, participate in activities, develop new skills and
-              make your college experience more meaningful.
-            </p>
-
-            <Link href="/join" className="btn-orange mt-8">
-              Join Student Activity Council →
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* FOOTER */}
       <footer className="border-t border-slate-200 bg-white">
         <div className="section-container py-14">
@@ -486,13 +459,6 @@ export default function Home() {
               </h3>
 
               <div className="mt-5 flex flex-col gap-3 text-sm font-semibold text-slate-500">
-                <Link
-                  href="/join"
-                  className="transition hover:text-[#1746a2]"
-                >
-                  Join SAC
-                </Link>
-
                 <Link
                   href="/suggestions"
                   className="transition hover:text-[#1746a2]"
