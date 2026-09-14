@@ -407,15 +407,15 @@ export default function AdminMembersPage() {
   });
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[#f8f6f0] text-[#172033]">
+      <header className="sticky top-0 z-50 border-b border-[#e4e7ec] bg-[#f8f6f0]/95 shadow-sm backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-400">
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-[#f47b20]">
               SAC Admin
             </p>
 
-            <h1 className="text-xl font-bold sm:text-2xl">
+            <h1 className="text-xl font-black text-[#1746a2] sm:text-2xl">
               Members Management
             </h1>
           </div>
@@ -423,7 +423,7 @@ export default function AdminMembersPage() {
           <div className="flex items-center gap-2">
             <Link
               href="/admin"
-              className="rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10"
+              className="rounded-xl border border-[#e4e7ec] bg-white px-4 py-2.5 text-sm font-bold text-[#1746a2] transition hover:border-[#1746a2]/30 hover:bg-[#eaf1ff]"
             >
               Dashboard
             </Link>
@@ -433,7 +433,7 @@ export default function AdminMembersPage() {
                 await supabase.auth.signOut();
                 window.location.href = "/admin/login";
               }}
-              className="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-600"
+              className="rounded-xl bg-[#f47b20] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#d96512] hover:shadow-md"
             >
               Logout
             </button>
@@ -441,28 +441,33 @@ export default function AdminMembersPage() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="college-pattern mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {message && (
-          <div className="mb-6 rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
-            {message}
+          <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-semibold text-emerald-700">
+            ✓ {message}
           </div>
         )}
 
         {error && (
-          <div className="mb-6 rounded-xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700">
             <strong>Error:</strong> {error}
           </div>
         )}
 
-        <section className="mb-10 rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-2xl sm:p-7">
-          <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+        <section className="college-card blue-glow mb-10 p-5 sm:p-7">
+          <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div>
-              <h2 className="text-2xl font-bold">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#eaf1ff] px-3 py-1.5 text-xs font-bold text-[#1746a2]">
+                <span className="h-2 w-2 rounded-full bg-[#f47b20]" />
+                Member Directory
+              </div>
+
+              <h2 className="text-2xl font-black text-[#172033]">
                 {editingId ? "Edit Member" : "Add New Member"}
               </h2>
 
-              <p className="mt-1 text-sm text-slate-400">
-                Manage member information, photo and social media profiles.
+              <p className="mt-1 text-sm text-[#667085]">
+                Manage member information, photos and social media profiles.
               </p>
             </div>
 
@@ -470,7 +475,7 @@ export default function AdminMembersPage() {
               <button
                 type="button"
                 onClick={resetForm}
-                className="rounded-lg border border-white/10 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10"
+                className="rounded-xl border border-[#e4e7ec] bg-white px-4 py-2.5 text-sm font-bold text-[#1746a2] transition hover:bg-[#eaf1ff]"
               >
                 Cancel Edit
               </button>
@@ -559,7 +564,7 @@ export default function AdminMembersPage() {
               <div>
                 <label
                   htmlFor="member-photo"
-                  className="mb-2 block text-sm font-semibold text-slate-200"
+                  className="mb-2 block text-sm font-bold text-[#172033]"
                 >
                   Member Photo
                 </label>
@@ -573,18 +578,18 @@ export default function AdminMembersPage() {
                       event.target.files?.[0] || null
                     )
                   }
-                  className="block w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-3 text-sm text-slate-300 file:mr-4 file:rounded-lg file:border-0 file:bg-cyan-500 file:px-4 file:py-2 file:font-semibold file:text-white hover:file:bg-cyan-600"
+                  className="block w-full rounded-xl border border-[#e4e7ec] bg-white px-3 py-3 text-sm text-[#667085] file:mr-4 file:rounded-lg file:border-0 file:bg-[#1746a2] file:px-4 file:py-2 file:font-bold file:text-white hover:file:bg-[#103575]"
                 />
 
                 {existingPhoto && (
-                  <div className="mt-3 flex items-center gap-3">
+                  <div className="mt-3 flex items-center gap-3 rounded-xl bg-[#eaf1ff] p-3">
                     <img
                       src={existingPhoto}
                       alt="Current member"
-                      className="h-16 w-16 rounded-xl object-cover ring-1 ring-white/10"
+                      className="h-16 w-16 rounded-xl object-cover ring-1 ring-[#1746a2]/10"
                     />
 
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs font-semibold text-[#667085]">
                       Current photo
                     </span>
                   </div>
@@ -592,8 +597,8 @@ export default function AdminMembersPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-cyan-400/10 bg-cyan-400/[0.03] p-5">
-              <h3 className="mb-4 text-lg font-bold text-cyan-300">
+            <div className="rounded-2xl border border-[#1746a2]/10 bg-[#eaf1ff]/60 p-5">
+              <h3 className="mb-4 text-lg font-black text-[#1746a2]">
                 Social Media
               </h3>
 
@@ -628,7 +633,7 @@ export default function AdminMembersPage() {
             <button
               type="submit"
               disabled={saving}
-              className="w-full rounded-xl bg-cyan-500 px-5 py-3.5 font-bold text-white shadow-lg shadow-cyan-500/20 transition hover:bg-cyan-600 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-xl bg-[#1746a2] px-5 py-3.5 font-bold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#103575] hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving
                 ? "Saving..."
@@ -642,11 +647,15 @@ export default function AdminMembersPage() {
         <section>
           <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div>
-              <h2 className="text-2xl font-bold">
+              <p className="text-sm font-black uppercase tracking-wider text-[#f47b20]">
+                Directory
+              </p>
+
+              <h2 className="mt-1 text-2xl font-black text-[#172033]">
                 All Members
               </h2>
 
-              <p className="text-sm text-slate-400">
+              <p className="mt-1 text-sm text-[#667085]">
                 {filteredMembers.length} member
                 {filteredMembers.length !== 1 ? "s" : ""} displayed
               </p>
@@ -660,12 +669,12 @@ export default function AdminMembersPage() {
                   setSearch(event.target.value)
                 }
                 placeholder="Search members..."
-                className="w-full rounded-xl border border-white/10 bg-white/[0.05] px-4 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-cyan-400 sm:w-72"
+                className="w-full rounded-xl border border-[#e4e7ec] bg-white px-4 py-3 text-sm text-[#172033] outline-none placeholder:text-[#98a2b3] focus:border-[#1746a2] focus:ring-4 focus:ring-[#1746a2]/10 sm:w-72"
               />
 
               <button
                 onClick={loadMembers}
-                className="rounded-xl border border-white/10 px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-white/10"
+                className="rounded-xl border border-[#e4e7ec] bg-white px-4 py-3 text-sm font-bold text-[#1746a2] transition hover:bg-[#eaf1ff]"
               >
                 Refresh
               </button>
@@ -673,16 +682,23 @@ export default function AdminMembersPage() {
           </div>
 
           {loading ? (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-10 text-center text-slate-400">
-              Loading members...
+            <div className="college-card p-10 text-center">
+              <div className="mx-auto mb-4 h-9 w-9 animate-spin rounded-full border-4 border-[#1746a2]/20 border-t-[#1746a2]" />
+              <p className="font-semibold text-[#667085]">
+                Loading members...
+              </p>
             </div>
           ) : filteredMembers.length === 0 ? (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-10 text-center">
-              <p className="text-lg font-semibold text-slate-200">
+            <div className="college-card p-10 text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eaf1ff] text-3xl">
+                👥
+              </div>
+
+              <p className="mt-5 text-lg font-black text-[#172033]">
                 No members found
               </p>
 
-              <p className="mt-2 text-sm text-slate-400">
+              <p className="mt-2 text-sm text-[#667085]">
                 Add a member using the form above.
               </p>
             </div>
@@ -691,9 +707,9 @@ export default function AdminMembersPage() {
               {filteredMembers.map((member) => (
                 <article
                   key={member.id}
-                  className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] shadow-xl"
+                  className="college-card overflow-hidden"
                 >
-                  <div className="relative h-56 bg-slate-900">
+                  <div className="relative h-56 bg-[#eaf1ff]">
                     {member.photo ? (
                       <img
                         src={member.photo}
@@ -701,14 +717,14 @@ export default function AdminMembersPage() {
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      <div className="flex h-full items-center justify-center text-6xl font-black text-cyan-500/30">
+                      <div className="flex h-full items-center justify-center text-7xl font-black text-[#1746a2]/25">
                         {member.name?.charAt(0)?.toUpperCase() ||
                           "?"}
                       </div>
                     )}
 
                     {member.position && (
-                      <div className="absolute left-3 top-3 rounded-full bg-slate-950/80 px-3 py-1 text-xs font-bold text-cyan-300 backdrop-blur">
+                      <div className="absolute left-3 top-3 rounded-full bg-[#1746a2] px-3 py-1.5 text-xs font-bold text-white shadow-md">
                         {member.position}
                       </div>
                     )}
@@ -717,32 +733,32 @@ export default function AdminMembersPage() {
                   <div className="p-5">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <h3 className="text-xl font-bold text-white">
+                        <h3 className="text-xl font-black text-[#172033]">
                           {member.name}
                         </h3>
 
                         {member.club && (
-                          <p className="mt-1 text-sm font-medium text-cyan-400">
+                          <p className="mt-1 text-sm font-bold text-[#1746a2]">
                             {member.club}
                           </p>
                         )}
                       </div>
 
-                      <div className="shrink-0 rounded-lg bg-cyan-500/10 px-3 py-1.5 text-center">
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                      <div className="shrink-0 rounded-xl bg-[#fff1e6] px-3 py-1.5 text-center">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-[#667085]">
                           Order
                         </p>
 
-                        <p className="text-lg font-black text-cyan-300">
+                        <p className="text-lg font-black text-[#f47b20]">
                           {member.display_order ?? "—"}
                         </p>
                       </div>
                     </div>
 
-                    <div className="mt-4 space-y-2 text-sm text-slate-400">
+                    <div className="mt-4 space-y-2 text-sm text-[#667085]">
                       {member.reg_no && (
                         <p>
-                          <span className="text-slate-500">
+                          <span className="font-semibold text-[#172033]">
                             Reg. No:
                           </span>{" "}
                           {member.reg_no}
@@ -751,7 +767,7 @@ export default function AdminMembersPage() {
 
                       {member.branch && (
                         <p>
-                          <span className="text-slate-500">
+                          <span className="font-semibold text-[#172033]">
                             Branch:
                           </span>{" "}
                           {member.branch}
@@ -760,7 +776,7 @@ export default function AdminMembersPage() {
 
                       {member.year_semester && (
                         <p>
-                          <span className="text-slate-500">
+                          <span className="font-semibold text-[#172033]">
                             Year:
                           </span>{" "}
                           {member.year_semester}
@@ -769,7 +785,7 @@ export default function AdminMembersPage() {
 
                       {member.email && (
                         <p className="break-all">
-                          <span className="text-slate-500">
+                          <span className="font-semibold text-[#172033]">
                             Email:
                           </span>{" "}
                           {member.email}
@@ -778,7 +794,7 @@ export default function AdminMembersPage() {
 
                       {member.phone && (
                         <p>
-                          <span className="text-slate-500">
+                          <span className="font-semibold text-[#172033]">
                             Phone:
                           </span>{" "}
                           {member.phone}
@@ -787,26 +803,25 @@ export default function AdminMembersPage() {
                     </div>
 
                     {member.skill && (
-                      <div className="mt-4 rounded-xl bg-white/[0.04] p-3">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      <div className="mt-4 rounded-xl bg-[#f8f6f0] p-3">
+                        <p className="text-xs font-bold uppercase tracking-wider text-[#667085]">
                           Skills
                         </p>
 
-                        <p className="mt-1 text-sm text-slate-300">
+                        <p className="mt-1 text-sm font-medium text-[#172033]">
                           {member.skill}
                         </p>
                       </div>
                     )}
 
-                    {(member.instagram ||
-                      member.linkedin) && (
+                    {(member.instagram || member.linkedin) && (
                       <div className="mt-4 flex gap-2">
                         {member.instagram && (
                           <a
                             href={member.instagram}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex-1 rounded-lg border border-pink-400/20 bg-pink-500/10 px-3 py-2 text-center text-xs font-semibold text-pink-300 transition hover:bg-pink-500/20"
+                            className="flex-1 rounded-xl border border-[#e4e7ec] bg-[#fff1e6] px-3 py-2 text-center text-xs font-bold text-[#d96512] transition hover:bg-[#f47b20] hover:text-white"
                           >
                             Instagram
                           </a>
@@ -817,7 +832,7 @@ export default function AdminMembersPage() {
                             href={member.linkedin}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex-1 rounded-lg border border-blue-400/20 bg-blue-500/10 px-3 py-2 text-center text-xs font-semibold text-blue-300 transition hover:bg-blue-500/20"
+                            className="flex-1 rounded-xl border border-[#1746a2]/15 bg-[#eaf1ff] px-3 py-2 text-center text-xs font-bold text-[#1746a2] transition hover:bg-[#1746a2] hover:text-white"
                           >
                             LinkedIn
                           </a>
@@ -826,7 +841,7 @@ export default function AdminMembersPage() {
                     )}
 
                     {member.bio && (
-                      <p className="mt-4 line-clamp-3 text-sm leading-6 text-slate-400">
+                      <p className="mt-4 line-clamp-3 text-sm leading-6 text-[#667085]">
                         {member.bio}
                       </p>
                     )}
@@ -834,17 +849,15 @@ export default function AdminMembersPage() {
                     <div className="mt-5 flex gap-2">
                       <button
                         onClick={() => startEdit(member)}
-                        className="flex-1 rounded-lg border border-cyan-400/20 bg-cyan-500/10 px-4 py-2.5 text-sm font-semibold text-cyan-300 transition hover:bg-cyan-500/20"
+                        className="flex-1 rounded-xl border border-[#1746a2]/15 bg-[#eaf1ff] px-4 py-2.5 text-sm font-bold text-[#1746a2] transition hover:bg-[#1746a2] hover:text-white"
                       >
                         Edit
                       </button>
 
                       <button
                         onClick={() => deleteMember(member)}
-                        disabled={
-                          deletingId === member.id
-                        }
-                        className="flex-1 rounded-lg border border-red-400/20 bg-red-500/10 px-4 py-2.5 text-sm font-semibold text-red-300 transition hover:bg-red-500/20 disabled:opacity-50"
+                        disabled={deletingId === member.id}
+                        className="flex-1 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-bold text-red-600 transition hover:bg-red-600 hover:text-white disabled:opacity-50"
                       >
                         {deletingId === member.id
                           ? "Deleting..."
@@ -879,7 +892,7 @@ function Input({
 }) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-semibold text-slate-200">
+      <label className="mb-2 block text-sm font-bold text-[#172033]">
         {label}
       </label>
 
@@ -887,11 +900,9 @@ function Input({
         type={type}
         min={min}
         value={value}
-        onChange={(event) =>
-          onChange(event.target.value)
-        }
+        onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-600 transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/10"
+        className="w-full rounded-xl border border-[#e4e7ec] bg-white px-4 py-3 text-sm text-[#172033] outline-none placeholder:text-[#98a2b3] transition focus:border-[#1746a2] focus:ring-4 focus:ring-[#1746a2]/10"
       />
     </div>
   );
@@ -910,16 +921,14 @@ function Select({
 }) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-semibold text-slate-200">
+      <label className="mb-2 block text-sm font-bold text-[#172033]">
         {label}
       </label>
 
       <select
         value={value}
-        onChange={(event) =>
-          onChange(event.target.value)
-        }
-        className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/10"
+        onChange={(event) => onChange(event.target.value)}
+        className="w-full rounded-xl border border-[#e4e7ec] bg-white px-4 py-3 text-sm text-[#172033] outline-none transition focus:border-[#1746a2] focus:ring-4 focus:ring-[#1746a2]/10"
       >
         <option value="">Select club</option>
 
@@ -946,18 +955,16 @@ function TextArea({
 }) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-semibold text-slate-200">
+      <label className="mb-2 block text-sm font-bold text-[#172033]">
         {label}
       </label>
 
       <textarea
         value={value}
-        onChange={(event) =>
-          onChange(event.target.value)
-        }
+        onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         rows={5}
-        className="w-full resize-none rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-sm leading-6 text-white outline-none placeholder:text-slate-600 transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/10"
+        className="w-full resize-none rounded-xl border border-[#e4e7ec] bg-white px-4 py-3 text-sm leading-6 text-[#172033] outline-none placeholder:text-[#98a2b3] transition focus:border-[#1746a2] focus:ring-4 focus:ring-[#1746a2]/10"
       />
     </div>
   );
