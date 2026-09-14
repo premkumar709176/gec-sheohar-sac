@@ -1,444 +1,593 @@
 "use client";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
-const branches = [
-  "Computer Science & Engineering",
-  "Civil Engineering",
-  "Electrical Engineering",
-  "Mechanical Engineering",
-  "Electronics & Communication Engineering",
-  "Other",
-];
+export default function JoinSACPage() {
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
 
-const years = [
-  "1st Year / 1st Semester",
-  "1st Year / 2nd Semester",
-  "2nd Year / 3rd Semester",
-  "2nd Year / 4th Semester",
-  "3rd Year / 5th Semester",
-  "3rd Year / 6th Semester",
-  "4th Year / 7th Semester",
-  "4th Year / 8th Semester",
-];
-
-const clubs = [
-  "Bhabha - Science Club",
-  "Vishveshvaraya - Technical Club",
-  "Media Club",
-  "Eco Task Force",
-  "Literary & Poetry Club",
-  "Social Work & Heritage Club",
-  "Red Ribbon Club",
-  "Electoral Literacy Club",
-  "Natraj - Dance Club",
-  "Sur Sangam - Music Club",
-  "Art & Craft Club",
-  "Yoga & Mental Wellness Club",
-  "Pixel & Frame - Photography & Videography Club",
-  "DigiCrafters - Digital Art & Craft Club",
-  "Any Club",
-];
-
-const positions = ["Club Member", "Volunteer"];
-
-export default function JoinPage() {
   const [form, setForm] = useState({
-    fullName: "",
-    registrationNumber: "",
+    full_name: "",
+    registration_number: "",
     branch: "",
-    yearSemester: "",
-    email: "",
+    year_semester: "",
+    college_email: "",
     phone: "",
-    preferredClub: "",
-    position: "",
+    preferred_club: "",
+    position_interested: "",
     skills: "",
-    whyJoin: "",
-    previousExperience: "",
+    motivation: "",
+    previous_experience: "",
     availability: "",
-    profilePhotoUrl: "",
+    profile_photo_url: "",
     declaration: false,
   });
 
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-
-  const updateField = (field: string, value: string | boolean) => {
+  const updateField = (
+    field: keyof typeof form,
+    value: string | boolean
+  ) => {
     setForm((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setSuccess("");
+    setError("");
+
+    if (!form.full_name.trim()) {
+      setError("Please enter your full name.");
+      return;
+    }
+
+    if (!form.registration_number.trim()) {
+      setError("Please enter your registration number.");
+      return;
+    }
+
+    if (!form.branch.trim()) {
+      setError("Please select your branch.");
+      return;
+    }
+
+    if (!form.year_semester.trim()) {
+      setError("Please select your year/semester.");
+      return;
+    }
+
+    if (!form.college_email.trim()) {
+      setError("Please enter your college email.");
+      return;
+    }
+
+    if (!form.phone.trim()) {
+      setError("Please enter your phone number.");
+      return;
+    }
+
+    if (!form.preferred_club.trim()) {
+      setError("Please select your preferred club.");
+      return;
+    }
+
+    if (!form.position_interested.trim()) {
+      setError("Please select the position you are interested in.");
+      return;
+    }
+
+    if (!form.motivation.trim()) {
+      setError("Please tell us why you want to join SAC.");
+      return;
+    }
+
     if (!form.declaration) {
-      setMessage("Please accept the declaration before submitting.");
+      setError("Please accept the declaration before submitting.");
       return;
     }
 
     setLoading(true);
-    setMessage("");
 
     try {
-      const { error } = await supabase.from("registrations").insert([
-        {
-          full_name: form.fullName,
-          registration_number: form.registrationNumber,
-          branch: form.branch,
-          year_semester: form.yearSemester,
-          email: form.email,
-          phone: form.phone,
-          preferred_club: form.preferredClub,
-          position_interested: form.position,
-          skills: form.skills,
-          why_join: form.whyJoin,
-          previous_experience: form.previousExperience,
-          availability: form.availability,
-          profile_photo_url: form.profilePhotoUrl || null,
-        },
-      ]);
+      const { error: insertError } = await supabase
+        .from("registrations")
+        .insert([
+          {
+            full_name: form.full_name.trim(),
+            registration_number: form.registration_number.trim(),
+            branch: form.branch.trim(),
+            year_semester: form.year_semester.trim(),
+            college_email: form.college_email.trim(),
+            phone: form.phone.trim(),
+            preferred_club: form.preferred_club.trim(),
+            position_interested: form.position_interested.trim(),
+            skills: form.skills.trim() || null,
+            motivation: form.motivation.trim(),
+            previous_experience:
+              form.previous_experience.trim() || null,
+            availability: form.availability.trim() || null,
+            profile_photo_url:
+              form.profile_photo_url.trim() || null,
+            declaration: form.declaration,
+            status: "pending",
+          },
+        ]);
 
-      if (error) {
-        throw error;
-      }
+      if (insertError) throw insertError;
 
-      setMessage(
-        "Application submitted successfully! The SAC team will review your application."
+      setSuccess(
+        "Your SAC registration has been submitted successfully. The SAC team will review your application."
       );
 
       setForm({
-        fullName: "",
-        registrationNumber: "",
+        full_name: "",
+        registration_number: "",
         branch: "",
-        yearSemester: "",
-        email: "",
+        year_semester: "",
+        college_email: "",
         phone: "",
-        preferredClub: "",
-        position: "",
+        preferred_club: "",
+        position_interested: "",
         skills: "",
-        whyJoin: "",
-        previousExperience: "",
+        motivation: "",
+        previous_experience: "",
         availability: "",
-        profilePhotoUrl: "",
+        profile_photo_url: "",
         declaration: false,
       });
-    } catch (error: any) {
-      setMessage(error.message || "Something went wrong. Please try again.");
+    } catch (err: any) {
+      console.error(err);
+      setError(
+        err?.message ||
+          "Registration failed. Please try again or contact the SAC team."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="min-h-screen bg-[#f8f6f0] text-[#172033]">
       <div className="h-[76px]" />
 
-      <section className="border-b border-white/10 bg-gradient-to-b from-slate-900 to-slate-950 px-5 py-16">
-        <div className="mx-auto max-w-5xl">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-blue-400">
-            Join SAC
-          </p>
+      {/* HERO */}
+      <section className="relative overflow-hidden bg-[#1746a2]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(244,123,32,0.30),_transparent_35%),radial-gradient(circle_at_bottom_left,_rgba(255,255,255,0.10),_transparent_40%)]" />
 
-          <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
-            Become a part of the Student Activity Council
+        <div className="college-pattern absolute inset-0 opacity-20" />
+
+        <div className="relative mx-auto max-w-5xl px-5 py-20 text-center lg:px-8 lg:py-28">
+          <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold text-white backdrop-blur">
+            Student Activity Council
+          </span>
+
+          <h1 className="mt-6 text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
+            Join <span className="text-[#f47b20]">SAC</span>
           </h1>
 
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">
-            Contribute your skills, ideas, creativity and leadership to campus
-            life.
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-blue-100 sm:text-lg">
+            Become a part of the Student Activity Council and contribute your
+            skills, ideas, creativity and leadership to campus life.
           </p>
         </div>
       </section>
 
-      <section className="px-5 py-12">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-10">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-400">
+      {/* FORM */}
+      <section className="px-5 py-14 lg:px-8 lg:py-20">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-10 text-center">
+            <p className="text-sm font-black uppercase tracking-[0.2em] text-[#f47b20]">
               Registration
             </p>
-            <h2 className="mt-2 text-3xl font-bold">
+
+            <h2 className="mt-3 text-3xl font-black tracking-tight text-[#172033] sm:text-4xl">
               SAC Membership Application
             </h2>
-            <p className="mt-3 text-slate-400">
+
+            <div className="mx-auto mt-4 h-1 w-14 rounded-full bg-[#f47b20]" />
+
+            <p className="mx-auto mt-5 max-w-2xl text-[#667085]">
               Fill in your details carefully. Your application will be
               reviewed by the SAC team.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
-              <div className="mb-7 flex items-start gap-4">
-                <span className="text-sm font-bold text-blue-400">01</span>
+          {/* SUCCESS */}
+          {success && (
+            <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-800">
+              <div className="flex gap-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600 font-bold text-white">
+                  ✓
+                </div>
+
                 <div>
-                  <h3 className="text-2xl font-bold">Personal Information</h3>
-                  <p className="mt-1 text-sm text-slate-400">
-                    Enter your basic academic and contact details.
-                  </p>
+                  <p className="font-bold">Registration Successful</p>
+                  <p className="mt-1 text-sm leading-6">{success}</p>
                 </div>
               </div>
+            </div>
+          )}
 
-              <div className="grid gap-5 md:grid-cols-2">
+          {/* ERROR */}
+          {error && (
+            <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-5 text-red-800">
+              <div className="flex gap-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-600 font-bold text-white">
+                  !
+                </div>
+
+                <div>
+                  <p className="font-bold">Registration Failed</p>
+                  <p className="mt-1 text-sm leading-6">{error}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <form
+            onSubmit={handleSubmit}
+            className="college-card overflow-hidden shadow-xl"
+          >
+            {/* PERSONAL INFORMATION */}
+            <div className="border-b border-[#e4e7ec] p-6 sm:p-8">
+              <SectionTitle
+                number="01"
+                title="Personal Information"
+                description="Enter your basic academic and contact details."
+              />
+
+              <div className="mt-8 grid gap-6 md:grid-cols-2">
                 <Input
                   label="Full Name"
                   required
-                  value={form.fullName}
-                  onChange={(v) => updateField("fullName", v)}
+                  value={form.full_name}
+                  onChange={(value) => updateField("full_name", value)}
+                  placeholder="Enter your full name"
                 />
 
                 <Input
                   label="Registration Number"
                   required
-                  value={form.registrationNumber}
-                  onChange={(v) => updateField("registrationNumber", v)}
+                  value={form.registration_number}
+                  onChange={(value) =>
+                    updateField("registration_number", value)
+                  }
+                  placeholder="e.g. 24101145034"
                 />
 
                 <Select
                   label="Branch"
                   required
                   value={form.branch}
-                  options={branches}
-                  onChange={(v) => updateField("branch", v)}
+                  onChange={(value) => updateField("branch", value)}
+                  options={[
+                    "Computer Science & Engineering",
+                    "Civil Engineering",
+                    "Civil Engineering with Computer Applications",
+                    "Electrical Engineering",
+                    "Mechanical Engineering",
+                    "Electronics & Communication Engineering",
+                    "Other",
+                  ]}
                 />
 
                 <Select
                   label="Year / Semester"
                   required
-                  value={form.yearSemester}
-                  options={years}
-                  onChange={(v) => updateField("yearSemester", v)}
+                  value={form.year_semester}
+                  onChange={(value) =>
+                    updateField("year_semester", value)
+                  }
+                  options={[
+                    "1st Year / 1st Semester",
+                    "1st Year / 2nd Semester",
+                    "2nd Year / 3rd Semester",
+                    "2nd Year / 4th Semester",
+                    "3rd Year / 5th Semester",
+                    "3rd Year / 6th Semester",
+                    "4th Year / 7th Semester",
+                    "4th Year / 8th Semester",
+                  ]}
                 />
 
                 <Input
                   label="College Email"
-                  type="email"
                   required
-                  value={form.email}
-                  onChange={(v) => updateField("email", v)}
+                  type="email"
+                  value={form.college_email}
+                  onChange={(value) =>
+                    updateField("college_email", value)
+                  }
+                  placeholder="yourname@college.edu"
                 />
 
                 <Input
                   label="Phone Number"
-                  type="tel"
                   required
+                  type="tel"
                   value={form.phone}
-                  onChange={(v) => updateField("phone", v)}
+                  onChange={(value) => updateField("phone", value)}
+                  placeholder="Enter your phone number"
                 />
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
-              <div className="mb-7 flex items-start gap-4">
-                <span className="text-sm font-bold text-blue-400">02</span>
-                <div>
-                  <h3 className="text-2xl font-bold">SAC Preference</h3>
-                  <p className="mt-1 text-sm text-slate-400">
-                    Tell us where you would like to contribute.
-                  </p>
-                </div>
-              </div>
+            {/* SAC PREFERENCE */}
+            <div className="border-b border-[#e4e7ec] p-6 sm:p-8">
+              <SectionTitle
+                number="02"
+                title="SAC Preference"
+                description="Tell us where you would like to contribute."
+              />
 
-              <div className="grid gap-5 md:grid-cols-2">
+              <div className="mt-8 grid gap-6 md:grid-cols-2">
                 <Select
                   label="Preferred Club"
                   required
-                  value={form.preferredClub}
-                  options={clubs}
-                  onChange={(v) => updateField("preferredClub", v)}
+                  value={form.preferred_club}
+                  onChange={(value) =>
+                    updateField("preferred_club", value)
+                  }
+                  options={[
+                    "Bhabha - Science Club",
+                    "Vishveshvaraya - Technical Club",
+                    "Media Club",
+                    "Eco Task Force",
+                    "Literary & Poetry Club",
+                    "Social Work & Heritage Club",
+                    "Red Ribbon Club",
+                    "Electoral Literacy Club",
+                    "Natraj - Dance Club",
+                    "Sur Sangam - Music Club",
+                    "Srijan - Art & Craft Club",
+                    "Yoga & Mental Wellness Club",
+                    "Pixel & Frame - Photography & Videography Club",
+                    "DigiCrafters - Digital Art & Craft Club",
+                    "SAC Core Team",
+                    "Any Club",
+                  ]}
                 />
 
                 <Select
                   label="Position Interested In"
                   required
-                  value={form.position}
-                  options={positions}
-                  onChange={(v) => updateField("position", v)}
+                  value={form.position_interested}
+                  onChange={(value) =>
+                    updateField("position_interested", value)
+                  }
+                  options={[
+                    "Club Member",
+                    "Club Head",
+                    "Club Coordinator",
+                    "Core Team Member",
+                    "Volunteer",
+                    "Civil Engineering with Computer Applications",
+                    "Content / Media Team",
+                    "Technical Team",
+                    "Event Management Team",
+                    "Any Position",
+                  ]}
                 />
 
                 <div className="md:col-span-2">
-                  <Textarea
+                  <TextArea
                     label="Skills"
                     value={form.skills}
-                    onChange={(v) => updateField("skills", v)}
-                    placeholder="e.g. Coding, Design, Photography, Public Speaking"
+                    onChange={(value) => updateField("skills", value)}
+                    placeholder="e.g. Web development, photography, public speaking, video editing, event management..."
+                    rows={4}
                   />
                 </div>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
-              <div className="mb-7 flex items-start gap-4">
-                <span className="text-sm font-bold text-blue-400">03</span>
-                <div>
-                  <h3 className="text-2xl font-bold">Your Contribution</h3>
-                  <p className="mt-1 text-sm text-slate-400">
-                    Help us understand your interest and experience.
-                  </p>
-                </div>
-              </div>
+            {/* CONTRIBUTION */}
+            <div className="border-b border-[#e4e7ec] p-6 sm:p-8">
+              <SectionTitle
+                number="03"
+                title="Your Contribution"
+                description="Help us understand your interest and experience."
+              />
 
-              <div className="space-y-5">
-                <Textarea
+              <div className="mt-8 space-y-6">
+                <TextArea
                   label="Why do you want to join SAC?"
                   required
-                  value={form.whyJoin}
-                  onChange={(v) => updateField("whyJoin", v)}
+                  value={form.motivation}
+                  onChange={(value) =>
+                    updateField("motivation", value)
+                  }
+                  placeholder="Tell us what motivates you to become a part of SAC..."
+                  rows={5}
                 />
 
-                <Textarea
+                <TextArea
                   label="Previous Experience"
-                  value={form.previousExperience}
-                  onChange={(v) => updateField("previousExperience", v)}
+                  value={form.previous_experience}
+                  onChange={(value) =>
+                    updateField("previous_experience", value)
+                  }
+                  placeholder="Mention any previous club, event, competition, volunteering or leadership experience..."
+                  rows={4}
                 />
 
-                <Textarea
+                <TextArea
                   label="Availability"
                   value={form.availability}
-                  onChange={(v) => updateField("availability", v)}
-                  placeholder="e.g. Weekdays after 4 PM, weekends"
+                  onChange={(value) =>
+                    updateField("availability", value)
+                  }
+                  placeholder="Tell us when you are generally available for SAC activities..."
+                  rows={3}
                 />
 
                 <Input
                   label="Profile Photo URL"
-                  value={form.profilePhotoUrl}
-                  onChange={(v) => updateField("profilePhotoUrl", v)}
+                  value={form.profile_photo_url}
+                  onChange={(value) =>
+                    updateField("profile_photo_url", value)
+                  }
+                  placeholder="Optional — paste a public photo URL"
                 />
 
-                <p className="-mt-2 text-sm text-slate-400">
+                <p className="text-xs leading-5 text-[#667085]">
                   Profile photo is optional. You can leave this field empty
                   and provide your photo later if requested by the SAC team.
                 </p>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
-              <div className="mb-7 flex items-start gap-4">
-                <span className="text-sm font-bold text-blue-400">04</span>
-                <div>
-                  <h3 className="text-2xl font-bold">Declaration</h3>
-                  <p className="mt-1 text-sm text-slate-400">
-                    Please confirm the information you have provided.
-                  </p>
-                </div>
-              </div>
+            {/* DECLARATION */}
+            <div className="p-6 sm:p-8">
+              <SectionTitle
+                number="04"
+                title="Declaration"
+                description="Please confirm the information you have provided."
+              />
 
-              <label className="flex cursor-pointer items-start gap-3 text-sm leading-6 text-slate-300">
+              <label className="mt-8 flex cursor-pointer gap-4 rounded-2xl border border-[#e4e7ec] bg-[#f8f6f0] p-5 transition hover:border-[#1746a2]/30 hover:bg-[#eaf1ff]">
                 <input
                   type="checkbox"
                   checked={form.declaration}
                   onChange={(e) =>
                     updateField("declaration", e.target.checked)
                   }
-                  className="mt-1 h-4 w-4 rounded border-slate-600"
+                  className="mt-1 h-5 w-5 shrink-0 accent-[#1746a2]"
                 />
 
-                <span>
+                <span className="text-sm leading-6 text-[#475467]">
                   I declare that the information provided by me is true and
                   correct to the best of my knowledge. I understand that
-                  submission of this form does not guarantee selection into SAC
-                  or any particular club/position.
+                  submission of this form does not guarantee selection into
+                  SAC or any particular club/position.
                 </span>
               </label>
-
-              {message && (
-                <div className="mt-6 rounded-xl border border-blue-500/30 bg-blue-500/10 px-4 py-3 text-sm text-blue-200">
-                  {message}
-                </div>
-              )}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-7 rounded-full bg-blue-600 px-7 py-3 font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-8 flex w-full items-center justify-center rounded-2xl bg-[#1746a2] px-6 py-4 text-base font-bold text-white shadow-lg transition hover:bg-[#103575] hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {loading ? "Submitting..." : "Submit SAC Application"}
+                {loading ? (
+                  <span className="flex items-center justify-center gap-3">
+                    <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    Submitting Application...
+                  </span>
+                ) : (
+                  "Submit SAC Application"
+                )}
               </button>
 
-              <p className="mt-4 text-sm text-slate-500">
-                Your information will be stored securely and used only for SAC
-                membership and administrative purposes.
+              <p className="mt-4 text-center text-xs leading-5 text-[#667085]">
+                Your information will be stored securely and used only for
+                SAC membership and administrative purposes.
               </p>
             </div>
           </form>
         </div>
       </section>
 
-      <footer className="border-t border-white/10 bg-slate-950 px-5 py-12">
-        <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-3">
-          <div>
-            <img
-              src="/sac-logo.jpg"
-              alt="Student Activity Club GEC Sheohar"
-              className="mb-4 h-14 w-14 rounded-full object-cover"
-            />
+      {/* FOOTER */}
+      <footer className="border-t border-[#e4e7ec] bg-white px-5 py-12 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-10 md:grid-cols-3">
+            <div>
+              <div className="flex items-center gap-3">
+                <img
+                  src="/sac-logo.jpg"
+                  alt="SAC"
+                  className="h-11 w-11 rounded-full border-2 border-white object-cover shadow-md"
+                />
 
-            <h3 className="text-lg font-bold">Student Activity Club</h3>
-            <p className="text-sm text-slate-400">GEC Sheohar</p>
+                <div>
+                  <p className="font-black text-[#1746a2]">
+                    GEC Sheohar
+                  </p>
+                  <p className="text-xs font-semibold text-[#667085]">
+                    Student Activity Council
+                  </p>
+                </div>
+              </div>
 
-            <p className="mt-4 text-sm leading-6 text-slate-400">
-              Empowering students through creativity, leadership,
-              collaboration and meaningful campus activities.
-            </p>
-          </div>
+              <p className="mt-4 max-w-sm text-sm leading-6 text-[#667085]">
+                Empowering students through creativity, leadership,
+                collaboration and meaningful campus activities.
+              </p>
+            </div>
 
-          <div>
-            <h3 className="mb-4 font-semibold">Quick Links</h3>
+            <div>
+              <h3 className="font-black text-[#172033]">Quick Links</h3>
 
-            <div className="flex flex-col gap-2 text-sm text-slate-400">
-              <a href="/" className="hover:text-white">
-                Home
-              </a>
-              <a href="/clubs" className="hover:text-white">
-                Clubs
-              </a>
-              <a href="/members" className="hover:text-white">
-                Members
-              </a>
-              <a href="/events" className="hover:text-white">
-                Events
-              </a>
-              <a href="/gallery" className="hover:text-white">
-                Gallery
-              </a>
-              <a href="/suggestions" className="hover:text-white">
-                Feedback
-              </a>
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                <FooterLink href="/">Home</FooterLink>
+                <FooterLink href="/clubs">Clubs</FooterLink>
+                <FooterLink href="/members">Members</FooterLink>
+                <FooterLink href="/events">Events</FooterLink>
+                <FooterLink href="/gallery">Gallery</FooterLink>
+                <FooterLink href="/suggestions">Feedback</FooterLink>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="font-black text-[#172033]">Get Involved</h3>
+
+              <p className="mt-4 text-sm leading-6 text-[#667085]">
+                Have an idea, activity or suggestion for SAC?
+              </p>
+
+              <div className="mt-5 flex flex-wrap gap-3">
+                <a
+                  href="/suggestions"
+                  className="rounded-xl border border-[#1746a2]/20 bg-[#eaf1ff] px-4 py-2.5 text-sm font-bold text-[#1746a2] transition hover:bg-[#1746a2] hover:text-white"
+                >
+                  Give Feedback
+                </a>
+
+                <a
+                  href="/events"
+                  className="rounded-xl bg-[#f47b20] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#d96512]"
+                >
+                  View Events
+                </a>
+              </div>
             </div>
           </div>
 
-          <div>
-            <h3 className="mb-4 font-semibold">Get Involved</h3>
-
-            <p className="text-sm leading-6 text-slate-400">
-              Have an idea, activity or suggestion for SAC?
-            </p>
-
-            <div className="mt-4 flex flex-col gap-3">
-              <a
-                href="/suggestions"
-                className="font-semibold text-blue-400 hover:text-blue-300"
-              >
-                Give Feedback
-              </a>
-
-              <a
-                href="/events"
-                className="font-semibold text-blue-400 hover:text-blue-300"
-              >
-                View Events
-              </a>
-            </div>
+          <div className="mt-10 border-t border-[#e4e7ec] pt-6 text-center text-xs text-[#667085]">
+            © {new Date().getFullYear()} Government Engineering College
+            Sheohar, Bihar • Student Activity Council
           </div>
-        </div>
-
-        <div className="mx-auto mt-10 max-w-6xl border-t border-white/10 pt-6 text-sm text-slate-500">
-          © 2026 Government Engineering College Sheohar, Bihar • Student
-          Activity Council
         </div>
       </footer>
     </main>
+  );
+}
+
+function SectionTitle({
+  number,
+  title,
+  description,
+}: {
+  number: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="flex gap-4">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1746a2] text-xs font-black text-white shadow-sm">
+        {number}
+      </div>
+
+      <div>
+        <h2 className="text-xl font-black text-[#172033]">{title}</h2>
+        <p className="mt-1 text-sm text-[#667085]">{description}</p>
+      </div>
+    </div>
   );
 }
 
@@ -446,28 +595,31 @@ function Input({
   label,
   value,
   onChange,
-  type = "text",
+  placeholder,
   required = false,
+  type = "text",
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  type?: string;
+  placeholder?: string;
   required?: boolean;
+  type?: string;
 }) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-slate-200">
+      <label className="mb-2 block text-sm font-bold text-[#344054]">
         {label}
-        {required && <span className="text-red-400">*</span>}
+        {required && <span className="ml-1 text-red-500">*</span>}
       </label>
 
       <input
         type={type}
-        required={required}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-blue-500"
+        placeholder={placeholder}
+        required={required}
+        className="w-full rounded-xl border border-[#d0d5dd] bg-white px-4 py-3.5 text-sm text-[#172033] outline-none transition placeholder:text-[#98a2b3] focus:border-[#1746a2] focus:ring-4 focus:ring-[#1746a2]/10"
       />
     </div>
   );
@@ -476,28 +628,28 @@ function Input({
 function Select({
   label,
   value,
-  options,
   onChange,
+  options,
   required = false,
 }: {
   label: string;
   value: string;
-  options: string[];
   onChange: (value: string) => void;
+  options: string[];
   required?: boolean;
 }) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-slate-200">
+      <label className="mb-2 block text-sm font-bold text-[#344054]">
         {label}
-        {required && <span className="text-red-400">*</span>}
+        {required && <span className="ml-1 text-red-500">*</span>}
       </label>
 
       <select
-        required={required}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-blue-500"
+        required={required}
+        className="w-full rounded-xl border border-[#d0d5dd] bg-white px-4 py-3.5 text-sm text-[#172033] outline-none transition focus:border-[#1746a2] focus:ring-4 focus:ring-[#1746a2]/10"
       >
         <option value="">Select {label}</option>
 
@@ -511,34 +663,53 @@ function Select({
   );
 }
 
-function Textarea({
+function TextArea({
   label,
   value,
   onChange,
   placeholder,
   required = false,
+  rows = 4,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   required?: boolean;
+  rows?: number;
 }) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-slate-200">
+      <label className="mb-2 block text-sm font-bold text-[#344054]">
         {label}
-        {required && <span className="text-red-400">*</span>}
+        {required && <span className="ml-1 text-red-500">*</span>}
       </label>
 
       <textarea
-        required={required}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        rows={4}
-        className="w-full resize-none rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-blue-500"
+        required={required}
+        rows={rows}
+        className="w-full resize-y rounded-xl border border-[#d0d5dd] bg-white px-4 py-3.5 text-sm leading-6 text-[#172033] outline-none transition placeholder:text-[#98a2b3] focus:border-[#1746a2] focus:ring-4 focus:ring-[#1746a2]/10"
       />
     </div>
+  );
+}
+
+function FooterLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      className="font-medium text-[#667085] transition hover:text-[#1746a2]"
+    >
+      {children}
+    </a>
   );
 }
