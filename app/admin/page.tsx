@@ -61,13 +61,17 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <main className="flex min-h-screen items-center justify-center bg-[#f8f6f0]">
         <div className="text-center">
-          <div className="text-white text-lg font-semibold">
-            Loading Admin Dashboard...
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eaf1ff]">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1746a2]/20 border-t-[#1746a2]" />
           </div>
 
-          <p className="text-slate-400 text-sm mt-2">
+          <h1 className="text-lg font-bold text-[#172033]">
+            Loading Admin Dashboard...
+          </h1>
+
+          <p className="mt-2 text-sm text-[#667085]">
             Checking administrator access
           </p>
         </div>
@@ -77,21 +81,23 @@ export default function AdminDashboard() {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-slate-950 flex items-center justify-center px-6">
-        <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-xl">
-          <div className="text-5xl mb-5">⚠️</div>
+      <main className="flex min-h-screen items-center justify-center bg-[#f8f6f0] px-6">
+        <div className="w-full max-w-md rounded-3xl border border-[#e4e7ec] bg-white p-8 text-center shadow-xl">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#fff1e6] text-3xl">
+            ⚠️
+          </div>
 
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="mt-5 text-2xl font-black text-[#172033]">
             Admin Access Error
           </h1>
 
-          <p className="text-slate-600 mt-3 leading-6">
+          <p className="mt-3 leading-6 text-[#667085]">
             {error}
           </p>
 
           <button
             onClick={() => goTo("/admin/login")}
-            className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
+            className="mt-7 w-full rounded-xl bg-[#1746a2] px-5 py-3 font-bold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#103575] hover:shadow-lg"
           >
             Go to Admin Login
           </button>
@@ -101,50 +107,82 @@ export default function AdminDashboard() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-100">
-      <header className="bg-slate-950 text-white">
-        <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">
-              SAC Admin Dashboard
-            </h1>
+    <main className="min-h-screen bg-[#f8f6f0] text-[#172033]">
+      <header className="border-b border-[#e4e7ec] bg-white shadow-sm">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-5 py-5 lg:px-8">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="absolute inset-0 rounded-2xl bg-[#f47b20]/20 blur-md" />
+              <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1746a2] text-sm font-black text-white shadow-md">
+                SAC
+              </div>
+            </div>
 
-            <p className="text-slate-400 text-sm mt-1">
-              Government Engineering College Sheohar
-            </p>
+            <div>
+              <h1 className="text-xl font-black text-[#1746a2] sm:text-2xl">
+                SAC Admin Dashboard
+              </h1>
+
+              <p className="mt-0.5 text-xs font-semibold text-[#667085] sm:text-sm">
+                Government Engineering College Sheohar
+              </p>
+            </div>
           </div>
 
           <button
             onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-600 px-5 py-2.5 rounded-lg font-semibold transition"
+            className="rounded-xl bg-[#f47b20] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#d96512] hover:shadow-md sm:px-5"
           >
             Logout
           </button>
         </div>
       </header>
 
-      <section className="max-w-7xl mx-auto px-6 pt-10">
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-7">
-          <p className="text-sm text-slate-500">
-            Logged in as
-          </p>
+      <section className="college-pattern">
+        <div className="mx-auto max-w-7xl px-5 pt-10 lg:px-8">
+          <div className="college-card blue-glow overflow-hidden p-7 sm:p-8">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#eaf1ff] px-3 py-1.5 text-xs font-bold text-[#1746a2]">
+                  <span className="h-2 w-2 rounded-full bg-[#f47b20]" />
+                  Administrator Access
+                </div>
 
-          <h2 className="text-2xl font-bold text-slate-900 mt-1 break-all">
-            {email}
-          </h2>
+                <p className="text-sm font-semibold text-[#667085]">
+                  Logged in as
+                </p>
 
-          <p className="text-slate-600 mt-2">
-            Welcome to the SAC website administration panel.
-          </p>
+                <h2 className="mt-1 break-all text-xl font-black text-[#172033] sm:text-2xl">
+                  {email}
+                </h2>
+
+                <p className="mt-2 text-[#667085]">
+                  Welcome to the SAC website administration panel.
+                </p>
+              </div>
+
+              <div className="hidden h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-[#eaf1ff] text-4xl sm:flex">
+                🛠️
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 py-10">
-        <h2 className="text-2xl font-bold text-slate-900 mb-6">
-          Website Management
-        </h2>
+      <section className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
+        <div className="mb-7">
+          <p className="text-sm font-bold uppercase tracking-wider text-[#f47b20]">
+            Administration
+          </p>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <h2 className="mt-1 text-2xl font-black text-[#172033] sm:text-3xl">
+            Website Management
+          </h2>
+
+          <div className="mt-3 h-1 w-14 rounded-full bg-[#f47b20]" />
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <AdminCard
             title="Members"
             description="Add, edit and manage SAC members, positions, clubs and profile information."
@@ -186,56 +224,69 @@ export default function AdminDashboard() {
           />
 
           <AdminCard
-            title="Complaints"
-            description="Review and manage complaints submitted through the SAC website."
-            icon="⚠️"
-            buttonText="View Complaints"
+            title="Raise a Ticket"
+            description="Review and manage support tickets raised through the SAC website."
+            icon="🎫"
+            buttonText="View Tickets"
             onClick={() => goTo("/admin/complaints")}
           />
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 pb-12">
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-7">
-          <h2 className="text-xl font-bold text-slate-900">
-            Quick Links
-          </h2>
+      <section className="mx-auto max-w-7xl px-5 pb-12 lg:px-8">
+        <div className="college-card p-7 sm:p-8">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#fff1e6] text-2xl">
+              🔗
+            </div>
 
-          <div className="flex flex-wrap gap-4 mt-5">
-            <button
+            <div>
+              <h2 className="text-xl font-black text-[#172033]">
+                Quick Links
+              </h2>
+
+              <p className="mt-1 text-sm text-[#667085]">
+                Quickly access the public SAC website sections.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <QuickLinkButton
+              text="View Website"
               onClick={() => goTo("/")}
-              className="px-5 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 font-semibold text-slate-700"
-            >
-              View Website
-            </button>
+            />
 
-            <button
+            <QuickLinkButton
+              text="View Members"
               onClick={() => goTo("/members")}
-              className="px-5 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 font-semibold text-slate-700"
-            >
-              View Members
-            </button>
+            />
 
-            <button
+            <QuickLinkButton
+              text="View Events"
               onClick={() => goTo("/events")}
-              className="px-5 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 font-semibold text-slate-700"
-            >
-              View Events
-            </button>
+            />
 
-            <button
+            <QuickLinkButton
+              text="View Gallery"
               onClick={() => goTo("/gallery")}
-              className="px-5 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 font-semibold text-slate-700"
-            >
-              View Gallery
-            </button>
+            />
+
+            <QuickLinkButton
+              text="Suggestions & Support"
+              onClick={() => goTo("/suggestions")}
+            />
           </div>
         </div>
       </section>
 
-      <footer className="bg-slate-950 text-slate-400 text-center py-6">
-        <p className="text-sm">
-          GEC Sheohar Student Activity Council — Admin Panel
+      <footer className="border-t border-[#103575] bg-[#103575] py-7 text-center text-white">
+        <p className="text-sm font-semibold">
+          GEC Sheohar Student Activity Council
+        </p>
+
+        <p className="mt-1 text-xs text-blue-100">
+          Admin Panel • Secure Website Management
         </p>
       </footer>
     </main>
@@ -256,25 +307,46 @@ function AdminCard({
   onClick: () => void;
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition">
-      <div className="text-4xl mb-4">
-        {icon}
+    <div className="college-card group flex flex-col p-6">
+      <div className="flex items-start justify-between">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#eaf1ff] text-3xl transition group-hover:scale-105 group-hover:bg-[#fff1e6]">
+          {icon}
+        </div>
+
+        <div className="h-2.5 w-2.5 rounded-full bg-[#f47b20]" />
       </div>
 
-      <h3 className="text-xl font-bold text-slate-900">
+      <h3 className="mt-5 text-xl font-black text-[#172033]">
         {title}
       </h3>
 
-      <p className="text-slate-600 text-sm leading-6 mt-2 min-h-[72px]">
+      <p className="mt-2 min-h-[72px] text-sm leading-6 text-[#667085]">
         {description}
       </p>
 
       <button
         onClick={onClick}
-        className="mt-5 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
+        className="mt-6 w-full rounded-xl bg-[#1746a2] px-5 py-3 font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#103575] hover:shadow-md"
       >
         {buttonText}
       </button>
     </div>
+  );
+}
+
+function QuickLinkButton({
+  text,
+  onClick,
+}: {
+  text: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="rounded-xl border border-[#e4e7ec] bg-white px-5 py-3 text-sm font-bold text-[#1746a2] transition hover:-translate-y-0.5 hover:border-[#1746a2]/30 hover:bg-[#eaf1ff]"
+    >
+      {text}
+    </button>
   );
 }
