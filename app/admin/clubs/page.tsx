@@ -11,7 +11,11 @@ type Club = {
   description: string;
   activities: string;
   head: string;
+  head_email: string | null;
+  head_phone: string | null;
   coordinator: string;
+  coordinator_email: string | null;
+  coordinator_phone: string | null;
   contact_name: string;
   contact_email: string;
   contact_phone: string;
@@ -27,7 +31,11 @@ type ClubForm = {
   description: string;
   activities: string;
   head: string;
+  head_email: string;
+  head_phone: string;
   coordinator: string;
+  coordinator_email: string;
+  coordinator_phone: string;
   contact_name: string;
   contact_email: string;
   contact_phone: string;
@@ -40,7 +48,11 @@ const emptyForm: ClubForm = {
   description: "",
   activities: "",
   head: "",
+  head_email: "",
+  head_phone: "",
   coordinator: "",
+  coordinator_email: "",
+  coordinator_phone: "",
   contact_name: "",
   contact_email: "",
   contact_phone: "",
@@ -90,7 +102,7 @@ export default function AdminClubsPage() {
     const { data, error: fetchError } = await supabase
       .from("clubs")
       .select(
-        "id,name,category,description,activities,head,coordinator,contact_name,contact_email,contact_phone,logo,display_order,created_at,updated_at"
+        "id,name,category,description,activities,head,head_email,head_phone,coordinator,coordinator_email,coordinator_phone,contact_name,contact_email,contact_phone,logo,display_order,created_at,updated_at"
       )
       .order("display_order", { ascending: true })
       .order("name", { ascending: true });
@@ -140,6 +152,10 @@ export default function AdminClubsPage() {
   async function uploadLogo(): Promise<string | null> {
     if (!logoFile) return existingLogo;
 
+    if (!logoFile.type.startsWith("image/")) {
+      throw new Error("Please select a valid image file.");
+    }
+
     const extension =
       logoFile.name.split(".").pop()?.toLowerCase() || "jpg";
 
@@ -161,7 +177,7 @@ export default function AdminClubsPage() {
       });
 
     if (uploadError) {
-      throw new Error(`Logo upload failed: ${uploadError.message}`);
+      throw new Error(`Club photo upload failed: ${uploadError.message}`);
     }
 
     const { data } = supabase.storage
@@ -190,13 +206,22 @@ export default function AdminClubsPage() {
         category: form.category.trim(),
         description: form.description.trim(),
         activities: form.activities.trim(),
+
         head: form.head.trim(),
+        head_email: form.head_email.trim(),
+        head_phone: form.head_phone.trim(),
+
         coordinator: form.coordinator.trim(),
+        coordinator_email: form.coordinator_email.trim(),
+        coordinator_phone: form.coordinator_phone.trim(),
+
         contact_name: form.contact_name.trim(),
         contact_email: form.contact_email.trim(),
         contact_phone: form.contact_phone.trim(),
+
         display_order: Number(form.display_order) || 0,
         logo: logoUrl,
+
         updated_at: new Date().toISOString(),
       };
 
@@ -206,7 +231,9 @@ export default function AdminClubsPage() {
           .update(payload)
           .eq("id", editingId);
 
-        if (updateError) throw new Error(updateError.message);
+        if (updateError) {
+          throw new Error(updateError.message);
+        }
 
         setMessage("Club updated successfully.");
       } else {
@@ -217,7 +244,9 @@ export default function AdminClubsPage() {
             created_at: new Date().toISOString(),
           });
 
-        if (insertError) throw new Error(insertError.message);
+        if (insertError) {
+          throw new Error(insertError.message);
+        }
 
         setMessage("Club added successfully.");
       }
@@ -241,11 +270,19 @@ export default function AdminClubsPage() {
       category: club.category || "",
       description: club.description || "",
       activities: club.activities || "",
+
       head: club.head || "",
+      head_email: club.head_email || "",
+      head_phone: club.head_phone || "",
+
       coordinator: club.coordinator || "",
+      coordinator_email: club.coordinator_email || "",
+      coordinator_phone: club.coordinator_phone || "",
+
       contact_name: club.contact_name || "",
       contact_email: club.contact_email || "",
       contact_phone: club.contact_phone || "",
+
       display_order: String(club.display_order ?? 0),
     });
 
@@ -325,7 +362,7 @@ export default function AdminClubsPage() {
           <h1 className="text-4xl font-black">Club Management</h1>
 
           <p className="mt-3 text-slate-400">
-            Add, edit and manage clubs, contacts and logos.
+            Manage club photos, heads, coordinators and contact information.
           </p>
         </div>
 
@@ -347,15 +384,16 @@ export default function AdminClubsPage() {
           </h2>
 
           <p className="mb-6 text-sm text-slate-400">
-            Club logos are uploaded directly to Supabase Storage.
+            Upload a club photo and manage the club head and coordinator details.
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid gap-5 md:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm font-medium">
                   Club Name *
                 </label>
+
                 <input
                   type="text"
                   required
@@ -370,6 +408,7 @@ export default function AdminClubsPage() {
                 <label className="mb-2 block text-sm font-medium">
                   Category
                 </label>
+
                 <input
                   type="text"
                   value={form.category}
@@ -383,81 +422,9 @@ export default function AdminClubsPage() {
 
               <div>
                 <label className="mb-2 block text-sm font-medium">
-                  Club Head
-                </label>
-                <input
-                  type="text"
-                  value={form.head}
-                  onChange={(e) => updateField("head", e.target.value)}
-                  placeholder="Club head"
-                  className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium">
-                  Coordinator
-                </label>
-                <input
-                  type="text"
-                  value={form.coordinator}
-                  onChange={(e) =>
-                    updateField("coordinator", e.target.value)
-                  }
-                  placeholder="Coordinator"
-                  className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium">
-                  Contact Person
-                </label>
-                <input
-                  type="text"
-                  value={form.contact_name}
-                  onChange={(e) =>
-                    updateField("contact_name", e.target.value)
-                  }
-                  placeholder="Contact person"
-                  className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium">
-                  Contact Email
-                </label>
-                <input
-                  type="email"
-                  value={form.contact_email}
-                  onChange={(e) =>
-                    updateField("contact_email", e.target.value)
-                  }
-                  placeholder="contact@example.com"
-                  className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium">
-                  Contact Phone
-                </label>
-                <input
-                  type="tel"
-                  value={form.contact_phone}
-                  onChange={(e) =>
-                    updateField("contact_phone", e.target.value)
-                  }
-                  placeholder="+91 XXXXX XXXXX"
-                  className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium">
                   Display Order
                 </label>
+
                 <input
                   type="number"
                   min="0"
@@ -468,35 +435,160 @@ export default function AdminClubsPage() {
                   className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
                 />
               </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium">
+                  Club Photo
+                </label>
+
+                <input
+                  id="club-logo"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) =>
+                    setLogoFile(e.target.files?.[0] || null)
+                  }
+                  className="block w-full rounded-xl border border-white/10 bg-slate-900 p-3 text-sm text-slate-400"
+                />
+
+                {existingLogo && (
+                  <div className="mt-4 flex items-center gap-4">
+                    <img
+                      src={existingLogo}
+                      alt="Current club photo"
+                      className="h-24 w-32 rounded-xl object-cover"
+                    />
+
+                    <div>
+                      <p className="text-sm font-semibold">
+                        Current photo
+                      </p>
+
+                      <p className="text-xs text-slate-500">
+                        Choose another image to replace it.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                Club Logo
-              </label>
+            <div className="rounded-2xl border border-cyan-400/10 bg-cyan-400/[0.03] p-5">
+              <h3 className="mb-5 text-xl font-bold text-cyan-300">
+                Club Head
+              </h3>
 
-              <input
-                id="club-logo"
-                type="file"
-                accept="image/*"
-                onChange={(e) =>
-                  setLogoFile(e.target.files?.[0] || null)
-                }
-                className="block w-full rounded-xl border border-white/10 bg-slate-900 p-3 text-sm text-slate-400"
-              />
+              <div className="grid gap-5 md:grid-cols-3">
+                <div>
+                  <label className="mb-2 block text-sm font-medium">
+                    Name
+                  </label>
 
-              {existingLogo && (
-                <div className="mt-4 flex items-center gap-4">
-                  <img
-                    src={existingLogo}
-                    alt="Current club logo"
-                    className="h-20 w-20 rounded-xl bg-white object-contain p-2"
+                  <input
+                    type="text"
+                    value={form.head}
+                    onChange={(e) =>
+                      updateField("head", e.target.value)
+                    }
+                    placeholder="Club head name"
+                    className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
                   />
-                  <span className="text-sm text-slate-400">
-                    Current logo
-                  </span>
                 </div>
-              )}
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium">
+                    Email
+                  </label>
+
+                  <input
+                    type="email"
+                    value={form.head_email}
+                    onChange={(e) =>
+                      updateField("head_email", e.target.value)
+                    }
+                    placeholder="head@example.com"
+                    className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium">
+                    Phone
+                  </label>
+
+                  <input
+                    type="tel"
+                    value={form.head_phone}
+                    onChange={(e) =>
+                      updateField("head_phone", e.target.value)
+                    }
+                    placeholder="+91 XXXXX XXXXX"
+                    className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-cyan-400"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-blue-400/10 bg-blue-400/[0.03] p-5">
+              <h3 className="mb-5 text-xl font-bold text-blue-300">
+                Student Coordinator
+              </h3>
+
+              <div className="grid gap-5 md:grid-cols-3">
+                <div>
+                  <label className="mb-2 block text-sm font-medium">
+                    Name
+                  </label>
+
+                  <input
+                    type="text"
+                    value={form.coordinator}
+                    onChange={(e) =>
+                      updateField("coordinator", e.target.value)
+                    }
+                    placeholder="Coordinator name"
+                    className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-blue-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium">
+                    Email
+                  </label>
+
+                  <input
+                    type="email"
+                    value={form.coordinator_email}
+                    onChange={(e) =>
+                      updateField(
+                        "coordinator_email",
+                        e.target.value
+                      )
+                    }
+                    placeholder="coordinator@example.com"
+                    className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-blue-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium">
+                    Phone
+                  </label>
+
+                  <input
+                    type="tel"
+                    value={form.coordinator_phone}
+                    onChange={(e) =>
+                      updateField(
+                        "coordinator_phone",
+                        e.target.value
+                      )
+                    }
+                    placeholder="+91 XXXXX XXXXX"
+                    className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 outline-none focus:border-blue-400"
+                  />
+                </div>
+              </div>
             </div>
 
             <div>
@@ -531,8 +623,64 @@ export default function AdminClubsPage() {
               />
 
               <p className="mt-2 text-xs text-slate-500">
-                You can separate activities with commas.
+                Separate activities with commas.
               </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-5">
+              <h3 className="mb-5 text-lg font-bold">
+                Additional Contact
+              </h3>
+
+              <div className="grid gap-5 md:grid-cols-3">
+                <div>
+                  <label className="mb-2 block text-sm font-medium">
+                    Contact Person
+                  </label>
+
+                  <input
+                    type="text"
+                    value={form.contact_name}
+                    onChange={(e) =>
+                      updateField("contact_name", e.target.value)
+                    }
+                    placeholder="Contact person"
+                    className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 outline-none focus:border-cyan-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium">
+                    Contact Email
+                  </label>
+
+                  <input
+                    type="email"
+                    value={form.contact_email}
+                    onChange={(e) =>
+                      updateField("contact_email", e.target.value)
+                    }
+                    placeholder="contact@example.com"
+                    className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 outline-none focus:border-cyan-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium">
+                    Contact Phone
+                  </label>
+
+                  <input
+                    type="tel"
+                    value={form.contact_phone}
+                    onChange={(e) =>
+                      updateField("contact_phone", e.target.value)
+                    }
+                    placeholder="+91 XXXXX XXXXX"
+                    className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 outline-none focus:border-cyan-400"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="flex gap-3">
@@ -565,9 +713,10 @@ export default function AdminClubsPage() {
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold">All Clubs</h2>
+
               <p className="mt-1 text-sm text-slate-400">
-                {clubs.length} {clubs.length === 1 ? "club" : "clubs"} in
-                database
+                {clubs.length}{" "}
+                {clubs.length === 1 ? "club" : "clubs"} in database
               </p>
             </div>
 
@@ -594,160 +743,157 @@ export default function AdminClubsPage() {
               {clubs.map((club) => (
                 <article
                   key={club.id}
-                  className="rounded-2xl border border-white/10 bg-white/[0.04] p-6"
+                  className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]"
                 >
-                  <div className="flex gap-5">
-                    <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white">
-                      {club.logo ? (
-                        <img
-                          src={club.logo}
-                          alt={`${club.name} logo`}
-                          className="h-full w-full object-contain p-2"
-                        />
-                      ) : (
-                        <span className="text-3xl">🏫</span>
-                      )}
-                    </div>
-
-                    <div className="flex-1">
-                      <div className="flex justify-between gap-3">
-                        <div>
-                          <h3 className="text-xl font-bold">
-                            {club.name}
-                          </h3>
-
-                          {club.category && (
-                            <p className="mt-1 text-sm text-cyan-400">
-                              {club.category}
-                            </p>
-                          )}
+                  {club.logo ? (
+                    <img
+                      src={club.logo}
+                      alt={club.name}
+                      className="h-56 w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-56 items-center justify-center bg-slate-900">
+                      <div className="text-center">
+                        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-3xl font-black text-cyan-400">
+                          {club.name.charAt(0).toUpperCase()}
                         </div>
 
-                        <span className="text-xs text-slate-500">
-                          #{club.display_order}
-                        </span>
+                        <p className="mt-4 text-sm text-slate-500">
+                          No club photo uploaded
+                        </p>
                       </div>
                     </div>
-                  </div>
-
-                  {club.description && (
-                    <p className="mt-5 text-sm leading-6 text-slate-400">
-                      {club.description}
-                    </p>
                   )}
 
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    {club.head && (
-                      <div className="rounded-xl bg-slate-900/70 p-4">
-                        <p className="text-xs uppercase text-slate-500">
-                          Club Head
+                  <div className="p-6">
+                    <div className="flex justify-between gap-3">
+                      <div>
+                        <h3 className="text-xl font-bold">
+                          {club.name}
+                        </h3>
+
+                        {club.category && (
+                          <p className="mt-1 text-sm text-cyan-400">
+                            {club.category}
+                          </p>
+                        )}
+                      </div>
+
+                      <span className="text-xs text-slate-500">
+                        #{club.display_order}
+                      </span>
+                    </div>
+
+                    {club.description && (
+                      <p className="mt-5 text-sm leading-6 text-slate-400">
+                        {club.description}
+                      </p>
+                    )}
+
+                    <div className="mt-5 grid gap-4">
+                      {club.head && (
+                        <div className="rounded-xl bg-slate-900/70 p-4">
+                          <p className="text-xs uppercase tracking-wider text-slate-500">
+                            Club Head
+                          </p>
+
+                          <p className="mt-1 font-semibold">
+                            {club.head}
+                          </p>
+
+                          {club.head_email && (
+                            <a
+                              href={`mailto:${club.head_email}`}
+                              className="mt-2 block text-sm text-cyan-400 hover:underline"
+                            >
+                              {club.head_email}
+                            </a>
+                          )}
+
+                          {club.head_phone && (
+                            <a
+                              href={`tel:${club.head_phone}`}
+                              className="mt-1 block text-sm text-cyan-400 hover:underline"
+                            >
+                              {club.head_phone}
+                            </a>
+                          )}
+                        </div>
+                      )}
+
+                      {club.coordinator && (
+                        <div className="rounded-xl bg-slate-900/70 p-4">
+                          <p className="text-xs uppercase tracking-wider text-slate-500">
+                            Student Coordinator
+                          </p>
+
+                          <p className="mt-1 font-semibold">
+                            {club.coordinator}
+                          </p>
+
+                          {club.coordinator_email && (
+                            <a
+                              href={`mailto:${club.coordinator_email}`}
+                              className="mt-2 block text-sm text-blue-400 hover:underline"
+                            >
+                              {club.coordinator_email}
+                            </a>
+                          )}
+
+                          {club.coordinator_phone && (
+                            <a
+                              href={`tel:${club.coordinator_phone}`}
+                              className="mt-1 block text-sm text-blue-400 hover:underline"
+                            >
+                              {club.coordinator_phone}
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {club.activities && (
+                      <div className="mt-4 rounded-xl bg-slate-900/70 p-4">
+                        <p className="mb-2 text-xs uppercase text-slate-500">
+                          Activities
                         </p>
-                        <p className="mt-1 font-semibold">
-                          {club.head}
-                        </p>
+
+                        <div className="flex flex-wrap gap-2">
+                          {club.activities
+                            .split(",")
+                            .map((activity, index) => {
+                              const item = activity.trim();
+
+                              if (!item) return null;
+
+                              return (
+                                <span
+                                  key={`${club.id}-${index}`}
+                                  className="rounded-full bg-white/5 px-3 py-1.5 text-xs text-slate-300"
+                                >
+                                  {item}
+                                </span>
+                              );
+                            })}
+                        </div>
                       </div>
                     )}
 
-                    {club.coordinator && (
-                      <div className="rounded-xl bg-slate-900/70 p-4">
-                        <p className="text-xs uppercase text-slate-500">
-                          Coordinator
-                        </p>
-                        <p className="mt-1 font-semibold">
-                          {club.coordinator}
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                    <div className="mt-6 flex gap-3 border-t border-white/10 pt-5">
+                      <button
+                        onClick={() => editClub(club)}
+                        className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-400"
+                      >
+                        Edit
+                      </button>
 
-                  {(club.contact_name ||
-                    club.contact_email ||
-                    club.contact_phone) && (
-                    <div className="mt-4 rounded-xl border border-cyan-400/10 bg-cyan-400/[0.04] p-4">
-                      <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-cyan-400">
-                        Contact Information
-                      </p>
-
-                      {club.contact_name && (
-                        <p className="mb-2 text-sm">
-                          <span className="font-semibold">
-                            Person:
-                          </span>{" "}
-                          {club.contact_name}
-                        </p>
-                      )}
-
-                      {club.contact_email && (
-                        <p className="mb-2 text-sm">
-                          <span className="font-semibold">
-                            Email:
-                          </span>{" "}
-                          <a
-                            href={`mailto:${club.contact_email}`}
-                            className="text-cyan-400 hover:underline"
-                          >
-                            {club.contact_email}
-                          </a>
-                        </p>
-                      )}
-
-                      {club.contact_phone && (
-                        <p className="text-sm">
-                          <span className="font-semibold">
-                            Phone:
-                          </span>{" "}
-                          <a
-                            href={`tel:${club.contact_phone}`}
-                            className="text-cyan-400 hover:underline"
-                          >
-                            {club.contact_phone}
-                          </a>
-                        </p>
-                      )}
+                      <button
+                        onClick={() => deleteClub(club.id)}
+                        className="rounded-lg bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-300 hover:bg-red-500/20"
+                      >
+                        Delete
+                      </button>
                     </div>
-                  )}
-
-                  {club.activities && (
-                    <div className="mt-4 rounded-xl bg-slate-900/70 p-4">
-                      <p className="mb-2 text-xs uppercase text-slate-500">
-                        Activities
-                      </p>
-
-                      <div className="flex flex-wrap gap-2">
-                        {club.activities
-                          .split(",")
-                          .map((activity, index) => {
-                            const item = activity.trim();
-
-                            if (!item) return null;
-
-                            return (
-                              <span
-                                key={`${club.id}-${index}`}
-                                className="rounded-full bg-white/5 px-3 py-1.5 text-xs text-slate-300"
-                              >
-                                {item}
-                              </span>
-                            );
-                          })}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="mt-6 flex gap-3 border-t border-white/10 pt-5">
-                    <button
-                      onClick={() => editClub(club)}
-                      className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-400"
-                    >
-                      Edit
-                    </button>
-
-                    <button
-                      onClick={() => deleteClub(club.id)}
-                      className="rounded-lg bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-300 hover:bg-red-500/20"
-                    >
-                      Delete
-                    </button>
                   </div>
                 </article>
               ))}

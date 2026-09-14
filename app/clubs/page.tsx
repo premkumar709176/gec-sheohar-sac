@@ -6,34 +6,21 @@ import { supabase } from "@/lib/supabase";
 type Club = {
   id: string;
   name: string;
-  short_name?: string | null;
+  category?: string | null;
   description?: string | null;
-  faculty_incharge?: string | null;
-  student_coordinator?: string | null;
+  activities?: string | null;
+  head?: string | null;
+  head_email?: string | null;
+  head_phone?: string | null;
+  coordinator?: string | null;
+  coordinator_email?: string | null;
+  coordinator_phone?: string | null;
+  contact_name?: string | null;
+  contact_email?: string | null;
+  contact_phone?: string | null;
+  logo?: string | null;
+  display_order?: number | null;
 };
-
-function getClubImage(name: string) {
-  const images: Record<string, string> = {
-    "Bhabha – Science Club": "/clubs/science.jpg",
-    "Vishveshvaraya – Technical Club": "/clubs/technical.jpg",
-    "Media Club": "/clubs/media.jpg",
-    "Eco Task Force": "/clubs/eco.jpg",
-    "Literary & Poetry Club": "/clubs/literary.jpg",
-    "Social Work & Heritage Club": "/clubs/social.jpg",
-    "Red Ribbon Club": "/clubs/red-ribbon.jpg",
-    "Electoral Literacy Club": "/clubs/electoral.jpg",
-    "Natraj – Dance Club": "/clubs/dance.jpg",
-    "Sur Sangam – Music Club": "/clubs/music.jpg",
-    "Srijan – Art & Craft Club": "/clubs/art.jpg",
-    "Yoga & Mental Wellness Club": "/clubs/yoga.jpg",
-    "Pixel & Frame – Photography and Videography Club":
-      "/clubs/photography.jpg",
-    "DigiCrafters – Digital Art & Craft Club":
-      "/clubs/digital-art.jpg",
-  };
-
-  return images[name] || null;
-}
 
 export default function ClubsPage() {
   const [clubs, setClubs] = useState<Club[]>([]);
@@ -42,11 +29,14 @@ export default function ClubsPage() {
   async function loadClubs() {
     const { data, error } = await supabase
       .from("clubs")
-      .select("*")
-      .order("display_order", { ascending: true });
+      .select(
+        "id,name,category,description,activities,head,head_email,head_phone,coordinator,coordinator_email,coordinator_phone,contact_name,contact_email,contact_phone,logo,display_order"
+      )
+      .order("display_order", { ascending: true })
+      .order("name", { ascending: true });
 
     if (!error && data) {
-      setClubs(data);
+      setClubs(data as Club[]);
     }
 
     setLoading(false);
@@ -128,90 +118,183 @@ export default function ClubsPage() {
           </div>
         ) : (
           <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-            {clubs.map((club) => {
-              const clubImage = getClubImage(club.name);
+            {clubs.map((club) => (
+              <article
+                key={club.id}
+                className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] transition duration-300 hover:-translate-y-1 hover:border-blue-400/30 hover:bg-white/[0.06]"
+              >
+                {/* CLUB PHOTO */}
+                <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
+                  {club.logo ? (
+                    <>
+                      <img
+                        src={club.logo}
+                        alt={club.name}
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      />
 
-              return (
-                <article
-                  key={club.id}
-                  className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] transition duration-300 hover:-translate-y-1 hover:border-blue-400/30 hover:bg-white/[0.06]"
-                >
-                  {/* CLUB IMAGE */}
-                  <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
-                    {clubImage ? (
-                      <>
-                        <img
-                          src={clubImage}
-                          alt={club.name}
-                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                        />
-
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-                      </>
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
-                        <div className="text-center">
-                          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-3xl font-black text-blue-400">
-                            {club.name.charAt(0).toUpperCase()}
-                          </div>
-
-                          <p className="mt-4 text-sm font-medium text-slate-500">
-                            Club photo will be added soon
-                          </p>
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                    </>
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+                      <div className="text-center">
+                        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-3xl font-black text-blue-400">
+                          {club.name.charAt(0).toUpperCase()}
                         </div>
+
+                        <p className="mt-4 text-sm font-medium text-slate-500">
+                          Club photo will be added soon
+                        </p>
                       </div>
-                    )}
-
-                    <div className="absolute bottom-4 left-4 right-4">
-                      {club.short_name && (
-                        <span className="inline-flex rounded-full border border-white/20 bg-slate-950/70 px-3 py-1 text-xs font-semibold text-blue-300 backdrop-blur">
-                          {club.short_name}
-                        </span>
-                      )}
                     </div>
-                  </div>
+                  )}
+                </div>
 
-                  {/* CLUB DETAILS */}
-                  <div className="p-6">
-                    <h2 className="text-xl font-bold leading-snug">
-                      {club.name}
-                    </h2>
+                {/* DETAILS */}
+                <div className="p-6">
+                  <h2 className="text-xl font-bold leading-snug">
+                    {club.name}
+                  </h2>
 
-                    {club.description && (
-                      <p className="mt-3 line-clamp-4 text-sm leading-6 text-slate-400">
-                        {club.description}
+                  {club.category && (
+                    <p className="mt-1 text-sm font-medium text-cyan-400">
+                      {club.category}
+                    </p>
+                  )}
+
+                  {club.description && (
+                    <p className="mt-4 text-sm leading-6 text-slate-400">
+                      {club.description}
+                    </p>
+                  )}
+
+                  {/* HEAD */}
+                  {club.head && (
+                    <div className="mt-6 rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-cyan-400">
+                        Club Head
                       </p>
-                    )}
 
-                    <div className="mt-6 space-y-3 border-t border-white/10 pt-5">
-                      {club.faculty_incharge && (
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                            Faculty In-Charge
-                          </p>
+                      <p className="mt-2 font-semibold text-white">
+                        {club.head}
+                      </p>
 
-                          <p className="mt-1 text-sm text-slate-200">
-                            {club.faculty_incharge}
-                          </p>
-                        </div>
+                      {club.head_email && (
+                        <a
+                          href={`mailto:${club.head_email}`}
+                          className="mt-2 block break-all text-sm text-slate-400 hover:text-cyan-400 hover:underline"
+                        >
+                          {club.head_email}
+                        </a>
                       )}
 
-                      {club.student_coordinator && (
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                            Student Coordinator
-                          </p>
-
-                          <p className="mt-1 text-sm text-slate-200">
-                            {club.student_coordinator}
-                          </p>
-                        </div>
+                      {club.head_phone && (
+                        <a
+                          href={`tel:${club.head_phone}`}
+                          className="mt-1 block text-sm text-slate-400 hover:text-cyan-400 hover:underline"
+                        >
+                          {club.head_phone}
+                        </a>
                       )}
                     </div>
-                  </div>
-                </article>
-              );
-            })}
+                  )}
+
+                  {/* COORDINATOR */}
+                  {club.coordinator && (
+                    <div className="mt-3 rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-blue-400">
+                        Student Coordinator
+                      </p>
+
+                      <p className="mt-2 font-semibold text-white">
+                        {club.coordinator}
+                      </p>
+
+                      {club.coordinator_email && (
+                        <a
+                          href={`mailto:${club.coordinator_email}`}
+                          className="mt-2 block break-all text-sm text-slate-400 hover:text-blue-400 hover:underline"
+                        >
+                          {club.coordinator_email}
+                        </a>
+                      )}
+
+                      {club.coordinator_phone && (
+                        <a
+                          href={`tel:${club.coordinator_phone}`}
+                          className="mt-1 block text-sm text-slate-400 hover:text-blue-400 hover:underline"
+                        >
+                          {club.coordinator_phone}
+                        </a>
+                      )}
+                    </div>
+                  )}
+
+                  {/* ACTIVITIES */}
+                  {club.activities && (
+                    <div className="mt-5">
+                      <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        Activities
+                      </p>
+
+                      <div className="flex flex-wrap gap-2">
+                        {club.activities
+                          .split(",")
+                          .map((activity, index) => {
+                            const item = activity.trim();
+
+                            if (!item) return null;
+
+                            return (
+                              <span
+                                key={`${club.id}-${index}`}
+                                className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-slate-300"
+                              >
+                                {item}
+                              </span>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* OLD GENERIC CONTACT */}
+                  {(club.contact_name ||
+                    club.contact_email ||
+                    club.contact_phone) && (
+                    <div className="mt-5 border-t border-white/10 pt-5">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        Additional Contact
+                      </p>
+
+                      {club.contact_name && (
+                        <p className="mt-2 text-sm text-slate-300">
+                          {club.contact_name}
+                        </p>
+                      )}
+
+                      {club.contact_email && (
+                        <a
+                          href={`mailto:${club.contact_email}`}
+                          className="mt-1 block break-all text-sm text-slate-400 hover:text-cyan-400 hover:underline"
+                        >
+                          {club.contact_email}
+                        </a>
+                      )}
+
+                      {club.contact_phone && (
+                        <a
+                          href={`tel:${club.contact_phone}`}
+                          className="mt-1 block text-sm text-slate-400 hover:text-cyan-400 hover:underline"
+                        >
+                          {club.contact_phone}
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))}
           </div>
         )}
       </section>
