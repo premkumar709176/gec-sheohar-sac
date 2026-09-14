@@ -260,8 +260,7 @@ export default function AdminEventsPage() {
 
   function toggleCollaboratingClub(clubName: string) {
     setForm((current) => {
-      const exists =
-        current.collaborating_clubs.includes(clubName);
+      const exists = current.collaborating_clubs.includes(clubName);
 
       return {
         ...current,
@@ -387,8 +386,7 @@ export default function AdminEventsPage() {
         display_order: Number(form.display_order) || 0,
         description: form.description.trim() || null,
         poster: posterUrl,
-        image:
-          allImages.length > 0 ? allImages[0] : null,
+        image: allImages.length > 0 ? allImages[0] : null,
         images: allImages,
         registration_link:
           form.registration_link.trim() || null,
@@ -401,8 +399,7 @@ export default function AdminEventsPage() {
         conducted_by: form.conducted_by,
         organizing_club: organizingClub || null,
         club_head: clubHead.trim() || null,
-        club_coordinator:
-          clubCoordinator.trim() || null,
+        club_coordinator: clubCoordinator.trim() || null,
         collaborating_clubs: collaboratingClubs,
         collaboration_details:
           form.collaboration_details.trim() || null,
@@ -808,7 +805,7 @@ export default function AdminEventsPage() {
                           onClick={() =>
                             removeExistingImage(url)
                           }
-                          className="absolute right-2 top-2 rounded-lg bg-red-600 px-3 py-1 text-xs font-bold text-white shadow-md"
+                          className="absolute right-2 top-2 rounded-lg bg-red-600 px-3 py-1 text-xs font-bold text-white shadow-md transition hover:bg-red-700"
                         >
                           Remove
                         </button>
@@ -910,8 +907,7 @@ export default function AdminEventsPage() {
                 form.conducted_by === "Collaboration") && (
                 <div className="mt-6 rounded-2xl border border-[#f47b20]/20 bg-[#fff1e6]/60 p-5">
                   <h4 className="mb-2 font-black text-[#d96512]">
-                    {form.conducted_by ===
-                    "Collaboration"
+                    {form.conducted_by === "Collaboration"
                       ? "Collaborating Clubs"
                       : "Participating Clubs"}
                   </h4>
@@ -1155,8 +1151,7 @@ export default function AdminEventsPage() {
 
                         <p>
                           👥{" "}
-                          {event.conducted_by ||
-                            "Whole SAC"}
+                          {event.conducted_by || "Whole SAC"}
                         </p>
 
                         {event.organizing_club && (
@@ -1166,8 +1161,7 @@ export default function AdminEventsPage() {
                         )}
 
                         {event.collaborating_clubs &&
-                          event.collaborating_clubs.length >
-                            0 && (
+                          event.collaborating_clubs.length > 0 && (
                             <p>
                               🤝{" "}
                               {event.collaborating_clubs.join(
@@ -1190,8 +1184,7 @@ export default function AdminEventsPage() {
                         )}
 
                         <p>
-                          📷{" "}
-                          {event.images?.length || 0} event
+                          📷 {event.images?.length || 0} event
                           photo(s)
                         </p>
                       </div>
@@ -1199,9 +1192,7 @@ export default function AdminEventsPage() {
                       <div className="mt-5 flex gap-3">
                         <button
                           type="button"
-                          onClick={() =>
-                            editEvent(event)
-                          }
+                          onClick={() => editEvent(event)}
                           className="flex-1 rounded-xl bg-[#1746a2] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#103575]"
                         >
                           Edit
@@ -1209,9 +1200,7 @@ export default function AdminEventsPage() {
 
                         <button
                           type="button"
-                          onClick={() =>
-                            deleteEvent(event.id)
-                          }
+                          onClick={() => deleteEvent(event.id)}
                           className="flex-1 rounded-xl bg-[#fff1e6] px-4 py-2.5 text-sm font-bold text-[#d96512] transition hover:bg-[#f47b20] hover:text-white"
                         >
                           Delete
