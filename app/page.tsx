@@ -1,490 +1,459 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
-const socialLinks = [
-  {
-    name: "YouTube",
-    icon: "▶",
-    url: "https://www.youtube.com/@SAC-GECSheohar",
-    label: "SAC GEC Sheohar",
-  },
-  {
-    name: "Facebook",
-    icon: "f",
-    url: "https://www.facebook.com/share/1BbqbSh9Qw/",
-    label: "Student Activity Council GEC Sheohar",
-  },
-  {
-    name: "Instagram",
-    icon: "◎",
-    url: "https://www.instagram.com/sacgecsheohar?stkn=ZjgwM2gwcmJxZXE1",
-    label: "@sacgecsheohar",
-  },
-];
+type Club = {
+  id: string;
+  name: string;
+  category?: string | null;
+  description?: string | null;
+  logo?: string | null;
+};
 
-const clubs = [
-  {
-    icon: "🔬",
-    title: "Science",
-    description:
-      "Explore scientific thinking, experiments, research and innovation.",
-  },
-  {
-    icon: "⚙️",
-    title: "Technical",
-    description:
-      "Build technical skills through projects, workshops and competitions.",
-  },
-  {
-    icon: "🎨",
-    title: "Creative",
-    description:
-      "Express yourself through art, design, media and literature.",
-  },
-  {
-    icon: "🎭",
-    title: "Cultural",
-    description:
-      "Celebrate talent through music, dance and cultural activities.",
-  },
-];
+type Event = {
+  id: string;
+  title: string;
+  description?: string | null;
+  event_date?: string | null;
+  event_time?: string | null;
+  venue?: string | null;
+  poster_url?: string | null;
+};
 
 export default function Home() {
+  const [clubs, setClubs] = useState<Club[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const [{ data: clubsData }, { data: eventsData }] = await Promise.all([
+        supabase
+          .from("clubs")
+          .select("*")
+          .order("created_at", { ascending: true }),
+
+        supabase
+          .from("events")
+          .select("*")
+          .order("event_date", { ascending: true })
+          .limit(3),
+      ]);
+
+      if (clubsData) {
+        setClubs(clubsData);
+      }
+
+      if (eventsData) {
+        setEvents(eventsData);
+      }
+    };
+
+    loadData();
+  }, []);
+
   return (
     <main className="min-h-screen bg-[#f8f6f0] text-[#172033]">
-      {/* HERO */}
-      <section className="relative overflow-hidden pt-[76px]">
-        <div className="section-container relative flex min-h-[680px] items-center justify-center py-20 text-center">
-          <div className="mx-auto max-w-4xl">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#1746a2]/15 bg-white px-4 py-2 text-sm font-bold text-[#1746a2] shadow-sm">
-              <span className="h-2 w-2 rounded-full bg-[#f47b20]" />
-              Student Activity Council
-            </div>
 
-            <p className="text-sm font-extrabold uppercase tracking-[0.22em] text-[#1746a2]">
-              Government Engineering College Sheohar
+      {/* HERO */}
+      <section className="relative min-h-[680px] overflow-hidden pt-[76px]">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('/sac-campus.jpg')",
+          }}
+        />
+
+        <div className="absolute inset-0 bg-[#071a3d]/65" />
+
+        <div className="relative mx-auto flex min-h-[604px] max-w-7xl items-center justify-center px-6 py-24 text-center lg:px-10">
+          <div className="mx-auto max-w-4xl text-white">
+
+            <p className="mb-5 text-sm font-bold uppercase tracking-[0.25em] text-orange-300">
+              Student Activity Council
             </p>
 
-            <h1 className="mt-5 text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl lg:text-8xl">
-              Empowering
-              <br />
-              <span className="gradient-text">Student Potential.</span>
+            <h1 className="text-5xl font-black leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl">
+              <span className="block">Empowering Student</span>
+              <span className="mt-2 block">Potential.</span>
             </h1>
 
-            <p className="mx-auto mt-7 max-w-3xl text-base leading-8 text-slate-600 sm:text-lg">
-              The Student Activity Council (SAC) of Government Engineering
-              College Sheohar is a student-driven platform dedicated to
-              creating a vibrant, inclusive and engaging campus environment.
-              SAC provides students with opportunities to discover their
-              interests, showcase their talents, develop leadership and
-              teamwork skills, and gain practical experience beyond academics.
+            <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-white/90 sm:text-xl">
+              A vibrant platform at Government Engineering College Sheohar
+              where students connect, create, lead and grow beyond the
+              classroom.
             </p>
 
-            <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-              <Link href="/join" className="btn-orange">
+            <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <Link
+                href="/join"
+                className="rounded-full bg-[#f47b20] px-7 py-3.5 font-bold text-white shadow-lg shadow-orange-900/20 transition hover:-translate-y-1 hover:bg-[#d96512]"
+              >
                 Become a Member →
               </Link>
 
-              <Link href="/events" className="btn-primary">
+              <Link
+                href="/events"
+                className="rounded-full border border-white/40 bg-white/10 px-7 py-3.5 font-bold text-white backdrop-blur-sm transition hover:bg-white hover:text-[#1746a2]"
+              >
                 Explore Events
               </Link>
             </div>
 
-            <div className="mt-12 flex flex-wrap justify-center gap-3">
-              {[
-                "Leadership",
-                "Creativity",
-                "Innovation",
-                "Teamwork",
-                "Campus Life",
-              ].map((item) => (
-                <span
-                  key={item}
-                  className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
           </div>
+        </div>
+      </section>
+
+      {/* ABOUT SAC */}
+      <section className="section-container py-20">
+        <div className="mx-auto max-w-4xl text-center">
+
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f47b20]">
+            About SAC
+          </p>
+
+          <h2 className="mt-3 text-3xl font-black text-[#1746a2] sm:text-4xl">
+            Explore Student Activity Council
+          </h2>
+
+          <p className="mt-6 text-lg leading-8 text-slate-600">
+            The Student Activity Council provides students with opportunities
+            to discover their talents, develop leadership skills, participate
+            in diverse activities and contribute meaningfully to campus life.
+            Through clubs, events, workshops and student-led initiatives, SAC
+            creates a community where every student can learn, express and
+            grow.
+          </p>
+
         </div>
       </section>
 
       {/* CLUBS */}
-      <section className="section-container py-20 sm:py-24">
-        <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+      <section className="section-container py-16">
+
+        <div className="mb-10 flex items-end justify-between gap-4">
+
           <div>
-            <p className="text-sm font-extrabold uppercase tracking-[0.2em] text-[#f47b20]">
-              Explore
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f47b20]">
+              Discover
             </p>
 
-            <h2 className="accent-line mt-3 text-4xl font-black tracking-tight sm:text-5xl">
-              Activity Clubs
+            <h2 className="mt-2 text-3xl font-black text-[#1746a2]">
+              Our Clubs
             </h2>
-
-            <p className="mt-5 max-w-2xl leading-7 text-slate-600">
-              Discover different clubs where students can learn, participate,
-              create and lead.
-            </p>
           </div>
 
           <Link
             href="/clubs"
-            className="hidden font-bold text-[#1746a2] transition hover:text-[#f47b20] md:block"
+            className="hidden font-bold text-[#1746a2] transition hover:text-[#f47b20] sm:block"
           >
-            View All Clubs →
+            View All →
           </Link>
+
         </div>
 
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {clubs.map((club) => (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+          {clubs.slice(0, 6).map((club) => (
             <Link
+              key={club.id}
               href="/clubs"
-              key={club.title}
-              className="college-card group p-7"
+              className="college-card group p-6"
             >
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eaf1ff] text-3xl transition group-hover:scale-105 group-hover:bg-[#1746a2]">
-                {club.icon}
+
+              <div className="mb-5 flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-[#eaf1ff]">
+
+                {club.logo ? (
+                  <img
+                    src={club.logo}
+                    alt={club.name}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-2xl font-black text-[#1746a2]">
+                    {club.name?.charAt(0)}
+                  </span>
+                )}
+
               </div>
 
-              <h3 className="mt-6 text-2xl font-black text-[#172033]">
-                {club.title}
-              </h3>
-
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                {club.description}
+              <p className="text-xs font-bold uppercase tracking-wider text-[#f47b20]">
+                {club.category || "Student Club"}
               </p>
 
-              <div className="mt-6 font-bold text-[#1746a2] transition group-hover:text-[#f47b20]">
-                Explore →
-              </div>
+              <h3 className="mt-2 text-xl font-black text-[#1746a2] transition group-hover:text-[#f47b20]">
+                {club.name}
+              </h3>
+
+              <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">
+                {club.description ||
+                  "Explore activities, opportunities and experiences through this SAC club."}
+              </p>
+
             </Link>
           ))}
+
         </div>
 
-        <Link href="/clubs" className="btn-primary mt-8 md:hidden">
+        <Link
+          href="/clubs"
+          className="mt-8 inline-flex font-bold text-[#1746a2] sm:hidden"
+        >
           View All Clubs →
         </Link>
+
       </section>
 
       {/* EVENTS */}
-      <section className="border-y border-slate-200/70 bg-white">
-        <div className="section-container grid gap-10 py-20 lg:grid-cols-2 lg:items-center">
-          <div>
-            <p className="text-sm font-extrabold uppercase tracking-[0.2em] text-[#f47b20]">
-              Stay Updated
-            </p>
+      <section className="bg-white py-20">
+        <div className="section-container">
 
-            <h2 className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
-              Events & Activities
-            </h2>
+          <div className="mb-10 flex items-end justify-between gap-4">
 
-            <p className="mt-5 max-w-xl leading-7 text-slate-600">
-              Stay informed about upcoming SAC events, workshops, seminars,
-              competitions, cultural programs and club activities happening at
-              GEC Sheohar.
-            </p>
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f47b20]">
+                What&apos;s Happening
+              </p>
 
-            <Link href="/events" className="btn-primary mt-8">
-              Explore Events →
-            </Link>
-          </div>
-
-          <div className="college-card overflow-hidden bg-[#172033] p-8 text-white sm:p-10">
-            <div className="flex items-center gap-5">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#1746a2] text-3xl">
-                📅
-              </div>
-
-              <div>
-                <p className="text-sm font-bold text-[#f47b20]">SAC Events</p>
-
-                <h3 className="mt-1 text-2xl font-black">
-                  Something exciting is coming
-                </h3>
-              </div>
+              <h2 className="mt-2 text-3xl font-black text-[#1746a2]">
+                Upcoming Events
+              </h2>
             </div>
-
-            <p className="mt-6 leading-7 text-slate-300">
-              Upcoming event information will be published here as activities
-              are scheduled.
-            </p>
 
             <Link
               href="/events"
-              className="mt-6 inline-block font-bold text-white transition hover:text-[#f47b20]"
+              className="hidden font-bold text-[#1746a2] transition hover:text-[#f47b20] sm:block"
             >
-              View Events →
+              View All →
             </Link>
+
           </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+
+            {events.map((event) => (
+              <Link
+                key={event.id}
+                href="/events"
+                className="college-card group overflow-hidden"
+              >
+
+                {event.poster_url && (
+                  <div className="image-hover h-52 bg-slate-100">
+                    <img
+                      src={event.poster_url}
+                      alt={event.title}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                )}
+
+                <div className="p-6">
+
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#f47b20]">
+                    {event.event_date
+                      ? new Date(event.event_date).toLocaleDateString(
+                          "en-IN",
+                          {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          }
+                        )
+                      : "Upcoming Event"}
+                  </p>
+
+                  <h3 className="mt-2 text-xl font-black text-[#1746a2] transition group-hover:text-[#f47b20]">
+                    {event.title}
+                  </h3>
+
+                  <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">
+                    {event.description ||
+                      "Join us for an exciting student activity at GEC Sheohar."}
+                  </p>
+
+                  {event.venue && (
+                    <p className="mt-4 text-sm font-semibold text-slate-500">
+                      📍 {event.venue}
+                    </p>
+                  )}
+
+                </div>
+
+              </Link>
+            ))}
+
+            {events.length === 0 && (
+              <div className="col-span-full rounded-2xl border border-dashed border-slate-300 bg-[#f8f6f0] p-12 text-center text-slate-500">
+                No upcoming events at the moment.
+              </div>
+            )}
+
+          </div>
+
+          <Link
+            href="/events"
+            className="mt-8 inline-flex font-bold text-[#1746a2] sm:hidden"
+          >
+            View All Events →
+          </Link>
+
         </div>
       </section>
 
       {/* FEEDBACK */}
-      <section className="section-container py-20 sm:py-24">
-        <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:items-center">
-          <div>
-            <p className="text-sm font-extrabold uppercase tracking-[0.2em] text-[#1746a2]">
+      <section className="section-container py-20">
+
+        <div className="rounded-3xl bg-[#1746a2] p-8 text-white shadow-xl sm:p-12">
+
+          <div className="mx-auto max-w-3xl text-center">
+
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-orange-300">
               Your Voice Matters
             </p>
 
-            <h2 className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
-              Suggestions & Support
+            <h2 className="mt-3 text-3xl font-black sm:text-4xl">
+              Have a suggestion or concern?
             </h2>
 
-            <p className="mt-5 max-w-xl leading-7 text-slate-600">
-              Have an idea to improve SAC activities? Facing an issue or
-              concern? Share your feedback with the Student Activity Council.
+            <p className="mx-auto mt-5 max-w-2xl leading-7 text-blue-100">
+              Share your ideas, suggestions or raise a ticket. Your feedback
+              helps us make student activities better.
             </p>
 
-            <p className="mt-4 max-w-xl leading-7 text-slate-600">
-              Your feedback can help us improve clubs, events, activities and
-              the overall student experience.
-            </p>
-
-            <Link href="/suggestions" className="btn-orange mt-8">
-              Share Your Feedback →
+            <Link
+              href="/suggestions"
+              className="mt-7 inline-flex rounded-full bg-[#f47b20] px-7 py-3.5 font-bold text-white transition hover:bg-[#d96512]"
+            >
+              Suggestions &amp; Support →
             </Link>
+
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div className="college-card p-7">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#fff1e6] text-2xl">
-                💡
-              </div>
-
-              <h3 className="mt-6 text-xl font-black">Give a Suggestion</h3>
-
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                Share ideas for new events, clubs, activities or campus
-                improvements.
-              </p>
-            </div>
-
-            <div className="college-card p-7">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#eaf1ff] text-2xl">
-                ⚠️
-              </div>
-
-              <h3 className="mt-6 text-xl font-black">Report an Issue</h3>
-
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                Report a concern or issue that needs attention from the SAC.
-              </p>
-            </div>
-          </div>
         </div>
+
       </section>
 
       {/* SOCIAL */}
-      <section className="bg-[#1746a2] text-white">
-        <div className="section-container py-20">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="text-sm font-extrabold uppercase tracking-[0.2em] text-orange-200">
-              Connect With Us
-            </p>
+      <section className="bg-[#eaf1ff] py-16">
 
-            <h2 className="mt-4 text-4xl font-black sm:text-5xl">
-              Student Activity Council Online
-            </h2>
+        <div className="section-container text-center">
 
-            <p className="mt-5 leading-7 text-blue-100">
-              Follow Student Activity Council GEC Sheohar on social media for
-              announcements, events, activities, achievements and campus
-              updates.
-            </p>
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f47b20]">
+            Stay Connected
+          </p>
+
+          <h2 className="mt-2 text-3xl font-black text-[#1746a2]">
+            Follow SAC GEC Sheohar
+          </h2>
+
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+
+            <a
+              href="https://www.youtube.com/@SAC-GECSheohar"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-white px-6 py-3 font-bold text-[#1746a2] shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+            >
+              YouTube
+            </a>
+
+            <a
+              href="https://www.facebook.com/share/1BbqbSh9Qw/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-white px-6 py-3 font-bold text-[#1746a2] shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+            >
+              Facebook
+            </a>
+
+            <a
+              href="https://www.instagram.com/sacgecsheohar?stkn=ZjgwM2gwcmJxZXE1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-white px-6 py-3 font-bold text-[#1746a2] shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+            >
+              Instagram
+            </a>
+
           </div>
 
-          <div className="mx-auto mt-10 grid max-w-5xl gap-4 sm:grid-cols-3">
-            {socialLinks.map((social) => (
-              <a
-                key={social.name}
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group rounded-2xl border border-white/15 bg-white/10 p-6 backdrop-blur transition hover:-translate-y-1 hover:bg-white/15"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-xl font-black text-[#1746a2]">
-                    {social.icon}
-                  </div>
-
-                  <div>
-                    <p className="font-black">{social.name}</p>
-
-                    <p className="mt-1 text-xs text-blue-100">
-                      {social.label}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-5 text-sm font-bold text-orange-200 transition group-hover:text-white">
-                  Visit →
-                </div>
-              </a>
-            ))}
-          </div>
         </div>
+
       </section>
 
       {/* LOCATION */}
-      <section className="section-container py-20 sm:py-24">
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-stretch">
-          <div className="college-card p-8 sm:p-10">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#fff1e6] text-2xl">
-              📍
-            </div>
+      <section className="section-container py-20">
 
-            <p className="mt-7 text-sm font-extrabold uppercase tracking-[0.2em] text-[#f47b20]">
-              Location
+        <div className="grid items-center gap-10 lg:grid-cols-2">
+
+          <div>
+
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f47b20]">
+              Visit Us
             </p>
 
-            <h2 className="mt-3 text-3xl font-black sm:text-4xl">
-              Find GEC Sheohar
+            <h2 className="mt-2 text-3xl font-black text-[#1746a2]">
+              Government Engineering College Sheohar
             </h2>
 
             <p className="mt-5 leading-7 text-slate-600">
-              Visit Government Engineering College Sheohar. Open the location
-              directly in Google Maps for directions.
+              Student Activity Council, Government Engineering College
+              Sheohar, Bihar.
             </p>
 
             <a
-              href="https://maps.app.goo.gl/4iggGvkexJGPyvKt9"
+              href="https://maps.google.com/?q=Government+Engineering+College+Sheohar"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary mt-8"
+              className="btn-primary mt-7"
             >
-              Open Google Maps →
+              Open in Google Maps →
             </a>
+
           </div>
 
-          <div className="overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-sm">
+          <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg">
+
             <iframe
               src="https://www.google.com/maps?q=Government%20Engineering%20College%20Sheohar&output=embed"
-              className="h-full min-h-[350px] w-full border-0"
+              width="100%"
+              height="350"
               loading="lazy"
+              className="border-0"
               title="Government Engineering College Sheohar location"
             />
+
           </div>
+
         </div>
+
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="section-container py-14">
-          <div className="grid gap-10 md:grid-cols-3">
-            <div>
-              <Link href="/" className="flex items-center gap-3">
-                <img
-                  src="/sac-logo.jpg"
-                  alt="Student Activity Council GEC Sheohar"
-                  className="h-12 w-12 rounded-full border-2 border-white object-cover shadow-md"
-                />
+      <footer className="bg-[#103575] py-10 text-white">
 
-                <div>
-                  <p className="font-black text-[#1746a2]">
-                    Student Activity Council
-                  </p>
+        <div className="section-container flex flex-col items-center justify-between gap-5 text-center sm:flex-row sm:text-left">
 
-                  <p className="text-sm font-semibold text-slate-500">
-                    GEC Sheohar
-                  </p>
-                </div>
-              </Link>
+          <div>
+            <p className="font-black">
+              Student Activity Council
+            </p>
 
-              <p className="mt-5 max-w-sm text-sm leading-7 text-slate-600">
-                Student Activity Council of Government Engineering College
-                Sheohar — encouraging student participation, creativity,
-                leadership and campus engagement.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-black text-[#172033]">Quick Links</h3>
-
-              <div className="mt-5 flex flex-col gap-3 text-sm font-semibold text-slate-500">
-                <Link href="/" className="transition hover:text-[#1746a2]">
-                  Home
-                </Link>
-
-                <Link
-                  href="/clubs"
-                  className="transition hover:text-[#1746a2]"
-                >
-                  Clubs
-                </Link>
-
-                <Link
-                  href="/members"
-                  className="transition hover:text-[#1746a2]"
-                >
-                  Members
-                </Link>
-
-                <Link
-                  href="/events"
-                  className="transition hover:text-[#1746a2]"
-                >
-                  Events
-                </Link>
-
-                <Link
-                  href="/gallery"
-                  className="transition hover:text-[#1746a2]"
-                >
-                  Gallery
-                </Link>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-black text-[#172033]">Student</h3>
-
-              <div className="mt-5 flex flex-col gap-3 text-sm font-semibold text-slate-500">
-                <Link
-                  href="/suggestions"
-                  className="transition hover:text-[#1746a2]"
-                >
-                  Suggestions & Support
-                </Link>
-
-                <a
-                  href="https://www.youtube.com/@SAC-GECSheohar"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition hover:text-[#1746a2]"
-                >
-                  YouTube
-                </a>
-
-                <a
-                  href="https://www.instagram.com/sacgecsheohar?stkn=ZjgwM2gwcmJxZXE1"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition hover:text-[#1746a2]"
-                >
-                  Instagram
-                </a>
-
-                <a
-                  href="https://www.facebook.com/share/1BbqbSh9Qw/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition hover:text-[#1746a2]"
-                >
-                  Facebook
-                </a>
-              </div>
-            </div>
+            <p className="mt-1 text-sm text-blue-200">
+              Government Engineering College Sheohar
+            </p>
           </div>
 
-          <div className="mt-12 border-t border-slate-200 pt-6 text-center text-sm text-slate-500">
-            © 2026 Government Engineering College Sheohar · Student Activity
-            Council
-          </div>
+          <p className="text-sm text-blue-200">
+            © {new Date().getFullYear()} SAC GEC Sheohar. All rights reserved.
+          </p>
+
         </div>
+
       </footer>
+
     </main>
   );
 }
