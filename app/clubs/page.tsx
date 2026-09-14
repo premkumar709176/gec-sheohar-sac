@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/app/lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 type Club = {
   id: string;
@@ -76,7 +76,6 @@ export default function ClubsPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      {/* NAVBAR SPACER */}
       <div className="h-[76px]" />
 
       {/* HERO */}
@@ -196,7 +195,7 @@ export default function ClubsPage() {
         )}
       </section>
 
-      {/* SIMPLE FOOTER */}
+      {/* FOOTER */}
       <footer className="border-t border-white/10 bg-black/20">
         <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-6 text-center sm:flex-row sm:text-left">
