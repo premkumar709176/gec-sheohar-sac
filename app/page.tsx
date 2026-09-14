@@ -1,3 +1,5 @@
+// app/page.tsx
+
 "use client";
 
 import Link from "next/link";
@@ -21,7 +23,6 @@ export default function Home() {
               <p className="text-sm font-bold leading-tight">
                 Student Activity Club
               </p>
-
               <p className="text-xs text-slate-300">
                 GEC Sheohar
               </p>
@@ -83,7 +84,6 @@ export default function Home() {
         </div>
       </nav>
 
-
       {/* ================= HERO ================= */}
       <section className="relative flex min-h-screen items-center overflow-hidden">
 
@@ -144,7 +144,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
 
       {/* ================= ACTIVITY CLUBS ================= */}
       <section className="bg-slate-50 px-5 py-20 lg:px-8 lg:py-28">
@@ -209,7 +208,6 @@ export default function Home() {
 
         </div>
       </section>
-
 
       {/* ================= EVENTS ================= */}
       <section className="px-5 py-20 lg:px-8 lg:py-28">
@@ -284,8 +282,7 @@ export default function Home() {
         </div>
       </section>
 
-
-      {/* ================= FEEDBACK / SUGGESTIONS ================= */}
+      {/* ================= FEEDBACK ================= */}
       <section className="bg-slate-50 px-5 py-20 lg:px-8 lg:py-24">
 
         <div className="mx-auto max-w-7xl">
@@ -363,88 +360,65 @@ export default function Home() {
               </div>
 
             </div>
-
           </div>
 
         </div>
       </section>
 
-
       {/* ================= SOCIAL MEDIA ================= */}
-      <section className="border-t border-white/10 bg-slate-900 px-5 py-14 text-white">
+      <section className="px-5 py-20 lg:px-8 lg:py-24">
 
-        <div className="mx-auto max-w-6xl text-center">
+        <div className="mx-auto max-w-7xl text-center">
 
-          <span className="text-sm font-bold uppercase tracking-widest text-blue-400">
+          <span className="text-sm font-bold uppercase tracking-widest text-blue-600">
             Connect With Us
           </span>
 
-          <h2 className="mt-3 text-2xl font-black sm:text-3xl">
-            Follow GEC Sheohar
+          <h2 className="mt-3 text-3xl font-black sm:text-4xl">
+            GEC Sheohar on Social Media
           </h2>
 
-          <p className="mx-auto mt-3 max-w-2xl text-slate-400">
-            Stay connected with Government Engineering College Sheohar
-            through our official social media platforms.
+          <p className="mx-auto mt-4 max-w-2xl text-slate-600">
+            Follow Government Engineering College Sheohar for the latest
+            updates, activities, events and announcements.
           </p>
 
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <div className="mt-10 flex flex-wrap justify-center gap-4">
 
-            <a
+            <SocialLink
               href="https://www.facebook.com/share/P96conXp3siyw5HQ/?mibextid=qi2Omg"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-6 py-3 font-semibold transition hover:-translate-y-1 hover:bg-blue-600 hover:shadow-lg"
-            >
-              <span className="text-xl">f</span>
-              Facebook
-            </a>
+              icon="f"
+              name="Facebook"
+            />
 
-            <a
+            <SocialLink
               href="https://www.linkedin.com/in/government-engineering-college-sheohar-8a27262a8?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-6 py-3 font-semibold transition hover:-translate-y-1 hover:bg-blue-600 hover:shadow-lg"
-            >
-              <span className="text-xl">in</span>
-              LinkedIn
-            </a>
+              icon="in"
+              name="LinkedIn"
+            />
 
-            <a
+            <SocialLink
               href="https://x.com/gecsheohar2023"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-6 py-3 font-semibold transition hover:-translate-y-1 hover:bg-black hover:shadow-lg"
-            >
-              <span className="text-xl">𝕏</span>
-              X
-            </a>
+              icon="𝕏"
+              name="X"
+            />
 
-            <a
+            <SocialLink
               href="https://www.instagram.com/gecsheohar2019?igsh=MTBxMmxnbThndjh6bQ=="
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-6 py-3 font-semibold transition hover:-translate-y-1 hover:bg-pink-600 hover:shadow-lg"
-            >
-              <span className="text-xl">◎</span>
-              Instagram
-            </a>
+              icon="◎"
+              name="Instagram"
+            />
 
-            <a
+            <SocialLink
               href="https://youtube.com/@gec_sheohar?si=J7AQVQAJHttqIByy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-6 py-3 font-semibold transition hover:-translate-y-1 hover:bg-red-600 hover:shadow-lg"
-            >
-              <span className="text-xl">▶</span>
-              YouTube
-            </a>
+              icon="▶"
+              name="YouTube"
+            />
 
           </div>
 
         </div>
       </section>
-
 
       {/* ================= FOOTER ================= */}
       <footer className="bg-slate-950 text-white">
@@ -453,24 +427,24 @@ export default function Home() {
 
           <div className="grid gap-10 md:grid-cols-4">
 
-            {/* SAC BRAND */}
+            {/* BRAND */}
             <div className="md:col-span-2">
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
 
                 <img
                   src="/sac-logo.jpg"
                   alt="Student Activity Club GEC Sheohar"
-                  className="h-14 w-14 rounded-full object-cover"
+                  className="h-12 w-12 rounded-full object-cover"
                 />
 
                 <div>
 
-                  <p className="text-lg font-bold">
+                  <p className="font-bold">
                     Student Activity Club
                   </p>
 
-                  <p className="text-sm text-slate-400">
+                  <p className="text-xs text-slate-400">
                     GEC Sheohar
                   </p>
 
@@ -479,13 +453,12 @@ export default function Home() {
               </div>
 
               <p className="mt-5 max-w-md text-sm leading-6 text-slate-400">
-                Student Activity Club of Government Engineering
-                College Sheohar — encouraging student participation,
-                creativity, leadership and campus engagement.
+                Student Activity Club of Government Engineering College
+                Sheohar — encouraging student participation, creativity,
+                leadership and campus engagement.
               </p>
 
             </div>
-
 
             {/* QUICK LINKS */}
             <div>
@@ -515,7 +488,6 @@ export default function Home() {
               </div>
 
             </div>
-
 
             {/* STUDENT LINKS */}
             <div>
@@ -547,7 +519,56 @@ export default function Home() {
 
           </div>
 
+          {/* ================= LOCATION ================= */}
+          <div className="mt-10 border-t border-white/10 pt-10">
 
+            <div className="grid gap-8 lg:grid-cols-2">
+
+              <div>
+
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-400">
+                  Location
+                </p>
+
+                <h3 className="mt-2 text-2xl font-bold">
+                  Government Engineering College Sheohar
+                </h3>
+
+                <p className="mt-3 max-w-xl text-sm leading-6 text-slate-400">
+                  Government Engineering College (GEC), Sheohar, Bihar.
+                </p>
+
+                <a
+                  href="https://maps.app.goo.gl/shAjRXoUpmDRTamAA"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-500"
+                >
+                  📍 Open in Google Maps
+                </a>
+
+              </div>
+
+              <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-xl">
+
+                <iframe
+                  src="https://www.google.com/maps?q=Government%20Engineering%20College%20Sheohar&output=embed"
+                  width="100%"
+                  height="300"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Government Engineering College Sheohar Location"
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* COPYRIGHT */}
           <div className="mt-10 border-t border-slate-800 pt-6 text-center text-xs text-slate-500">
             © {new Date().getFullYear()} Government Engineering College
             Sheohar — Student Activity Club. All rights reserved.
@@ -560,7 +581,6 @@ export default function Home() {
     </main>
   );
 }
-
 
 /* ================= ACTIVITY CARD ================= */
 
@@ -596,5 +616,36 @@ function ActivityCard({
       </div>
 
     </Link>
+  );
+}
+
+/* ================= SOCIAL LINK ================= */
+
+function SocialLink({
+  href,
+  icon,
+  name,
+}: {
+  href: string;
+  icon: string;
+  name: string;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-3.5 font-semibold shadow-sm transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg"
+    >
+
+      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-950 text-sm font-black text-white">
+        {icon}
+      </span>
+
+      <span>
+        {name}
+      </span>
+
+    </a>
   );
 }
