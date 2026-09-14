@@ -57,14 +57,12 @@ export default function Home() {
     <main className="min-h-screen bg-[#f8f6f0] text-[#172033]">
 
       {/* HERO */}
-      <section className="relative min-h-[680px] overflow-hidden pt-[76px]">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: "url('/sac-campus.jpg')",
-          }}
-        />
-
+      <section
+        className="relative min-h-[680px] overflow-hidden bg-cover bg-center bg-no-repeat pt-[76px]"
+        style={{
+          backgroundImage: "url('/sac-campus.jpg')",
+        }}
+      >
         <div className="absolute inset-0 bg-[#071a3d]/65" />
 
         <div className="relative mx-auto flex min-h-[604px] max-w-7xl items-center justify-center px-6 py-24 text-center lg:px-10">
