@@ -1,94 +1,91 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 type EventItem = {
   id: string;
   title: string;
+  category: string | null;
   event_date: string | null;
-  images: unknown;
+  venue: string | null;
+  organizer: string | null;
+  status: string | null;
+  description: string | null;
+  poster: string | null;
   image: string | null;
+  images: string[] | null;
+  conducted_by: string | null;
+  organizing_club: string | null;
+  club_head: string | null;
+  club_coordinator: string | null;
+  collaborating_clubs: string[] | null;
+  collaboration_details: string | null;
+  registration_link: string | null;
+  contact_name: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+  created_at: string;
 };
 
 type GalleryPhoto = {
-  id: string;
   url: string;
-  title: string;
-  date: string | null;
+  event: EventItem;
+  isPoster: boolean;
 };
 
-function getImageUrls(images: unknown, image: string | null): string[] {
-  if (Array.isArray(images)) {
-    return images.filter(
-      (item): item is string =>
-        typeof item === "string" && item.trim().length > 0
-    );
-  }
-
-  if (typeof images === "string" && images.trim()) {
-    try {
-      const parsed = JSON.parse(images);
-
-      if (Array.isArray(parsed)) {
-        return parsed.filter(
-          (item): item is string =>
-            typeof item === "string" && item.trim().length > 0
-        );
-      }
-    } catch {
-      return [images];
-    }
-  }
-
-  if (image && image.trim()) {
-    return [image];
-  }
-
-  return [];
-}
-
 export default function GalleryPage() {
-  const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedPhoto, setSelectedPhoto] =
-    useState<GalleryPhoto | null>(null);
+  const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState("All");
 
-  async function loadGallery() {
+  async function loadEvents() {
+    setLoading(true);
+    setError("");
+
     const { data, error } = await supabase
       .from("events")
-      .select("id,title,event_date,images,image")
-      .order("event_date", { ascending: false });
+      .select(`
+        id,
+        title,
+        category,
+        event_date,
+        venue,
+        organizer,
+        status,
+        description,
+        poster,
+        image,
+        images,
+        conducted_by,
+        organizing_club,
+        club_head,
+        club_coordinator,
+        collaborating_clubs,
+        collaboration_details,
+        registration_link,
+        contact_name,
+        contact_email,
+        contact_phone,
+        created_at
+      `)
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Gallery error:", error);
-      setLoading(false);
-      return;
+      setError(error.message);
+      setEvents([]);
+    } else {
+      setEvents((data || []) as EventItem[]);
     }
 
-    const galleryPhotos: GalleryPhoto[] = [];
-
-    (data as EventItem[] | null)?.forEach((event) => {
-      const urls = getImageUrls(event.images, event.image);
-
-      urls.forEach((url, index) => {
-        galleryPhotos.push({
-          id: `${event.id}-${index}`,
-          url,
-          title: event.title,
-          date: event.event_date,
-        });
-      });
-    });
-
-    setPhotos(galleryPhotos);
-    setCurrentIndex(0);
     setLoading(false);
   }
 
   useEffect(() => {
-    loadGallery();
+    loadEvents();
 
     const channel = supabase
       .channel("gallery-events")
@@ -99,9 +96,7 @@ export default function GalleryPage() {
           schema: "public",
           table: "events",
         },
-        () => {
-          loadGallery();
-        }
+        () => loadEvents()
       )
       .subscribe();
 
@@ -110,146 +105,731 @@ export default function GalleryPage() {
     };
   }, []);
 
-  useEffect(() => {
-    if (photos.length <= 1) return;
+  const categories = useMemo(() => {
+    const unique = new Set<string>();
 
-    const interval = setInterval(() => {
-      setCurrentIndex((index) => (index + 1) % photos.length);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [photos.length]);
-
-  useEffect(() => {
-    if (!selectedPhoto) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setSelectedPhoto(null);
+    events.forEach((event) => {
+      if (event.category?.trim()) {
+        unique.add(event.category.trim());
       }
-    };
+    });
 
-    window.addEventListener("keydown", handleKeyDown);
+    return ["All", ...Array.from(unique)];
+  }, [events]);
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [selectedPhoto]);
+  const filteredEvents = useMemo(() => {
+    if (activeCategory === "All") {
+      return events;
+    }
+
+    return events.filter(
+      (event) => event.category?.trim() === activeCategory
+    );
+  }, [events, activeCategory]);
+
+  const latestPhotos = useMemo<GalleryPhoto[]>(() => {
+    const photos: GalleryPhoto[] = [];
+
+    [...events]
+      .sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() -
+          new Date(a.created_at).getTime()
+      )
+      .forEach((event) => {
+        if (event.poster) {
+          photos.push({
+            url: event.poster,
+            event,
+            isPoster: true,
+          });
+        }
+
+        const eventImages = Array.isArray(event.images)
+          ? event.images
+          : [];
+
+        eventImages.forEach((url) => {
+          if (url && url !== event.poster) {
+            photos.push({
+              url,
+              event,
+              isPoster: false,
+            });
+          }
+        });
+
+        if (
+          event.image &&
+          event.image !== event.poster &&
+          !eventImages.includes(event.image)
+        ) {
+          photos.push({
+            url: event.image,
+            event,
+            isPoster: false,
+          });
+        }
+      });
+
+    return photos.slice(0, 20);
+  }, [events]);
+
+  function getEventPhotos(event: EventItem): GalleryPhoto[] {
+    const photos: GalleryPhoto[] = [];
+
+    if (event.poster) {
+      photos.push({
+        url: event.poster,
+        event,
+        isPoster: true,
+      });
+    }
+
+    const images = Array.isArray(event.images)
+      ? event.images
+      : [];
+
+    images.forEach((url) => {
+      if (url && url !== event.poster) {
+        photos.push({
+          url,
+          event,
+          isPoster: false,
+        });
+      }
+    });
+
+    if (
+      event.image &&
+      event.image !== event.poster &&
+      !images.includes(event.image)
+    ) {
+      photos.push({
+        url: event.image,
+        event,
+        isPoster: false,
+      });
+    }
+
+    return photos;
+  }
 
   function formatDate(date: string | null) {
-    if (!date) return "";
+    if (!date) return "Date not specified";
 
-    return new Date(date).toLocaleDateString("en-IN", {
+    const parsed = new Date(date);
+
+    if (Number.isNaN(parsed.getTime())) {
+      return date;
+    }
+
+    return parsed.toLocaleDateString("en-IN", {
       day: "numeric",
       month: "long",
       year: "numeric",
     });
   }
 
+  function getStatusClass(status: string | null) {
+    const value = status?.toLowerCase();
+
+    if (value === "completed") {
+      return "bg-green-100 text-green-700";
+    }
+
+    if (value === "cancelled") {
+      return "bg-red-100 text-red-700";
+    }
+
+    if (value === "ongoing") {
+      return "bg-orange-100 text-orange-700";
+    }
+
+    return "bg-[#eaf1ff] text-[#1746a2]";
+  }
+
+  function openEvent(event: EventItem, photo?: string) {
+    setSelectedEvent(event);
+    setSelectedPhoto(
+      photo || event.poster || getEventPhotos(event)[0]?.url || null
+    );
+  }
+
+  function closeModal() {
+    setSelectedEvent(null);
+    setSelectedPhoto(null);
+  }
+
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="min-h-screen bg-[#f8f6f0] text-[#172033]">
       <div className="h-[76px]" />
 
-      <section className="mx-auto max-w-7xl px-5 py-8 lg:px-8">
-        {loading ? (
-          <div className="flex min-h-[60vh] items-center justify-center">
-            <p className="text-slate-400">Loading gallery...</p>
+      {/* HERO */}
+      <section className="relative overflow-hidden border-b border-slate-200">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#eaf1ff] via-[#f8f6f0] to-[#fff1e6]" />
+        <div className="college-pattern absolute inset-0 opacity-70" />
+
+        <div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[#1746a2]/10 blur-3xl" />
+        <div className="absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-[#f47b20]/10 blur-3xl" />
+
+        <div className="relative mx-auto max-w-7xl px-5 py-20 text-center lg:px-8">
+          <p className="text-sm font-bold uppercase tracking-[0.25em] text-[#f47b20]">
+            Student Activity Council
+          </p>
+
+          <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl md:text-6xl">
+            SAC <span className="gradient-text">Gallery</span>
+          </h1>
+
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
+            A collection of memories, achievements, celebrations, workshops
+            and activities from GEC Sheohar.
+          </p>
+        </div>
+      </section>
+
+      {/* LATEST PHOTOS */}
+      <section className="overflow-hidden bg-white py-16">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="mb-8 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-widest text-[#1746a2]">
+                From Campus Life
+              </p>
+
+              <h2 className="mt-2 text-3xl font-black sm:text-4xl">
+                Moments That Matter
+              </h2>
+
+              <p className="mt-2 max-w-2xl text-slate-500">
+                A glimpse of the latest memories, achievements and
+                celebrations at GEC Sheohar.
+              </p>
+            </div>
+
+            <div className="rounded-full bg-[#eaf1ff] px-4 py-2 text-sm font-bold text-[#1746a2]">
+              {latestPhotos.length} Photos
+            </div>
           </div>
-        ) : photos.length === 0 ? (
-          <div className="flex min-h-[60vh] items-center justify-center">
-            <p className="text-slate-400">No event photos yet.</p>
+
+          {loading ? (
+            <div className="flex h-64 items-center justify-center rounded-3xl bg-[#f8f6f0]">
+              <div className="text-sm font-semibold text-slate-500">
+                Loading memories...
+              </div>
+            </div>
+          ) : latestPhotos.length === 0 ? (
+            <div className="flex h-64 items-center justify-center rounded-3xl bg-[#f8f6f0] text-slate-500">
+              No photos available yet.
+            </div>
+          ) : (
+            <div className="group relative overflow-hidden rounded-3xl">
+              <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-20 bg-gradient-to-r from-white to-transparent" />
+              <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-20 bg-gradient-to-l from-white to-transparent" />
+
+              <div className="latest-photo-track flex w-max gap-5 py-4 group-hover:[animation-play-state:paused]">
+                {[...latestPhotos, ...latestPhotos].map(
+                  (photo, index) => (
+                    <button
+                      key={`${photo.url}-${index}`}
+                      type="button"
+                      onClick={() => openEvent(photo.event, photo.url)}
+                      className="group/photo relative h-52 w-72 shrink-0 overflow-hidden rounded-2xl bg-slate-200 shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl sm:h-60 sm:w-80"
+                    >
+                      <img
+                        src={photo.url}
+                        alt={photo.event.title}
+                        className="h-full w-full object-cover transition duration-500 group-hover/photo:scale-110"
+                      />
+
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 transition group-hover/photo:opacity-100" />
+
+                      <div className="absolute bottom-0 left-0 right-0 translate-y-3 p-5 text-left opacity-0 transition duration-300 group-hover/photo:translate-y-0 group-hover/photo:opacity-100">
+                        <p className="line-clamp-2 text-sm font-bold text-white">
+                          {photo.event.title}
+                        </p>
+
+                        <p className="mt-1 text-xs text-slate-300">
+                          {photo.event.category || "SAC Event"}
+                        </p>
+                      </div>
+                    </button>
+                  )
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* EXPLORE */}
+      <section className="bg-[#f8f6f0] py-20">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="text-center">
+            <p className="text-sm font-bold uppercase tracking-widest text-[#1746a2]">
+              Explore
+            </p>
+
+            <h2 className="mt-2 text-3xl font-black sm:text-4xl">
+              Explore by Event
+            </h2>
+
+            <p className="mx-auto mt-3 max-w-2xl text-slate-500">
+              Discover complete photo collections from workshops, cultural
+              programmes, competitions and other SAC events.
+            </p>
           </div>
-        ) : (
-          <>
-            {/* SLIDESHOW */}
-            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black">
-              <div className="relative aspect-[16/9] w-full overflow-hidden">
-                {photos.map((photo, index) => (
-                  <button
-                    key={photo.id}
-                    type="button"
-                    onClick={() => setSelectedPhoto(photo)}
-                    className={`absolute inset-0 h-full w-full transform transition-all duration-700 ease-in-out ${
-                      index === currentIndex
-                        ? "translate-x-0 opacity-100"
-                        : index < currentIndex
-                          ? "-translate-x-full opacity-0"
-                          : "translate-x-full opacity-0"
-                    }`}
+
+          {/* CATEGORIES */}
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            {categories.map((category) => (
+              <button
+                key={category}
+                type="button"
+                onClick={() => setActiveCategory(category)}
+                className={`rounded-full px-5 py-2.5 text-sm font-bold transition ${
+                  activeCategory === category
+                    ? "bg-[#1746a2] text-white shadow-lg shadow-blue-200"
+                    : "bg-white text-slate-600 shadow-sm hover:bg-[#eaf1ff] hover:text-[#1746a2]"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+
+          {error && (
+            <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-red-200 bg-red-50 p-5 text-center text-sm text-red-700">
+              {error}
+            </div>
+          )}
+
+          {loading ? (
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {[1, 2, 3].map((item) => (
+                <div
+                  key={item}
+                  className="h-96 animate-pulse rounded-3xl bg-white"
+                />
+              ))}
+            </div>
+          ) : filteredEvents.length === 0 ? (
+            <div className="mt-12 rounded-3xl bg-white px-6 py-20 text-center shadow-sm">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eaf1ff] text-3xl">
+                📸
+              </div>
+
+              <p className="mt-5 text-lg font-bold">
+                No event photos available.
+              </p>
+
+              <p className="mt-2 text-sm text-slate-500">
+                Photos uploaded through the Events section will automatically
+                appear here.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredEvents.map((event) => {
+                const photos = getEventPhotos(event);
+                const cover = event.poster || photos[0]?.url;
+
+                return (
+                  <article
+                    key={event.id}
+                    className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
                   >
-                    <img
-                      src={photo.url}
-                      alt={photo.title}
-                      className="h-full w-full object-cover"
-                    />
+                    <button
+                      type="button"
+                      onClick={() => openEvent(event, cover)}
+                      className="relative block h-72 w-full overflow-hidden bg-slate-200 text-left"
+                    >
+                      {cover ? (
+                        <img
+                          src={cover}
+                          alt={event.title}
+                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-slate-400">
+                          No event image
+                        </div>
+                      )}
 
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-6 pb-6 pt-20 text-left">
-                      <h2 className="text-xl font-bold sm:text-2xl">
-                        {photo.title}
-                      </h2>
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 pt-20">
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-[#1746a2]">
+                            {event.category || "SAC Event"}
+                          </span>
 
-                      {photo.date && (
-                        <p className="mt-1 text-sm text-slate-300">
-                          {formatDate(photo.date)}
+                          <span className="rounded-full bg-black/50 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
+                            {photos.length}{" "}
+                            {photos.length === 1 ? "Photo" : "Photos"}
+                          </span>
+                        </div>
+                      </div>
+                    </button>
+
+                    <div className="p-6">
+                      <div className="flex items-start justify-between gap-4">
+                        <h3 className="text-xl font-black leading-tight">
+                          {event.title}
+                        </h3>
+
+                        {event.status && (
+                          <span
+                            className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold capitalize ${getStatusClass(
+                              event.status
+                            )}`}
+                          >
+                            {event.status}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="mt-4 space-y-2 text-sm text-slate-500">
+                        {event.event_date && (
+                          <p>
+                            <span className="font-semibold text-slate-700">
+                              Date:
+                            </span>{" "}
+                            {formatDate(event.event_date)}
+                          </p>
+                        )}
+
+                        {event.venue && (
+                          <p>
+                            <span className="font-semibold text-slate-700">
+                              Venue:
+                            </span>{" "}
+                            {event.venue}
+                          </p>
+                        )}
+
+                        {event.conducted_by && (
+                          <p>
+                            <span className="font-semibold text-slate-700">
+                              Conducted by:
+                            </span>{" "}
+                            {event.conducted_by}
+                          </p>
+                        )}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => openEvent(event, cover)}
+                        className="mt-6 w-full rounded-xl bg-[#1746a2] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#103575]"
+                      >
+                        View Event Gallery
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* MODAL */}
+      {selectedEvent && (
+        <div
+          className="fixed inset-0 z-[100] overflow-y-auto bg-[#172033]/80 p-4 backdrop-blur-sm"
+          onClick={closeModal}
+        >
+          <div className="flex min-h-full items-center justify-center py-8">
+            <div
+              className="w-full max-w-6xl overflow-hidden rounded-3xl bg-white shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 sm:px-7">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#f47b20]">
+                    {selectedEvent.category || "SAC Event"}
+                  </p>
+
+                  <h2 className="mt-1 text-xl font-black sm:text-2xl">
+                    {selectedEvent.title}
+                  </h2>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-[#eaf1ff] text-xl font-bold text-[#1746a2] transition hover:bg-[#1746a2] hover:text-white"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="max-h-[80vh] overflow-y-auto p-5 sm:p-7">
+                {selectedPhoto && (
+                  <div className="relative mb-8 overflow-hidden rounded-2xl bg-[#f8f6f0]">
+                    <div className="flex h-[280px] items-center justify-center sm:h-[480px]">
+                      <img
+                        src={selectedPhoto}
+                        alt={selectedEvent.title}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+
+                    {getEventPhotos(selectedEvent).length > 1 && (
+                      <div className="absolute bottom-4 right-4 rounded-full bg-[#172033]/70 px-4 py-2 text-xs font-semibold text-white backdrop-blur">
+                        Select another photo below
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="grid gap-8 lg:grid-cols-[1fr_2fr]">
+                  <div>
+                    <h3 className="text-lg font-black text-[#1746a2]">
+                      Event Details
+                    </h3>
+
+                    <div className="mt-4 space-y-3 text-sm text-slate-600">
+                      {selectedEvent.event_date && (
+                        <p>
+                          <span className="font-bold text-slate-900">
+                            Date:
+                          </span>{" "}
+                          {formatDate(selectedEvent.event_date)}
+                        </p>
+                      )}
+
+                      {selectedEvent.venue && (
+                        <p>
+                          <span className="font-bold text-slate-900">
+                            Venue:
+                          </span>{" "}
+                          {selectedEvent.venue}
+                        </p>
+                      )}
+
+                      {selectedEvent.organizer && (
+                        <p>
+                          <span className="font-bold text-slate-900">
+                            Organizer:
+                          </span>{" "}
+                          {selectedEvent.organizer}
+                        </p>
+                      )}
+
+                      {selectedEvent.conducted_by && (
+                        <p>
+                          <span className="font-bold text-slate-900">
+                            Conducted by:
+                          </span>{" "}
+                          {selectedEvent.conducted_by}
+                        </p>
+                      )}
+
+                      {selectedEvent.organizing_club && (
+                        <p>
+                          <span className="font-bold text-slate-900">
+                            Organizing Club:
+                          </span>{" "}
+                          {selectedEvent.organizing_club}
+                        </p>
+                      )}
+
+                      {selectedEvent.club_head && (
+                        <p>
+                          <span className="font-bold text-slate-900">
+                            Club Head:
+                          </span>{" "}
+                          {selectedEvent.club_head}
+                        </p>
+                      )}
+
+                      {selectedEvent.club_coordinator && (
+                        <p>
+                          <span className="font-bold text-slate-900">
+                            Club Coordinator:
+                          </span>{" "}
+                          {selectedEvent.club_coordinator}
+                        </p>
+                      )}
+
+                      {selectedEvent.status && (
+                        <p>
+                          <span className="font-bold text-slate-900">
+                            Status:
+                          </span>{" "}
+                          <span className="capitalize">
+                            {selectedEvent.status}
+                          </span>
                         </p>
                       )}
                     </div>
-                  </button>
-                ))}
-              </div>
 
-              <div className="absolute bottom-4 right-5 z-20 rounded-full bg-black/60 px-3 py-1 text-xs backdrop-blur">
-                {currentIndex + 1} / {photos.length}
+                    {selectedEvent.collaborating_clubs &&
+                      selectedEvent.collaborating_clubs.length > 0 && (
+                        <div className="mt-6">
+                          <h4 className="font-bold text-[#1746a2]">
+                            Collaborating Clubs
+                          </h4>
+
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {selectedEvent.collaborating_clubs.map(
+                              (club) => (
+                                <span
+                                  key={club}
+                                  className="rounded-full bg-[#eaf1ff] px-3 py-1.5 text-xs font-semibold text-[#1746a2]"
+                                >
+                                  {club}
+                                </span>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                    {selectedEvent.collaboration_details && (
+                      <div className="mt-6">
+                        <h4 className="font-bold text-[#1746a2]">
+                          Collaboration Details
+                        </h4>
+
+                        <p className="mt-2 text-sm leading-6 text-slate-600">
+                          {selectedEvent.collaboration_details}
+                        </p>
+                      </div>
+                    )}
+
+                    {selectedEvent.registration_link && (
+                      <a
+                        href={selectedEvent.registration_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-7 inline-flex rounded-xl bg-[#f47b20] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#d96512]"
+                      >
+                        Register for Event
+                      </a>
+                    )}
+                  </div>
+
+                  <div>
+                    {selectedEvent.description && (
+                      <div>
+                        <h3 className="text-lg font-black text-[#1746a2]">
+                          About the Event
+                        </h3>
+
+                        <p className="mt-3 whitespace-pre-line text-sm leading-7 text-slate-600">
+                          {selectedEvent.description}
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="mt-8">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-black">
+                          Event Photos
+                        </h3>
+
+                        <span className="text-sm text-slate-500">
+                          {getEventPhotos(selectedEvent).length} photos
+                        </span>
+                      </div>
+
+                      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        {getEventPhotos(selectedEvent).map(
+                          (photo, index) => (
+                            <button
+                              key={`${photo.url}-${index}`}
+                              type="button"
+                              onClick={() =>
+                                setSelectedPhoto(photo.url)
+                              }
+                              className={`relative aspect-square overflow-hidden rounded-xl bg-[#f8f6f0] ${
+                                selectedPhoto === photo.url
+                                  ? "ring-4 ring-[#f47b20]"
+                                  : ""
+                              }`}
+                            >
+                              <img
+                                src={photo.url}
+                                alt={`${selectedEvent.title} ${
+                                  index + 1
+                                }`}
+                                className="h-full w-full object-cover transition duration-300 hover:scale-105"
+                              />
+
+                              {photo.isPoster && (
+                                <span className="absolute left-2 top-2 rounded-full bg-[#1746a2] px-2 py-1 text-[10px] font-bold text-white">
+                                  POSTER
+                                </span>
+                              )}
+                            </button>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-
-            {/* PHOTO GRID */}
-            <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-              {photos.map((photo) => (
-                <button
-                  key={`grid-${photo.id}`}
-                  type="button"
-                  onClick={() => setSelectedPhoto(photo)}
-                  className="group relative overflow-hidden rounded-xl border border-white/10 bg-slate-900"
-                >
-                  <img
-                    src={photo.url}
-                    alt={photo.title}
-                    className="aspect-square w-full object-cover transition duration-300 group-hover:scale-105"
-                  />
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-      </section>
-
-      {/* FULLSCREEN PHOTO */}
-      {selectedPhoto && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4"
-          onClick={() => setSelectedPhoto(null)}
-        >
-          <button
-            type="button"
-            onClick={() => setSelectedPhoto(null)}
-            className="absolute right-5 top-5 z-20 rounded-full bg-white/10 px-4 py-2 text-3xl text-white hover:bg-white/20"
-          >
-            ×
-          </button>
-
-          <img
-            src={selectedPhoto.url}
-            alt={selectedPhoto.title}
-            className="max-h-[90vh] max-w-full rounded-xl object-contain"
-            onClick={(event) => event.stopPropagation()}
-          />
+          </div>
         </div>
       )}
 
-      <footer className="mt-12 border-t border-white/10 bg-slate-950 px-5 py-8 text-center text-sm text-slate-500">
-        Government Engineering College Sheohar — Student Activity Council
+      {/* FOOTER */}
+      <footer className="border-t border-slate-200 bg-white px-5 py-10">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 sm:flex-row lg:px-8">
+          <div className="flex items-center gap-3">
+            <img
+              src="/sac-logo.jpg"
+              alt="SAC Logo"
+              className="h-11 w-11 rounded-full border border-slate-200 object-cover"
+            />
+
+            <div>
+              <p className="font-black text-[#1746a2]">
+                Student Activity Council
+              </p>
+              <p className="text-sm text-slate-500">
+                GEC Sheohar
+              </p>
+            </div>
+          </div>
+
+          <p className="text-sm text-slate-500">
+            © {new Date().getFullYear()} Government Engineering College
+            Sheohar — SAC
+          </p>
+        </div>
       </footer>
+
+      <style jsx global>{`
+        @keyframes latestPhotoMarquee {
+          from {
+            transform: translateX(0);
+          }
+
+          to {
+            transform: translateX(-50%);
+          }
+        }
+
+        .latest-photo-track {
+          animation: latestPhotoMarquee 45s linear infinite;
+        }
+
+        @media (max-width: 640px) {
+          .latest-photo-track {
+            animation-duration: 35s;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .latest-photo-track {
+            animation: none;
+          }
+        }
+      `}</style>
     </main>
   );
 }
