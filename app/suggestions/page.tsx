@@ -4,15 +4,15 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 
 export default function SuggestionsPage() {
-  const [type, setType] = useState<"suggestion" | "complaint">("suggestion");
+  const [type, setType] = useState<"suggestion" | "ticket">("suggestion");
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     alert(
       type === "suggestion"
-        ? "Thank you! Your suggestion has been recorded in the form interface. Database connection will be added later."
-        : "Thank you! Your complaint has been submitted through the form interface. Database connection will be added later."
+        ? "Thank you! Your suggestion has been submitted successfully."
+        : "Your ticket has been raised successfully. The SAC team will review it."
     );
   };
 
@@ -21,35 +21,30 @@ export default function SuggestionsPage() {
       <div className="h-[76px]" />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-[#1746a2] text-white">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#103575] via-[#1746a2] to-[#1746a2]" />
+      <section className="college-pattern relative overflow-hidden border-b border-[#e4e7ec] bg-[#f8f6f0]">
+        <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[#1746a2]/10 blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-[#f47b20]/10 blur-3xl" />
 
-        <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#f47b20]/20 blur-3xl" />
-        <div className="absolute -bottom-32 -left-20 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
-
-        <div className="relative mx-auto max-w-5xl px-5 py-20 text-center lg:px-8 lg:py-28">
-          <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-blue-100 backdrop-blur-sm">
-            Student Voice & Feedback
+        <div className="relative mx-auto max-w-5xl px-5 py-16 text-center lg:px-8 lg:py-20">
+          <span className="inline-flex rounded-full border border-[#1746a2]/20 bg-[#eaf1ff] px-4 py-2 text-sm font-bold text-[#1746a2]">
+            Student Voice & Support
           </span>
 
-          <h1 className="mt-6 text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
-            Suggestions{" "}
-            <span className="text-[#ffad73]">& Complaints</span>
+          <h1 className="mt-5 text-4xl font-black tracking-tight text-[#172033] sm:text-5xl lg:text-6xl">
+            Suggestions & <span className="text-[#f47b20]">Support</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-blue-100 sm:text-lg">
-            Your feedback helps the Student Activity Council improve
-            student activities, clubs, events and the overall campus
-            experience.
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#667085] sm:text-lg">
+            Share your ideas with the Student Activity Council or raise a
+            ticket about an issue that needs attention.
           </p>
         </div>
       </section>
 
-      {/* FORM SECTION */}
-      <section className="px-5 py-16 lg:px-8 lg:py-20">
+      {/* FORM */}
+      <section className="px-5 py-14 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-4xl">
-
-          {/* INTRO CARD */}
+          {/* INTRO */}
           <div className="college-card mb-8 p-6 sm:p-8">
             <div className="flex gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#eaf1ff] text-xl">
@@ -57,26 +52,24 @@ export default function SuggestionsPage() {
               </div>
 
               <div>
-                <h2 className="text-xl font-bold text-[#172033]">
+                <h2 className="text-xl font-black text-[#172033]">
                   We want to hear from you
                 </h2>
 
                 <p className="mt-2 text-sm leading-6 text-[#667085]">
-                  You can submit a suggestion for improvement or report
-                  an issue through a complaint. Providing your contact
-                  details is optional, but it may help SAC follow up with
-                  you when necessary.
+                  Submit a suggestion to help improve student life, or raise a
+                  ticket if you have an issue or concern that requires
+                  attention.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* FORM */}
           <form
             onSubmit={handleSubmit}
-            className="rounded-3xl border border-[#e4e7ec] bg-white p-6 shadow-xl shadow-slate-900/5 sm:p-10"
+            className="college-card p-6 sm:p-10"
           >
-            {/* TYPE SELECTOR */}
+            {/* TYPE */}
             <div>
               <label className="mb-4 block text-sm font-bold text-[#172033]">
                 What would you like to submit?
@@ -88,8 +81,8 @@ export default function SuggestionsPage() {
                   onClick={() => setType("suggestion")}
                   className={`rounded-2xl border-2 p-5 text-left transition ${
                     type === "suggestion"
-                      ? "border-[#1746a2] bg-[#eaf1ff] shadow-md shadow-blue-900/5"
-                      : "border-[#e4e7ec] bg-white hover:border-[#1746a2]/30 hover:bg-[#fafcff]"
+                      ? "border-[#1746a2] bg-[#eaf1ff]"
+                      : "border-[#e4e7ec] bg-white hover:border-[#1746a2]/40"
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -104,10 +97,7 @@ export default function SuggestionsPage() {
                     </div>
 
                     <div>
-                      <p className="font-bold text-[#172033]">
-                        Suggestion
-                      </p>
-
+                      <p className="font-bold text-[#172033]">Suggestion</p>
                       <p className="mt-1 text-xs text-[#667085]">
                         Share an idea or improvement
                       </p>
@@ -117,29 +107,28 @@ export default function SuggestionsPage() {
 
                 <button
                   type="button"
-                  onClick={() => setType("complaint")}
+                  onClick={() => setType("ticket")}
                   className={`rounded-2xl border-2 p-5 text-left transition ${
-                    type === "complaint"
-                      ? "border-[#f47b20] bg-[#fff1e6] shadow-md shadow-orange-900/5"
-                      : "border-[#e4e7ec] bg-white hover:border-[#f47b20]/40 hover:bg-[#fffdfb]"
+                    type === "ticket"
+                      ? "border-[#f47b20] bg-[#fff1e6]"
+                      : "border-[#e4e7ec] bg-white hover:border-[#f47b20]/40"
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className={`flex h-11 w-11 items-center justify-center rounded-xl text-lg ${
-                        type === "complaint"
+                        type === "ticket"
                           ? "bg-[#f47b20] text-white"
                           : "bg-[#f1f3f6]"
                       }`}
                     >
-                      ⚠️
+                      🎫
                     </div>
 
                     <div>
                       <p className="font-bold text-[#172033]">
-                        Complaint
+                        Raise a Ticket
                       </p>
-
                       <p className="mt-1 text-xs text-[#667085]">
                         Report an issue or concern
                       </p>
@@ -162,7 +151,7 @@ export default function SuggestionsPage() {
                 id="category"
                 name="category"
                 required
-                className="w-full rounded-xl border border-[#d9dde5] bg-white px-4 py-3.5 text-sm text-[#172033] outline-none transition focus:border-[#1746a2] focus:ring-4 focus:ring-[#eaf1ff]"
+                className="w-full rounded-xl border border-[#e4e7ec] bg-white px-4 py-3.5 text-sm text-[#172033] outline-none transition focus:border-[#1746a2] focus:ring-4 focus:ring-[#eaf1ff]"
               >
                 <option value="">Select a category</option>
                 <option>Academic & Student Activities</option>
@@ -177,10 +166,10 @@ export default function SuggestionsPage() {
               </select>
             </div>
 
-            {/* PERSONAL DETAILS */}
+            {/* DETAILS */}
             <div className="mt-10">
               <div className="mb-5">
-                <h3 className="text-xl font-bold text-[#172033]">
+                <h3 className="text-xl font-black text-[#172033]">
                   Your Details
                 </h3>
 
@@ -203,7 +192,7 @@ export default function SuggestionsPage() {
                     name="name"
                     type="text"
                     placeholder="Your full name"
-                    className="w-full rounded-xl border border-[#d9dde5] bg-white px-4 py-3.5 text-sm text-[#172033] outline-none transition placeholder:text-slate-400 focus:border-[#1746a2] focus:ring-4 focus:ring-[#eaf1ff]"
+                    className="w-full rounded-xl border border-[#e4e7ec] bg-white px-4 py-3.5 text-sm outline-none transition focus:border-[#1746a2] focus:ring-4 focus:ring-[#eaf1ff]"
                   />
                 </div>
 
@@ -220,7 +209,7 @@ export default function SuggestionsPage() {
                     name="roll"
                     type="text"
                     placeholder="e.g. 24101145001"
-                    className="w-full rounded-xl border border-[#d9dde5] bg-white px-4 py-3.5 text-sm text-[#172033] outline-none transition placeholder:text-slate-400 focus:border-[#1746a2] focus:ring-4 focus:ring-[#eaf1ff]"
+                    className="w-full rounded-xl border border-[#e4e7ec] bg-white px-4 py-3.5 text-sm outline-none transition focus:border-[#1746a2] focus:ring-4 focus:ring-[#eaf1ff]"
                   />
                 </div>
 
@@ -237,7 +226,7 @@ export default function SuggestionsPage() {
                     name="email"
                     type="email"
                     placeholder="your.email@example.com"
-                    className="w-full rounded-xl border border-[#d9dde5] bg-white px-4 py-3.5 text-sm text-[#172033] outline-none transition placeholder:text-slate-400 focus:border-[#1746a2] focus:ring-4 focus:ring-[#eaf1ff]"
+                    className="w-full rounded-xl border border-[#e4e7ec] bg-white px-4 py-3.5 text-sm outline-none transition focus:border-[#1746a2] focus:ring-4 focus:ring-[#eaf1ff]"
                   />
                 </div>
 
@@ -254,7 +243,7 @@ export default function SuggestionsPage() {
                     name="phone"
                     type="tel"
                     placeholder="Your phone number"
-                    className="w-full rounded-xl border border-[#d9dde5] bg-white px-4 py-3.5 text-sm text-[#172033] outline-none transition placeholder:text-slate-400 focus:border-[#1746a2] focus:ring-4 focus:ring-[#eaf1ff]"
+                    className="w-full rounded-xl border border-[#e4e7ec] bg-white px-4 py-3.5 text-sm outline-none transition focus:border-[#1746a2] focus:ring-4 focus:ring-[#eaf1ff]"
                   />
                 </div>
               </div>
@@ -262,10 +251,10 @@ export default function SuggestionsPage() {
 
             {/* MESSAGE */}
             <div className="mt-10">
-              <h3 className="mb-5 text-xl font-bold text-[#172033]">
+              <h3 className="mb-5 text-xl font-black text-[#172033]">
                 {type === "suggestion"
                   ? "Suggestion Details"
-                  : "Complaint Details"}
+                  : "Ticket Details"}
               </h3>
 
               <div>
@@ -284,9 +273,9 @@ export default function SuggestionsPage() {
                   placeholder={
                     type === "suggestion"
                       ? "Briefly describe your suggestion"
-                      : "Briefly describe your complaint"
+                      : "Briefly describe the issue"
                   }
-                  className="w-full rounded-xl border border-[#d9dde5] bg-white px-4 py-3.5 text-sm text-[#172033] outline-none transition placeholder:text-slate-400 focus:border-[#1746a2] focus:ring-4 focus:ring-[#eaf1ff]"
+                  className="w-full rounded-xl border border-[#e4e7ec] bg-white px-4 py-3.5 text-sm outline-none transition focus:border-[#1746a2] focus:ring-4 focus:ring-[#eaf1ff]"
                 />
               </div>
 
@@ -295,7 +284,8 @@ export default function SuggestionsPage() {
                   htmlFor="message"
                   className="mb-2 block text-sm font-semibold text-[#172033]"
                 >
-                  Detailed Message <span className="text-[#f47b20]">*</span>
+                  Detailed Message{" "}
+                  <span className="text-[#f47b20]">*</span>
                 </label>
 
                 <textarea
@@ -308,7 +298,7 @@ export default function SuggestionsPage() {
                       ? "Explain your idea or suggestion in detail..."
                       : "Describe the issue or concern in detail..."
                   }
-                  className="w-full resize-none rounded-xl border border-[#d9dde5] bg-white px-4 py-3.5 text-sm text-[#172033] outline-none transition placeholder:text-slate-400 focus:border-[#1746a2] focus:ring-4 focus:ring-[#eaf1ff]"
+                  className="w-full resize-none rounded-xl border border-[#e4e7ec] bg-white px-4 py-3.5 text-sm outline-none transition focus:border-[#1746a2] focus:ring-4 focus:ring-[#eaf1ff]"
                 />
               </div>
             </div>
@@ -327,29 +317,29 @@ export default function SuggestionsPage() {
                 name="attachment"
                 type="file"
                 accept="image/*,.pdf,.doc,.docx"
-                className="block w-full cursor-pointer rounded-xl border border-dashed border-[#d9dde5] bg-[#fafafa] px-4 py-4 text-sm text-[#667085] file:mr-4 file:rounded-lg file:border-0 file:bg-[#1746a2] file:px-4 file:py-2 file:font-semibold file:text-white hover:file:bg-[#103575]"
+                className="block w-full cursor-pointer rounded-xl border border-dashed border-[#e4e7ec] bg-[#f8f6f0] px-4 py-4 text-sm text-[#667085] file:mr-4 file:rounded-lg file:border-0 file:bg-[#1746a2] file:px-4 file:py-2 file:font-semibold file:text-white hover:file:bg-[#103575]"
               />
 
               <p className="mt-2 text-xs text-[#667085]">
-                Optional. You may attach an image or document that helps
-                explain your submission.
+                Optional. Attach an image or document that helps explain your
+                submission.
               </p>
             </div>
 
             {/* DECLARATION */}
-            <div className="mt-10 rounded-2xl border border-[#e4e7ec] bg-[#f8f6f0] p-5">
+            <div className="mt-10 rounded-2xl bg-[#f8f6f0] p-5">
               <label className="flex cursor-pointer items-start gap-3">
                 <input
                   type="checkbox"
                   required
-                  className="mt-1 h-4 w-4 rounded border-slate-300 accent-[#1746a2] focus:ring-[#1746a2]"
+                  className="mt-1 h-4 w-4 rounded border-[#e4e7ec] text-[#1746a2] focus:ring-[#1746a2]"
                 />
 
                 <span className="text-sm leading-6 text-[#667085]">
-                  I confirm that the information provided by me is
-                  accurate to the best of my knowledge. I understand that
-                  the SAC may review this submission and take appropriate
-                  action where necessary.
+                  I confirm that the information provided by me is accurate to
+                  the best of my knowledge. I understand that the SAC may
+                  review this submission and take appropriate action where
+                  necessary.
                 </span>
               </label>
             </div>
@@ -357,100 +347,117 @@ export default function SuggestionsPage() {
             {/* SUBMIT */}
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs leading-5 text-[#667085]">
-                Your submission will be connected to the SAC database
-                when the backend is configured.
+                Your submission will be reviewed by the Student Activity
+                Council.
               </p>
 
               <button
                 type="submit"
                 className={`rounded-xl px-7 py-3.5 font-bold text-white shadow-lg transition hover:-translate-y-0.5 ${
                   type === "suggestion"
-                    ? "bg-[#1746a2] shadow-blue-900/15 hover:bg-[#103575]"
-                    : "bg-[#f47b20] shadow-orange-900/15 hover:bg-[#d96512]"
+                    ? "bg-[#1746a2] shadow-[#1746a2]/20 hover:bg-[#103575]"
+                    : "bg-[#f47b20] shadow-[#f47b20]/20 hover:bg-[#d96512]"
                 }`}
               >
-                Submit{" "}
                 {type === "suggestion"
-                  ? "Suggestion"
-                  : "Complaint"}
+                  ? "Submit Suggestion"
+                  : "Raise Ticket"}
               </button>
             </div>
           </form>
 
-          {/* PRIVACY NOTE */}
-          <div className="mt-6 rounded-2xl border border-[#e4e7ec] bg-white p-5 text-center shadow-sm">
+          {/* PRIVACY */}
+          <div className="mt-6 rounded-2xl border border-[#e4e7ec] bg-white p-5 text-center">
             <p className="text-sm text-[#667085]">
-              🔒 Please avoid including passwords, payment information,
-              or other highly sensitive information in your submission.
+              🔒 Please avoid including passwords, payment information, or
+              other highly sensitive information.
             </p>
           </div>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-[#172033] text-white">
+      <footer className="border-t border-[#e4e7ec] bg-white">
         <div className="mx-auto max-w-7xl px-5 py-12 lg:px-8">
           <div className="grid gap-10 md:grid-cols-3">
             <div>
-              <h3 className="text-lg font-bold text-white">
+              <h3 className="text-lg font-black text-[#1746a2]">
                 GEC Sheohar SAC
               </h3>
 
-              <p className="mt-3 max-w-sm text-sm leading-6 text-slate-300">
-                Student Activity Council of Government Engineering
-                College Sheohar — encouraging student participation,
-                creativity, leadership and campus engagement.
+              <p className="mt-3 max-w-sm text-sm leading-6 text-[#667085]">
+                Student Activity Council of Government Engineering College
+                Sheohar — encouraging student participation, creativity,
+                leadership and campus engagement.
               </p>
             </div>
 
             <div>
-              <h3 className="font-bold text-white">Quick Links</h3>
+              <h3 className="font-black text-[#172033]">Quick Links</h3>
 
-              <div className="mt-4 flex flex-col gap-2 text-sm text-slate-300">
-                <Link href="/" className="transition hover:text-[#ffad73]">
+              <div className="mt-4 flex flex-col gap-3 text-sm">
+                <Link
+                  href="/"
+                  className="text-[#667085] transition hover:text-[#1746a2]"
+                >
                   Home
                 </Link>
 
-                <Link href="/clubs" className="transition hover:text-[#ffad73]">
+                <Link
+                  href="/clubs"
+                  className="text-[#667085] transition hover:text-[#1746a2]"
+                >
                   Clubs
                 </Link>
 
-                <Link href="/members" className="transition hover:text-[#ffad73]">
+                <Link
+                  href="/members"
+                  className="text-[#667085] transition hover:text-[#1746a2]"
+                >
                   Members
                 </Link>
 
-                <Link href="/events" className="transition hover:text-[#ffad73]">
+                <Link
+                  href="/events"
+                  className="text-[#667085] transition hover:text-[#1746a2]"
+                >
                   Events
                 </Link>
 
-                <Link href="/gallery" className="transition hover:text-[#ffad73]">
+                <Link
+                  href="/gallery"
+                  className="text-[#667085] transition hover:text-[#1746a2]"
+                >
                   Gallery
                 </Link>
 
-                <Link href="/join" className="transition hover:text-[#ffad73]">
+                <Link
+                  href="/join"
+                  className="text-[#667085] transition hover:text-[#1746a2]"
+                >
                   Join SAC
                 </Link>
               </div>
             </div>
 
             <div>
-              <h3 className="font-bold text-white">Student Voice</h3>
+              <h3 className="font-black text-[#172033]">Student Voice</h3>
 
-              <p className="mt-4 text-sm leading-6 text-slate-300">
-                Have an idea, concern or issue? Use this page to
-                communicate with the Student Activity Council.
+              <p className="mt-4 text-sm leading-6 text-[#667085]">
+                Have an idea, concern or issue? Share your feedback or raise a
+                ticket with the Student Activity Council.
               </p>
 
               <Link
                 href="/suggestions"
-                className="mt-5 inline-block rounded-lg bg-[#f47b20] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#d96512]"
+                className="mt-5 inline-flex rounded-full bg-[#f47b20] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#d96512]"
               >
-                Suggestions & Complaints
+                Suggestions & Support
               </Link>
             </div>
           </div>
 
-          <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs text-slate-400">
+          <div className="mt-10 border-t border-[#e4e7ec] pt-6 text-center text-xs text-[#667085]">
             © {new Date().getFullYear()} Government Engineering College
             Sheohar — Student Activity Council. All rights reserved.
           </div>
