@@ -13,14 +13,15 @@ export default function Home() {
           <Link href="/" className="flex items-center gap-3">
             <img
               src="/sac-logo.jpg"
-              alt="Student Activity Council GEC Sheohar"
+              alt="Student Activity Club GEC Sheohar"
               className="h-12 w-12 rounded-full object-cover"
             />
 
             <div>
               <p className="text-sm font-bold leading-tight">
-                Student Activity Council
+                Student Activity Club
               </p>
+
               <p className="text-xs text-slate-300">
                 GEC Sheohar
               </p>
@@ -251,6 +252,7 @@ export default function Home() {
                 </div>
 
                 <div>
+
                   <p className="text-sm text-blue-300">
                     SAC Events
                   </p>
@@ -258,6 +260,7 @@ export default function Home() {
                   <h3 className="text-xl font-bold">
                     Something exciting is coming
                   </h3>
+
                 </div>
 
               </div>
@@ -367,35 +370,6 @@ export default function Home() {
       </section>
 
 
-      {/* ================= JOIN SAC ================= */}
-      <section className="bg-blue-700 px-5 py-20 text-white lg:px-8 lg:py-24">
-
-        <div className="mx-auto max-w-5xl text-center">
-
-          <span className="text-sm font-bold uppercase tracking-widest text-blue-200">
-            Get Involved
-          </span>
-
-          <h2 className="mt-4 text-3xl font-black sm:text-4xl">
-            Be a part of SAC
-          </h2>
-
-          <p className="mx-auto mt-5 max-w-2xl leading-7 text-blue-100">
-            Join a club, participate in activities, develop new skills
-            and make your college experience more meaningful.
-          </p>
-
-          <Link
-            href="/join"
-            className="mt-8 inline-flex rounded-xl bg-white px-8 py-4 font-bold text-blue-800 transition hover:bg-blue-50"
-          >
-            Join Student Activity Council →
-          </Link>
-
-        </div>
-      </section>
-
-
       {/* ================= SOCIAL MEDIA ================= */}
       <section className="border-t border-white/10 bg-slate-900 px-5 py-14 text-white">
 
@@ -479,28 +453,33 @@ export default function Home() {
 
           <div className="grid gap-10 md:grid-cols-4">
 
+            {/* SAC BRAND */}
             <div className="md:col-span-2">
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
 
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-sm font-black text-blue-900">
-                  GEC
-                </div>
+                <img
+                  src="/sac-logo.jpg"
+                  alt="Student Activity Club GEC Sheohar"
+                  className="h-14 w-14 rounded-full object-cover"
+                />
 
                 <div>
-                  <p className="font-bold">
+
+                  <p className="text-lg font-bold">
+                    Student Activity Club
+                  </p>
+
+                  <p className="text-sm text-slate-400">
                     GEC Sheohar
                   </p>
 
-                  <p className="text-xs text-slate-400">
-                    Student Activity Council
-                  </p>
                 </div>
 
               </div>
 
               <p className="mt-5 max-w-md text-sm leading-6 text-slate-400">
-                Student Activity Council of Government Engineering
+                Student Activity Club of Government Engineering
                 College Sheohar — encouraging student participation,
                 creativity, leadership and campus engagement.
               </p>
@@ -571,7 +550,7 @@ export default function Home() {
 
           <div className="mt-10 border-t border-slate-800 pt-6 text-center text-xs text-slate-500">
             © {new Date().getFullYear()} Government Engineering College
-            Sheohar — Student Activity Council. All rights reserved.
+            Sheohar — Student Activity Club. All rights reserved.
           </div>
 
         </div>
