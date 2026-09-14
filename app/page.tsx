@@ -55,13 +55,8 @@ export default function Home() {
     <main className="min-h-screen bg-[#f8f6f0] text-[#172033]">
       {/* HERO */}
       <section className="relative overflow-hidden pt-[76px]">
-        <div className="absolute inset-0 college-pattern opacity-70" />
-
-        <div className="absolute -right-32 top-20 h-80 w-80 rounded-full bg-[#1746a2]/10 blur-3xl" />
-        <div className="absolute -left-32 bottom-10 h-80 w-80 rounded-full bg-[#f47b20]/10 blur-3xl" />
-
-        <div className="section-container relative flex min-h-[650px] items-center py-20 lg:min-h-[700px]">
-          <div className="max-w-4xl">
+        <div className="section-container relative flex min-h-[680px] items-center justify-center py-20 text-center">
+          <div className="mx-auto max-w-4xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#1746a2]/15 bg-white px-4 py-2 text-sm font-bold text-[#1746a2] shadow-sm">
               <span className="h-2 w-2 rounded-full bg-[#f47b20]" />
               Student Activity Council
@@ -77,7 +72,7 @@ export default function Home() {
               <span className="gradient-text">Student Potential.</span>
             </h1>
 
-            <p className="mt-7 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
+            <p className="mx-auto mt-7 max-w-3xl text-base leading-8 text-slate-600 sm:text-lg">
               The Student Activity Council (SAC) of Government Engineering
               College Sheohar is a student-driven platform dedicated to
               creating a vibrant, inclusive and engaging campus environment.
@@ -86,7 +81,7 @@ export default function Home() {
               teamwork skills, and gain practical experience beyond academics.
             </p>
 
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
               <Link href="/join" className="btn-orange">
                 Become a Member →
               </Link>
@@ -96,7 +91,7 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="mt-12 flex flex-wrap gap-3">
+            <div className="mt-12 flex flex-wrap justify-center gap-3">
               {[
                 "Leadership",
                 "Creativity",
@@ -168,10 +163,7 @@ export default function Home() {
           ))}
         </div>
 
-        <Link
-          href="/clubs"
-          className="btn-primary mt-8 md:hidden"
-        >
+        <Link href="/clubs" className="btn-primary mt-8 md:hidden">
           View All Clubs →
         </Link>
       </section>
@@ -206,9 +198,7 @@ export default function Home() {
               </div>
 
               <div>
-                <p className="text-sm font-bold text-[#f47b20]">
-                  SAC Events
-                </p>
+                <p className="text-sm font-bold text-[#f47b20]">SAC Events</p>
 
                 <h3 className="mt-1 text-2xl font-black">
                   Something exciting is coming
@@ -264,9 +254,7 @@ export default function Home() {
                 💡
               </div>
 
-              <h3 className="mt-6 text-xl font-black">
-                Give a Suggestion
-              </h3>
+              <h3 className="mt-6 text-xl font-black">Give a Suggestion</h3>
 
               <p className="mt-3 text-sm leading-6 text-slate-600">
                 Share ideas for new events, clubs, activities or campus
@@ -279,9 +267,7 @@ export default function Home() {
                 ⚠️
               </div>
 
-              <h3 className="mt-6 text-xl font-black">
-                Report an Issue
-              </h3>
+              <h3 className="mt-6 text-xl font-black">Report an Issue</h3>
 
               <p className="mt-3 text-sm leading-6 text-slate-600">
                 Report a concern or issue that needs attention from the SAC.
@@ -326,6 +312,7 @@ export default function Home() {
 
                   <div>
                     <p className="font-black">{social.name}</p>
+
                     <p className="mt-1 text-xs text-blue-100">
                       {social.label}
                     </p>
@@ -414,9 +401,7 @@ export default function Home() {
             </div>
 
             <div>
-              <h3 className="font-black text-[#172033]">
-                Quick Links
-              </h3>
+              <h3 className="font-black text-[#172033]">Quick Links</h3>
 
               <div className="mt-5 flex flex-col gap-3 text-sm font-semibold text-slate-500">
                 <Link href="/" className="transition hover:text-[#1746a2]">
@@ -454,9 +439,7 @@ export default function Home() {
             </div>
 
             <div>
-              <h3 className="font-black text-[#172033]">
-                Student
-              </h3>
+              <h3 className="font-black text-[#172033]">Student</h3>
 
               <div className="mt-5 flex flex-col gap-3 text-sm font-semibold text-slate-500">
                 <Link
