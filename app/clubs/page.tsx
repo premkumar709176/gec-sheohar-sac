@@ -87,7 +87,9 @@ export default function ClubsPage() {
             alt="Government Engineering College Sheohar"
             className="h-full w-full object-cover"
           />
+
           <div className="absolute inset-0 bg-slate-950/75" />
+
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950/20 via-slate-950/70 to-slate-950" />
         </div>
 
@@ -119,6 +121,7 @@ export default function ClubsPage() {
         ) : clubs.length === 0 ? (
           <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-12 text-center">
             <h2 className="text-2xl font-bold">No clubs available</h2>
+
             <p className="mt-3 text-slate-400">
               Club information will appear here once it is added.
             </p>
@@ -167,6 +170,7 @@ export default function ClubsPage() {
                         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                           Faculty In-Charge
                         </p>
+
                         <p className="mt-1 text-sm text-slate-200">
                           {club.faculty_incharge}
                         </p>
@@ -178,6 +182,7 @@ export default function ClubsPage() {
                         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                           Student Coordinator
                         </p>
+
                         <p className="mt-1 text-sm text-slate-200">
                           {club.student_coordinator}
                         </p>
@@ -191,7 +196,7 @@ export default function ClubsPage() {
         )}
       </section>
 
-      {/* FOOTER */}
+      {/* SIMPLE FOOTER */}
       <footer className="border-t border-white/10 bg-black/20">
         <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-6 text-center sm:flex-row sm:text-left">
@@ -206,7 +211,10 @@ export default function ClubsPage() {
                 <p className="font-bold text-white">
                   Student Activity Council
                 </p>
-                <p className="text-sm text-slate-400">GEC Sheohar</p>
+
+                <p className="text-sm text-slate-400">
+                  GEC Sheohar
+                </p>
               </div>
             </div>
 
