@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 type Registration = {
@@ -144,7 +145,7 @@ export default function AdminRegistrationsPage() {
   }, [registrations, search, statusFilter]);
 
   const pendingCount = registrations.filter(
-    (item) => item.status === "pending"
+    (item) => (item.status || "pending") === "pending"
   ).length;
 
   const approvedCount = registrations.filter(
@@ -156,30 +157,51 @@ export default function AdminRegistrationsPage() {
   ).length;
 
   return (
-    <main className="min-h-screen bg-slate-100 text-slate-900">
-      {/* NAVBAR */}
-      <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div>
-            <h1 className="text-xl font-bold text-slate-900">
-              SAC Admin Panel
-            </h1>
-            <p className="text-xs text-slate-500">
-              Government Engineering College Sheohar
+    <main className="min-h-screen bg-[#f8f6f0] text-[#172033]">
+      <nav className="sticky top-0 z-50 border-b border-[#e4e7ec] bg-[#f8f6f0]/95 shadow-sm backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
+          <Link href="/admin" className="group">
+            <p className="text-lg font-extrabold text-[#1746a2]">
+              SAC Admin
             </p>
-          </div>
 
-          <div className="flex items-center gap-3">
-            <a
+            <p className="text-xs font-semibold tracking-wide text-[#667085]">
+              GEC Sheohar
+            </p>
+          </Link>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
               href="/admin"
-              className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+              className="hidden rounded-full px-4 py-2 text-sm font-semibold text-[#667085] transition hover:bg-[#eaf1ff] hover:text-[#1746a2] sm:block"
             >
               Dashboard
-            </a>
+            </Link>
+
+            <Link
+              href="/admin/members"
+              className="hidden rounded-full px-4 py-2 text-sm font-semibold text-[#667085] transition hover:bg-[#eaf1ff] hover:text-[#1746a2] lg:block"
+            >
+              Members
+            </Link>
+
+            <Link
+              href="/admin/events"
+              className="hidden rounded-full px-4 py-2 text-sm font-semibold text-[#667085] transition hover:bg-[#eaf1ff] hover:text-[#1746a2] lg:block"
+            >
+              Events
+            </Link>
+
+            <Link
+              href="/admin/registrations"
+              className="rounded-full bg-[#1746a2] px-4 py-2 text-sm font-bold text-white shadow-sm"
+            >
+              Registrations
+            </Link>
 
             <button
               onClick={logout}
-              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
+              className="rounded-full bg-[#fff1e6] px-4 py-2 text-sm font-bold text-[#d96512] transition hover:bg-[#f47b20] hover:text-white"
             >
               Logout
             </button>
@@ -187,246 +209,256 @@ export default function AdminRegistrationsPage() {
         </div>
       </nav>
 
-      <div className="mx-auto max-w-7xl px-6 py-10">
-        {/* HEADER */}
-        <div className="mb-8">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-blue-600">
-            Administration
-          </p>
+      <div className="college-pattern min-h-[calc(100vh-76px)]">
+        <div className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
+          <div className="mb-8">
+            <p className="mb-2 text-sm font-bold uppercase tracking-[0.18em] text-[#f47b20]">
+              Administration
+            </p>
 
-          <h2 className="text-3xl font-bold tracking-tight">
-            SAC Membership Registrations
-          </h2>
+            <h1 className="text-4xl font-black tracking-tight text-[#172033] sm:text-5xl">
+              SAC Membership Registrations
+            </h1>
 
-          <p className="mt-2 text-slate-600">
-            Review and manage applications submitted through the Join SAC form.
-          </p>
-        </div>
-
-        {/* MESSAGE */}
-        {message && (
-          <div className="mb-6 rounded-xl border border-blue-200 bg-blue-50 px-5 py-4 text-sm text-blue-800">
-            {message}
+            <p className="mt-3 max-w-2xl text-[#667085]">
+              Review and manage applications submitted through the Join SAC
+              form.
+            </p>
           </div>
-        )}
 
-        {/* STAT CARDS */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard
-            title="Total Applications"
-            value={registrations.length}
-          />
+          {message && (
+            <div className="mb-6 rounded-2xl border border-[#1746a2]/15 bg-[#eaf1ff] px-5 py-4 text-sm font-semibold text-[#1746a2]">
+              {message}
+            </div>
+          )}
 
-          <StatCard
-            title="Pending"
-            value={pendingCount}
-          />
-
-          <StatCard
-            title="Approved"
-            value={approvedCount}
-          />
-
-          <StatCard
-            title="Rejected"
-            value={rejectedCount}
-          />
-        </div>
-
-        {/* FILTERS */}
-        <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="grid gap-4 md:grid-cols-[1fr_220px_auto]">
-            <input
-              type="text"
-              placeholder="Search name, registration no., email, club..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          <div className="mb-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+              title="Total Applications"
+              value={registrations.length}
+              icon="📋"
+              accent="blue"
             />
 
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            >
-              <option value="all">All Applications</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-            </select>
+            <StatCard
+              title="Pending"
+              value={pendingCount}
+              icon="⏳"
+              accent="orange"
+            />
 
-            <button
-              onClick={loadRegistrations}
-              className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800"
-            >
-              Refresh
-            </button>
-          </div>
-        </div>
+            <StatCard
+              title="Approved"
+              value={approvedCount}
+              icon="✓"
+              accent="green"
+            />
 
-        {/* APPLICATIONS */}
-        {loading ? (
-          <div className="rounded-2xl bg-white p-12 text-center shadow-sm">
-            <p className="text-slate-500">
-              Loading applications...
-            </p>
+            <StatCard
+              title="Rejected"
+              value={rejectedCount}
+              icon="×"
+              accent="red"
+            />
           </div>
-        ) : filteredRegistrations.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-2xl">
-              📋
+
+          <div className="mb-6 rounded-2xl border border-[#e4e7ec] bg-white p-5 shadow-sm">
+            <div className="grid gap-4 md:grid-cols-[1fr_220px_auto]">
+              <input
+                type="text"
+                placeholder="Search name, registration no., email, club..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full rounded-xl border border-[#d8dce4] bg-white px-4 py-3 text-sm text-[#172033] outline-none transition placeholder:text-[#98a2b3] focus:border-[#1746a2] focus:ring-4 focus:ring-[#1746a2]/10"
+              />
+
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="rounded-xl border border-[#d8dce4] bg-white px-4 py-3 text-sm font-medium text-[#172033] outline-none focus:border-[#1746a2] focus:ring-4 focus:ring-[#1746a2]/10"
+              >
+                <option value="all">All Applications</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+
+              <button
+                onClick={loadRegistrations}
+                className="rounded-xl bg-[#1746a2] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#103575] hover:shadow-lg"
+              >
+                Refresh
+              </button>
             </div>
-
-            <h3 className="text-lg font-semibold">
-              No applications found
-            </h3>
-
-            <p className="mt-2 text-sm text-slate-500">
-              Applications submitted through Join SAC will appear here.
-            </p>
           </div>
-        ) : (
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[900px] text-left">
-                <thead className="border-b border-slate-200 bg-slate-50">
-                  <tr>
-                    <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
-                      Applicant
-                    </th>
 
-                    <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
-                      Registration No.
-                    </th>
+          {loading ? (
+            <div className="rounded-2xl border border-[#e4e7ec] bg-white p-12 text-center shadow-sm">
+              <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-[#eaf1ff] border-t-[#1746a2]" />
 
-                    <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
-                      Branch / Year
-                    </th>
+              <p className="mt-4 text-sm font-medium text-[#667085]">
+                Loading applications...
+              </p>
+            </div>
+          ) : filteredRegistrations.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-[#d8dce4] bg-white p-12 text-center shadow-sm">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eaf1ff] text-3xl">
+                📋
+              </div>
 
-                    <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
-                      Preferred Club
-                    </th>
+              <h3 className="mt-5 text-lg font-extrabold text-[#172033]">
+                No applications found
+              </h3>
 
-                    <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
-                      Status
-                    </th>
+              <p className="mt-2 text-sm text-[#667085]">
+                Applications submitted through Join SAC will appear here.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-hidden rounded-2xl border border-[#e4e7ec] bg-white shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[950px] text-left">
+                  <thead className="border-b border-[#e4e7ec] bg-[#eaf1ff]/60">
+                    <tr>
+                      <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-[#667085]">
+                        Applicant
+                      </th>
 
-                    <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
+                      <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-[#667085]">
+                        Registration No.
+                      </th>
 
-                <tbody className="divide-y divide-slate-100">
-                  {filteredRegistrations.map((item) => (
-                    <tr
-                      key={item.id}
-                      className="hover:bg-slate-50"
-                    >
-                      <td className="px-5 py-5">
-                        <div className="flex items-center gap-3">
-                          {item.profile_photo_url ? (
-                            <img
-                              src={item.profile_photo_url}
-                              alt={item.full_name}
-                              className="h-11 w-11 rounded-full object-cover"
-                            />
-                          ) : (
-                            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-700">
-                              {item.full_name
-                                ?.charAt(0)
-                                .toUpperCase()}
-                            </div>
-                          )}
+                      <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-[#667085]">
+                        Branch / Year
+                      </th>
 
-                          <div>
-                            <p className="font-semibold text-slate-900">
-                              {item.full_name}
-                            </p>
+                      <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-[#667085]">
+                        Preferred Club
+                      </th>
 
-                            <p className="text-sm text-slate-500">
-                              {item.college_email}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
+                      <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-[#667085]">
+                        Status
+                      </th>
 
-                      <td className="px-5 py-5 text-sm font-medium">
-                        {item.registration_number || "—"}
-                      </td>
-
-                      <td className="px-5 py-5">
-                        <p className="text-sm font-medium">
-                          {item.branch || "—"}
-                        </p>
-
-                        <p className="text-xs text-slate-500">
-                          {item.year_semester || "—"}
-                        </p>
-                      </td>
-
-                      <td className="px-5 py-5 text-sm">
-                        {item.preferred_club || "—"}
-                      </td>
-
-                      <td className="px-5 py-5">
-                        <StatusBadge status={item.status} />
-                      </td>
-
-                      <td className="px-5 py-5">
-                        <button
-                          onClick={() => setSelected(item)}
-                          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-                        >
-                          View
-                        </button>
-                      </td>
+                      <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-[#667085]">
+                        Action
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+
+                  <tbody className="divide-y divide-[#eef0f3]">
+                    {filteredRegistrations.map((item) => (
+                      <tr
+                        key={item.id}
+                        className="transition hover:bg-[#f8f6f0]"
+                      >
+                        <td className="px-5 py-5">
+                          <div className="flex items-center gap-3">
+                            {item.profile_photo_url ? (
+                              <img
+                                src={item.profile_photo_url}
+                                alt={item.full_name}
+                                className="h-11 w-11 rounded-full border-2 border-white object-cover shadow-sm"
+                              />
+                            ) : (
+                              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#eaf1ff] font-black text-[#1746a2]">
+                                {item.full_name
+                                  ?.charAt(0)
+                                  .toUpperCase()}
+                              </div>
+                            )}
+
+                            <div>
+                              <p className="font-bold text-[#172033]">
+                                {item.full_name}
+                              </p>
+
+                              <p className="text-sm text-[#667085]">
+                                {item.college_email}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td className="px-5 py-5 text-sm font-semibold text-[#172033]">
+                          {item.registration_number || "—"}
+                        </td>
+
+                        <td className="px-5 py-5">
+                          <p className="text-sm font-semibold text-[#172033]">
+                            {item.branch || "—"}
+                          </p>
+
+                          <p className="text-xs font-medium text-[#667085]">
+                            {item.year_semester || "—"}
+                          </p>
+                        </td>
+
+                        <td className="px-5 py-5 text-sm font-medium text-[#172033]">
+                          {item.preferred_club || "—"}
+                        </td>
+
+                        <td className="px-5 py-5">
+                          <StatusBadge status={item.status} />
+                        </td>
+
+                        <td className="px-5 py-5">
+                          <button
+                            onClick={() => setSelected(item)}
+                            className="rounded-xl bg-[#1746a2] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#103575]"
+                          >
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
-      {/* DETAILS MODAL */}
       {selected && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4">
-          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
-            {/* MODAL HEADER */}
-            <div className="sticky top-0 flex items-center justify-between border-b border-slate-200 bg-white px-6 py-5">
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#172033]/60 p-4 backdrop-blur-sm"
+          onClick={() => setSelected(null)}
+        >
+          <div
+            className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-[#e4e7ec] bg-white shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sticky top-0 flex items-center justify-between border-b border-[#e4e7ec] bg-white px-5 py-5 sm:px-6">
               <div>
-                <h3 className="text-xl font-bold">
+                <h3 className="text-xl font-black text-[#172033]">
                   Application Details
                 </h3>
 
-                <p className="text-sm text-slate-500">
+                <p className="mt-1 text-sm font-medium text-[#667085]">
                   {selected.full_name}
                 </p>
               </div>
 
               <button
                 onClick={() => setSelected(null)}
-                className="rounded-full bg-slate-100 px-3 py-2 text-lg hover:bg-slate-200"
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f1f3f6] text-lg font-bold text-[#667085] transition hover:bg-[#eaf1ff] hover:text-[#1746a2]"
               >
-                ✕
+                ×
               </button>
             </div>
 
-            <div className="space-y-7 p-6">
-              {/* PHOTO */}
+            <div className="space-y-7 p-5 sm:p-6">
               {selected.profile_photo_url && (
                 <div className="flex justify-center">
                   <img
                     src={selected.profile_photo_url}
                     alt={selected.full_name}
-                    className="h-28 w-28 rounded-2xl object-cover shadow-md"
+                    className="h-28 w-28 rounded-2xl border-4 border-white object-cover shadow-lg ring-1 ring-[#e4e7ec]"
                   />
                 </div>
               )}
 
-              {/* PERSONAL */}
               <Section title="Personal Information">
                 <Detail
                   label="Full Name"
@@ -459,7 +491,6 @@ export default function AdminRegistrationsPage() {
                 />
               </Section>
 
-              {/* SAC */}
               <Section title="SAC Preferences">
                 <Detail
                   label="Preferred Club"
@@ -482,7 +513,6 @@ export default function AdminRegistrationsPage() {
                 />
               </Section>
 
-              {/* EXPERIENCE */}
               <Section title="Experience & Motivation">
                 <Detail
                   label="Motivation"
@@ -497,18 +527,16 @@ export default function AdminRegistrationsPage() {
                 />
               </Section>
 
-              {/* STATUS */}
-              <div>
-                <p className="mb-3 text-sm font-semibold text-slate-500">
+              <div className="rounded-2xl border border-[#e4e7ec] bg-[#f8f6f0] p-5">
+                <p className="mb-3 text-sm font-bold uppercase tracking-wider text-[#667085]">
                   Current Status
                 </p>
 
                 <StatusBadge status={selected.status} />
               </div>
 
-              {/* ACTIONS */}
-              <div className="border-t border-slate-200 pt-6">
-                <p className="mb-3 text-sm font-semibold text-slate-600">
+              <div className="border-t border-[#e4e7ec] pt-6">
+                <p className="mb-4 text-sm font-bold text-[#172033]">
                   Change Application Status
                 </p>
 
@@ -517,7 +545,7 @@ export default function AdminRegistrationsPage() {
                     onClick={() =>
                       updateStatus(selected.id, "approved")
                     }
-                    className="rounded-xl bg-green-600 px-5 py-3 text-sm font-semibold text-white hover:bg-green-700"
+                    className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-700"
                   >
                     ✓ Approve
                   </button>
@@ -526,7 +554,7 @@ export default function AdminRegistrationsPage() {
                     onClick={() =>
                       updateStatus(selected.id, "pending")
                     }
-                    className="rounded-xl bg-amber-500 px-5 py-3 text-sm font-semibold text-white hover:bg-amber-600"
+                    className="rounded-xl bg-[#f47b20] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#d96512]"
                   >
                     ↻ Pending
                   </button>
@@ -535,29 +563,28 @@ export default function AdminRegistrationsPage() {
                     onClick={() =>
                       updateStatus(selected.id, "rejected")
                     }
-                    className="rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white hover:bg-red-700"
+                    className="rounded-xl bg-red-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-red-700"
                   >
-                    ✕ Reject
+                    × Reject
                   </button>
 
                   <button
                     onClick={() =>
                       deleteRegistration(selected.id)
                     }
-                    className="rounded-xl border border-red-300 px-5 py-3 text-sm font-semibold text-red-600 hover:bg-red-50"
+                    className="rounded-xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-bold text-red-600 transition hover:bg-red-100"
                   >
                     🗑 Delete
                   </button>
                 </div>
               </div>
 
-              {/* DATE */}
-              <p className="text-xs text-slate-400">
+              <p className="text-xs font-medium text-[#98a2b3]">
                 Submitted:{" "}
                 {selected.created_at
-                  ? new Date(
-                      selected.created_at
-                    ).toLocaleString()
+                  ? new Date(selected.created_at).toLocaleString(
+                      "en-IN"
+                    )
                   : "Unknown"}
               </p>
             </div>
@@ -568,24 +595,43 @@ export default function AdminRegistrationsPage() {
   );
 }
 
-/* ---------------- COMPONENTS ---------------- */
-
 function StatCard({
   title,
   value,
+  icon,
+  accent,
 }: {
   title: string;
   value: number;
+  icon: string;
+  accent: "blue" | "orange" | "green" | "red";
 }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-sm font-medium text-slate-500">
-        {title}
-      </p>
+  const styles = {
+    blue: "bg-[#eaf1ff] text-[#1746a2]",
+    orange: "bg-[#fff1e6] text-[#f47b20]",
+    green: "bg-emerald-50 text-emerald-600",
+    red: "bg-red-50 text-red-600",
+  };
 
-      <p className="mt-2 text-3xl font-bold text-slate-900">
-        {value}
-      </p>
+  return (
+    <div className="college-card p-5 shadow-sm">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-semibold text-[#667085]">
+            {title}
+          </p>
+
+          <p className="mt-2 text-3xl font-black text-[#172033]">
+            {value}
+          </p>
+        </div>
+
+        <div
+          className={`flex h-12 w-12 items-center justify-center rounded-xl text-xl font-black ${styles[accent]}`}
+        >
+          {icon}
+        </div>
+      </div>
     </div>
   );
 }
@@ -595,7 +641,7 @@ function StatusBadge({ status }: { status: string }) {
 
   if (normalized === "approved") {
     return (
-      <span className="inline-flex rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700">
+      <span className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
         Approved
       </span>
     );
@@ -603,14 +649,14 @@ function StatusBadge({ status }: { status: string }) {
 
   if (normalized === "rejected") {
     return (
-      <span className="inline-flex rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-700">
+      <span className="inline-flex rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-red-700">
         Rejected
       </span>
     );
   }
 
   return (
-    <span className="inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-700">
+    <span className="inline-flex rounded-full bg-[#fff1e6] px-3 py-1 text-xs font-bold text-[#d96512]">
       Pending
     </span>
   );
@@ -625,11 +671,11 @@ function Section({
 }) {
   return (
     <section>
-      <h4 className="mb-4 text-lg font-bold text-slate-900">
+      <h4 className="mb-4 text-lg font-black text-[#1746a2]">
         {title}
       </h4>
 
-      <div className="grid gap-4 rounded-xl border border-slate-200 bg-slate-50 p-5 md:grid-cols-2">
+      <div className="grid gap-4 rounded-2xl border border-[#e4e7ec] bg-[#f8f6f0] p-5 md:grid-cols-2">
         {children}
       </div>
     </section>
@@ -646,12 +692,16 @@ function Detail({
   full?: boolean;
 }) {
   return (
-    <div className={full ? "md:col-span-2" : ""}>
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+    <div
+      className={
+        full ? "rounded-xl bg-white p-4 md:col-span-2" : "rounded-xl bg-white p-4"
+      }
+    >
+      <p className="text-xs font-bold uppercase tracking-wider text-[#98a2b3]">
         {label}
       </p>
 
-      <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-slate-700">
+      <p className="mt-2 whitespace-pre-wrap break-words text-sm font-semibold leading-6 text-[#172033]">
         {value || "—"}
       </p>
     </div>
