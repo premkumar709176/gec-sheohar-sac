@@ -92,7 +92,7 @@ export default function ComplaintsPage() {
 
   async function deleteComplaint(id: string) {
     const confirmed = window.confirm(
-      "Are you sure you want to delete this complaint?"
+      "Are you sure you want to delete this ticket?"
     );
 
     if (!confirmed) return;
@@ -154,50 +154,50 @@ export default function ComplaintsPage() {
   ).length;
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <div>
-            <h1 className="text-xl font-bold text-slate-900">
+    <main className="min-h-screen bg-[#f8f6f0] text-[#172033]">
+      <header className="sticky top-0 z-40 border-b border-[#e4e7ec] bg-[#f8f6f0]/95 shadow-sm backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
+          <Link href="/admin" className="group">
+            <p className="text-lg font-extrabold text-[#1746a2]">
               SAC Admin
-            </h1>
-            <p className="text-xs text-slate-500">
-              Complaints Management
             </p>
-          </div>
+            <p className="text-xs font-semibold tracking-wide text-[#667085]">
+              Suggestions & Support
+            </p>
+          </Link>
 
-          <nav className="hidden items-center gap-2 md:flex">
+          <nav className="hidden items-center gap-1 md:flex">
             <Link
               href="/admin"
-              className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+              className="rounded-full px-4 py-2 text-sm font-semibold text-[#667085] transition hover:bg-[#eaf1ff] hover:text-[#1746a2]"
             >
               Dashboard
             </Link>
 
             <Link
               href="/admin/members"
-              className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+              className="rounded-full px-4 py-2 text-sm font-semibold text-[#667085] transition hover:bg-[#eaf1ff] hover:text-[#1746a2]"
             >
               Members
             </Link>
 
             <Link
               href="/admin/events"
-              className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+              className="rounded-full px-4 py-2 text-sm font-semibold text-[#667085] transition hover:bg-[#eaf1ff] hover:text-[#1746a2]"
             >
               Events
             </Link>
 
             <Link
               href="/admin/complaints"
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
+              className="rounded-full bg-[#1746a2] px-4 py-2 text-sm font-bold text-white shadow-sm"
             >
-              Complaints
+              Tickets
             </Link>
 
             <button
               onClick={logout}
-              className="rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-100"
+              className="ml-2 rounded-full bg-[#fff1e6] px-4 py-2 text-sm font-bold text-[#d96512] transition hover:bg-[#f47b20] hover:text-white"
             >
               Logout
             </button>
@@ -205,58 +205,63 @@ export default function ComplaintsPage() {
         </div>
       </header>
 
-      <section className="border-b border-slate-200 bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-700 text-white">
-        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-blue-100">
+      <section className="college-pattern border-b border-[#e4e7ec]">
+        <div className="mx-auto max-w-7xl px-5 py-12 lg:px-8">
+          <p className="mb-3 text-sm font-bold uppercase tracking-[0.18em] text-[#f47b20]">
             Student Activity Council
           </p>
 
-          <h2 className="text-3xl font-bold sm:text-4xl">
-            Complaints
-          </h2>
+          <h1 className="text-4xl font-black tracking-tight text-[#172033] sm:text-5xl">
+            Suggestions & Support
+          </h1>
 
-          <p className="mt-3 max-w-2xl text-blue-100">
-            Review, manage and respond to complaints submitted by students.
+          <p className="mt-4 max-w-2xl text-base leading-7 text-[#667085]">
+            Review, manage and respond to suggestions and support tickets
+            submitted by students.
           </p>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-5 py-8 lg:px-8">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
-            title="Total Complaints"
+            title="Total Tickets"
             value={complaints.length}
             icon="📋"
+            accent="blue"
           />
 
           <StatCard
             title="Pending"
             value={pendingCount}
             icon="⏳"
+            accent="orange"
           />
 
           <StatCard
             title="Reviewed"
             value={reviewedCount}
-            icon="👁️"
+            icon="👁"
+            accent="blue"
           />
 
           <StatCard
             title="Resolved"
             value={resolvedCount}
-            icon="✅"
+            icon="✓"
+            accent="green"
           />
         </div>
 
-        <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="mt-8 rounded-2xl border border-[#e4e7ec] bg-white p-5 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex-1">
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search complaints..."
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                placeholder="Search tickets..."
+                className="w-full rounded-xl border border-[#d8dce4] bg-white px-4 py-3 text-sm text-[#172033] outline-none transition placeholder:text-[#98a2b3] focus:border-[#1746a2] focus:ring-4 focus:ring-[#1746a2]/10"
               />
             </div>
 
@@ -264,7 +269,7 @@ export default function ComplaintsPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500"
+                className="rounded-xl border border-[#d8dce4] bg-white px-4 py-3 text-sm font-medium text-[#172033] outline-none focus:border-[#1746a2]"
               >
                 <option value="all">All Status</option>
                 <option value="pending">Pending</option>
@@ -275,7 +280,7 @@ export default function ComplaintsPage() {
 
               <button
                 onClick={loadComplaints}
-                className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800"
+                className="rounded-xl bg-[#1746a2] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#103575] hover:shadow-lg"
               >
                 Refresh
               </button>
@@ -284,25 +289,25 @@ export default function ComplaintsPage() {
         </div>
 
         {loading && (
-          <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
-            <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
-            <p className="mt-4 text-sm text-slate-500">
-              Loading complaints...
+          <div className="mt-8 rounded-2xl border border-[#e4e7ec] bg-white p-12 text-center shadow-sm">
+            <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-[#eaf1ff] border-t-[#1746a2]" />
+            <p className="mt-4 text-sm font-medium text-[#667085]">
+              Loading tickets...
             </p>
           </div>
         )}
 
         {!loading && error && (
           <div className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-6">
-            <h3 className="font-semibold text-red-800">
-              Unable to load complaints
+            <h3 className="font-bold text-red-800">
+              Unable to load tickets
             </h3>
 
             <p className="mt-2 text-sm text-red-700">{error}</p>
 
             <button
               onClick={loadComplaints}
-              className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
+              className="mt-4 rounded-xl bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700"
             >
               Try Again
             </button>
@@ -310,15 +315,17 @@ export default function ComplaintsPage() {
         )}
 
         {!loading && !error && filteredComplaints.length === 0 && (
-          <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
-            <div className="text-5xl">📭</div>
+          <div className="mt-8 rounded-2xl border border-dashed border-[#d8dce4] bg-white p-12 text-center shadow-sm">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eaf1ff] text-3xl">
+              📭
+            </div>
 
-            <h3 className="mt-4 text-lg font-bold text-slate-900">
-              No complaints found
+            <h3 className="mt-5 text-lg font-extrabold text-[#172033]">
+              No tickets found
             </h3>
 
-            <p className="mt-2 text-sm text-slate-500">
-              There are no complaints matching the current filters.
+            <p className="mt-2 text-sm text-[#667085]">
+              There are no tickets matching the current filters.
             </p>
           </div>
         )}
@@ -358,22 +365,35 @@ function StatCard({
   title,
   value,
   icon,
+  accent,
 }: {
   title: string;
   value: number;
   icon: string;
+  accent: "blue" | "orange" | "green";
 }) {
+  const styles = {
+    blue: "bg-[#eaf1ff] text-[#1746a2]",
+    orange: "bg-[#fff1e6] text-[#f47b20]",
+    green: "bg-emerald-50 text-emerald-600",
+  };
+
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="college-card p-5 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-slate-500">{title}</p>
-          <p className="mt-2 text-3xl font-bold text-slate-900">
+          <p className="text-sm font-semibold text-[#667085]">
+            {title}
+          </p>
+
+          <p className="mt-2 text-3xl font-black text-[#172033]">
             {value}
           </p>
         </div>
 
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl">
+        <div
+          className={`flex h-12 w-12 items-center justify-center rounded-xl text-xl font-bold ${styles[accent]}`}
+        >
           {icon}
         </div>
       </div>
@@ -395,29 +415,32 @@ function ComplaintCard({
   const status = complaint.status || "pending";
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <article className="college-card overflow-hidden shadow-sm">
       <div className="p-5 sm:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <StatusBadge status={status} />
 
               {complaint.category && (
-                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                  {complaint.category.replace(/^Complaint\s*-\s*/i, "")}
+                <span className="rounded-full bg-[#f1f3f6] px-3 py-1 text-xs font-semibold text-[#667085]">
+                  {complaint.category.replace(
+                    /^Complaint\s*-\s*/i,
+                    ""
+                  )}
                 </span>
               )}
             </div>
 
-            <h3 className="mt-3 text-lg font-bold text-slate-900">
-              {complaint.subject || "Untitled Complaint"}
+            <h3 className="mt-3 text-lg font-extrabold text-[#172033]">
+              {complaint.subject || "Untitled Ticket"}
             </h3>
 
-            <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">
-              {complaint.message || "No complaint details provided."}
+            <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#667085]">
+              {complaint.message || "No ticket details provided."}
             </p>
 
-            <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-5 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
               <InfoItem
                 label="Name"
                 value={complaint.name || "Anonymous"}
@@ -425,7 +448,9 @@ function ComplaintCard({
 
               <InfoItem
                 label="Registration"
-                value={complaint.registration_number || "Not provided"}
+                value={
+                  complaint.registration_number || "Not provided"
+                }
               />
 
               <InfoItem
@@ -439,7 +464,7 @@ function ComplaintCard({
               />
             </div>
 
-            <p className="mt-4 text-xs text-slate-400">
+            <p className="mt-4 text-xs font-medium text-[#98a2b3]">
               Submitted{" "}
               {new Date(complaint.created_at).toLocaleString("en-IN")}
             </p>
@@ -448,7 +473,7 @@ function ComplaintCard({
           <div className="flex flex-wrap gap-2 lg:w-64 lg:justify-end">
             <button
               onClick={onView}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+              className="rounded-xl bg-[#1746a2] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#103575]"
             >
               View
             </button>
@@ -456,7 +481,7 @@ function ComplaintCard({
             <select
               value={status}
               onChange={(e) => onStatusChange(e.target.value)}
-              className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+              className="rounded-xl border border-[#d8dce4] bg-white px-3 py-2 text-sm font-medium text-[#172033] outline-none focus:border-[#1746a2]"
             >
               <option value="pending">Pending</option>
               <option value="reviewed">Reviewed</option>
@@ -466,14 +491,14 @@ function ComplaintCard({
 
             <button
               onClick={onDelete}
-              className="rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-100"
+              className="rounded-xl bg-red-50 px-4 py-2 text-sm font-bold text-red-600 transition hover:bg-red-100"
             >
               Delete
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
 
@@ -485,11 +510,12 @@ function InfoItem({
   value: string;
 }) {
   return (
-    <div className="rounded-lg bg-slate-50 p-3">
-      <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+    <div className="rounded-xl border border-[#e4e7ec] bg-[#fafafa] p-3">
+      <p className="text-[11px] font-bold uppercase tracking-wider text-[#98a2b3]">
         {label}
       </p>
-      <p className="mt-1 break-words font-medium text-slate-700">
+
+      <p className="mt-1 break-words font-semibold text-[#172033]">
         {value}
       </p>
     </div>
@@ -498,16 +524,16 @@ function InfoItem({
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    pending: "bg-amber-100 text-amber-700",
-    reviewed: "bg-blue-100 text-blue-700",
-    resolved: "bg-emerald-100 text-emerald-700",
-    rejected: "bg-red-100 text-red-700",
+    pending: "bg-[#fff1e6] text-[#d96512]",
+    reviewed: "bg-[#eaf1ff] text-[#1746a2]",
+    resolved: "bg-emerald-50 text-emerald-700",
+    rejected: "bg-red-50 text-red-700",
   };
 
   return (
     <span
-      className={`rounded-full px-3 py-1 text-xs font-semibold ${
-        styles[status] || "bg-slate-100 text-slate-600"
+      className={`rounded-full px-3 py-1 text-xs font-bold ${
+        styles[status] || "bg-[#f1f3f6] text-[#667085]"
       }`}
     >
       {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -530,27 +556,27 @@ function ComplaintModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#172033]/60 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
+        className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-[#e4e7ec] bg-white shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4 sm:px-6">
+        <div className="sticky top-0 flex items-center justify-between border-b border-[#e4e7ec] bg-white px-5 py-4 sm:px-6">
           <div>
-            <h2 className="text-xl font-bold text-slate-900">
-              Complaint Details
+            <h2 className="text-xl font-black text-[#172033]">
+              Ticket Details
             </h2>
 
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs font-medium text-[#667085]">
               {new Date(complaint.created_at).toLocaleString("en-IN")}
             </p>
           </div>
 
           <button
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-xl text-slate-600 hover:bg-slate-200"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f1f3f6] text-xl font-bold text-[#667085] transition hover:bg-[#eaf1ff] hover:text-[#1746a2]"
           >
             ×
           </button>
@@ -562,14 +588,17 @@ function ComplaintModal({
               <StatusBadge status={status} />
 
               {complaint.category && (
-                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                  {complaint.category.replace(/^Complaint\s*-\s*/i, "")}
+                <span className="rounded-full bg-[#f1f3f6] px-3 py-1 text-xs font-semibold text-[#667085]">
+                  {complaint.category.replace(
+                    /^Complaint\s*-\s*/i,
+                    ""
+                  )}
                 </span>
               )}
             </div>
 
-            <h3 className="mt-3 text-2xl font-bold text-slate-900">
-              {complaint.subject || "Untitled Complaint"}
+            <h3 className="mt-3 text-2xl font-black text-[#172033]">
+              {complaint.subject || "Untitled Ticket"}
             </h3>
           </div>
 
@@ -581,7 +610,9 @@ function ComplaintModal({
 
             <DetailField
               label="Registration Number"
-              value={complaint.registration_number || "Not provided"}
+              value={
+                complaint.registration_number || "Not provided"
+              }
             />
 
             <DetailField
@@ -596,18 +627,18 @@ function ComplaintModal({
           </div>
 
           <div>
-            <p className="mb-2 text-sm font-semibold text-slate-900">
-              Complaint
+            <p className="mb-2 text-sm font-bold text-[#172033]">
+              Ticket Message
             </p>
 
-            <div className="whitespace-pre-wrap rounded-xl bg-slate-50 p-4 text-sm leading-7 text-slate-700">
-              {complaint.message || "No complaint details provided."}
+            <div className="whitespace-pre-wrap rounded-xl border border-[#e4e7ec] bg-[#fafafa] p-4 text-sm leading-7 text-[#172033]">
+              {complaint.message || "No ticket details provided."}
             </div>
           </div>
 
           {complaint.attachment_url && (
             <div>
-              <p className="mb-2 text-sm font-semibold text-slate-900">
+              <p className="mb-2 text-sm font-bold text-[#172033]">
                 Attachment
               </p>
 
@@ -615,18 +646,18 @@ function ComplaintModal({
                 href={complaint.attachment_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex rounded-lg bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100"
+                className="inline-flex rounded-xl bg-[#eaf1ff] px-4 py-2 text-sm font-bold text-[#1746a2] transition hover:bg-[#dce8ff]"
               >
                 View Attachment
               </a>
             </div>
           )}
 
-          <div className="flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 border-t border-[#e4e7ec] pt-5 sm:flex-row sm:items-center sm:justify-between">
             <select
               value={status}
               onChange={(e) => onStatusChange(e.target.value)}
-              className="rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500"
+              className="rounded-xl border border-[#d8dce4] bg-white px-4 py-3 text-sm font-semibold text-[#172033] outline-none focus:border-[#1746a2]"
             >
               <option value="pending">Pending</option>
               <option value="reviewed">Reviewed</option>
@@ -637,14 +668,14 @@ function ComplaintModal({
             <div className="flex gap-2">
               <button
                 onClick={onDelete}
-                className="rounded-lg bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-100"
+                className="rounded-xl bg-red-50 px-4 py-3 text-sm font-bold text-red-600 transition hover:bg-red-100"
               >
                 Delete
               </button>
 
               <button
                 onClick={onClose}
-                className="rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800"
+                className="rounded-xl bg-[#1746a2] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#103575]"
               >
                 Close
               </button>
@@ -664,12 +695,12 @@ function DetailField({
   value: string;
 }) {
   return (
-    <div className="rounded-xl border border-slate-200 p-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+    <div className="rounded-xl border border-[#e4e7ec] bg-[#fafafa] p-4">
+      <p className="text-xs font-bold uppercase tracking-wider text-[#98a2b3]">
         {label}
       </p>
 
-      <p className="mt-2 break-words text-sm font-medium text-slate-700">
+      <p className="mt-2 break-words text-sm font-semibold text-[#172033]">
         {value}
       </p>
     </div>
