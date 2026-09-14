@@ -38,7 +38,9 @@ export default function GalleryPage() {
         .order("created_at", { ascending: false });
 
       if (galleryError) {
-        throw galleryError;
+        console.error("Gallery error:", galleryError);
+        setError(galleryError.message);
+        return;
       }
 
       const formattedPhotos: GalleryPhoto[] = (galleryData || [])
@@ -46,6 +48,8 @@ export default function GalleryPage() {
           const imageUrl =
             item.image_url ||
             item.photo_url ||
+            item.imageUrl ||
+            item.photoUrl ||
             item.image ||
             item.photo ||
             item.url ||
@@ -54,55 +58,76 @@ export default function GalleryPage() {
 
           return {
             id: String(item.id),
-            imageUrl,
-            title: item.title || item.name || "",
-            description: item.description || "",
+            imageUrl: String(imageUrl),
+            title: String(item.title || item.name || ""),
+            description: String(item.description || ""),
           };
         })
-        .filter((photo) => photo.imageUrl);
+        .filter((photo) => photo.imageUrl.trim() !== "");
 
       setPhotos(formattedPhotos);
+    } catch (err) {
+      console.error("Gallery loading error:", err);
+      setError("Unable to load gallery photos.");
+    }
+  }
 
-      const { data: eventData, error: eventError } = await supabase
+  async function loadEvents() {
+    try {
+      const { data, error: eventError } = await supabase
         .from("events")
         .select("*")
         .order("event_date", { ascending: false });
 
       if (eventError) {
-        console.error("Events loading error:", eventError);
-        setEvents([]);
-      } else {
-        const formattedEvents: EventItem[] = (eventData || []).map(
-          (item: any) => ({
-            id: String(item.id),
-            title: item.title || item.name || "Event",
-            description: item.description || "",
-            event_date: item.event_date || item.date || null,
-            location: item.location || null,
-            imageUrl:
-              item.image_url ||
-              item.photo_url ||
-              item.image ||
-              item.photo ||
-              "",
-          })
-        );
-
-        setEvents(formattedEvents);
+        console.error("Events error:", eventError);
+        return;
       }
+
+      const formattedEvents: EventItem[] = (data || []).map(
+        (item: any) => ({
+          id: String(item.id),
+          title: String(item.title || item.name || "Event"),
+          description: String(item.description || ""),
+          event_date:
+            item.event_date ||
+            item.date ||
+            item.eventDate ||
+            null,
+          location: item.location || null,
+          imageUrl:
+            item.image_url ||
+            item.photo_url ||
+            item.imageUrl ||
+            item.photoUrl ||
+            item.image ||
+            item.photo ||
+            "",
+        })
+      );
+
+      setEvents(formattedEvents);
     } catch (err) {
-      console.error("Gallery loading error:", err);
-      setError("Unable to load gallery photos.");
-    } finally {
-      setLoading(false);
+      console.error("Events loading error:", err);
     }
   }
 
   useEffect(() => {
-    loadGallery();
+    async function loadData() {
+      setLoading(true);
 
-    const channel = supabase
-      .channel("gallery-live-updates")
+      await Promise.all([
+        loadGallery(),
+        loadEvents(),
+      ]);
+
+      setLoading(false);
+    }
+
+    loadData();
+
+    const galleryChannel = supabase
+      .channel("gallery-updates")
       .on(
         "postgres_changes",
         {
@@ -117,7 +142,7 @@ export default function GalleryPage() {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(galleryChannel);
     };
   }, []);
 
@@ -126,14 +151,18 @@ export default function GalleryPage() {
       return;
     }
 
-    const timer = window.setInterval(() => {
-      setCurrentIndex((previous) =>
-        previous >= photos.length - 1 ? 0 : previous + 1
-      );
+    const timer = setInterval(() => {
+      setCurrentIndex((previous) => {
+        if (previous >= photos.length - 1) {
+          return 0;
+        }
+
+        return previous + 1;
+      });
     }, 1000);
 
     return () => {
-      window.clearInterval(timer);
+      clearInterval(timer);
     };
   }, [photos.length]);
 
@@ -160,7 +189,7 @@ export default function GalleryPage() {
       <main className="min-h-screen bg-slate-950 text-white">
         <div className="h-[76px]" />
 
-        <section className="flex min-h-[70vh] items-center justify-center px-6">
+        <div className="flex min-h-[70vh] items-center justify-center">
           <div className="text-center">
             <div className="mx-auto mb-5 h-10 w-10 animate-spin rounded-full border-4 border-slate-700 border-t-blue-500" />
 
@@ -172,7 +201,7 @@ export default function GalleryPage() {
               Please wait while the gallery is loading.
             </p>
           </div>
-        </section>
+        </div>
       </main>
     );
   }
@@ -181,7 +210,7 @@ export default function GalleryPage() {
     <main className="min-h-screen bg-slate-950 text-white">
       <div className="h-[76px]" />
 
-      {/* HERO SECTION */}
+      {/* HERO */}
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="absolute inset-0 bg-gradient-to-b from-blue-950/40 via-slate-950 to-slate-950" />
 
@@ -195,38 +224,36 @@ export default function GalleryPage() {
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400 sm:text-lg">
-            A collection of photographs highlighting activities,
-            workshops, competitions, events and memorable moments
-            of the Student Activity Council at Government Engineering
-            College Sheohar.
+            Moments, memories and highlights from activities,
+            workshops, competitions and events at Government
+            Engineering College Sheohar.
           </p>
         </div>
       </section>
 
-      {/* ERROR MESSAGE */}
+      {/* ERROR */}
       {error && (
         <section className="mx-auto max-w-7xl px-6 pt-8 lg:px-8">
-          <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-300">
+          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
             {error}
           </div>
         </section>
       )}
 
-      {/* PHOTO SLIDER */}
-      <section className="py-14">
+      {/* LATEST MOMENTS */}
+      <section className="py-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mb-8">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-400">
               Memories
             </p>
 
-            <h2 className="mt-2 text-3xl font-bold text-white">
+            <h2 className="mt-2 text-3xl font-bold">
               Latest Moments
             </h2>
 
-            <p className="mt-2 text-sm text-slate-500">
-              Photographs are displayed sequentially, with one photo
-              advancing every second.
+            <p className="mt-2 text-sm text-slate-400">
+              One photo every second
             </p>
           </div>
         </div>
@@ -237,27 +264,29 @@ export default function GalleryPage() {
               <div className="text-5xl">🖼️</div>
 
               <h3 className="mt-5 text-xl font-bold">
-                No Gallery Photos Available
+                No photos yet
               </h3>
 
               <p className="mt-2 text-sm text-slate-400">
-                Photographs uploaded through the administration panel
-                will appear here.
+                Gallery photos will appear here once they are added.
               </p>
             </div>
           </div>
         ) : (
           <div className="relative w-full overflow-hidden">
-            <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-20 bg-gradient-to-r from-slate-950 to-transparent" />
+            {/* LEFT FADE */}
+            <div className="pointer-events-none absolute left-0 top-0 z-20 h-full w-24 bg-gradient-to-r from-slate-950 to-transparent" />
 
-            <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-20 bg-gradient-to-l from-slate-950 to-transparent" />
+            {/* RIGHT FADE */}
+            <div className="pointer-events-none absolute right-0 top-0 z-20 h-full w-24 bg-gradient-to-l from-slate-950 to-transparent" />
 
+            {/* SLIDER */}
             <div
-              className="flex gap-4 transition-transform duration-700 ease-in-out"
+              className="flex gap-5 transition-transform duration-700 ease-in-out"
               style={{
-                transform: `translateX(-${
-                  currentIndex * 420
-                }px)`,
+                transform: `translateX(calc(50% - 210px - ${
+                  currentIndex * 440
+                }px))`,
               }}
             >
               {photos.map((photo) => (
@@ -265,34 +294,33 @@ export default function GalleryPage() {
                   key={photo.id}
                   type="button"
                   onClick={() => setSelectedPhoto(photo)}
-                  className="group w-[85vw] max-w-[420px] flex-shrink-0 text-left sm:w-[420px]"
+                  className="group w-[420px] min-w-[420px] flex-shrink-0 text-left"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl">
                     <img
                       src={photo.imageUrl}
-                      alt={photo.title || "SAC Gallery Photograph"}
+                      alt={
+                        photo.title ||
+                        "SAC Gallery Photograph"
+                      }
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                     />
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
                     {photo.title && (
-                      <div className="absolute bottom-0 left-0 right-0 p-5">
-                        <h3 className="text-lg font-bold text-white">
+                      <div className="absolute bottom-0 left-0 right-0 p-6">
+                        <h3 className="text-xl font-bold text-white">
                           {photo.title}
                         </h3>
 
                         {photo.description && (
-                          <p className="mt-1 line-clamp-2 text-sm text-slate-200">
+                          <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-200">
                             {photo.description}
                           </p>
                         )}
                       </div>
                     )}
-
-                    <div className="absolute right-4 top-4 rounded-full bg-black/50 px-3 py-1.5 text-xs font-medium text-white opacity-0 backdrop-blur transition group-hover:opacity-100">
-                      View Photograph
-                    </div>
                   </div>
                 </button>
               ))}
@@ -301,19 +329,19 @@ export default function GalleryPage() {
         )}
       </section>
 
-      {/* ALL PHOTOGRAPHS */}
+      {/* ALL PHOTOS */}
       <section className="mx-auto max-w-7xl px-6 pb-20 lg:px-8">
         <div className="mb-8">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-400">
-            Gallery
+            Explore
           </p>
 
           <h2 className="mt-2 text-3xl font-bold">
-            All Photographs
+            All Gallery Photos
           </h2>
 
           <p className="mt-2 text-sm text-slate-400">
-            Browse all photographs uploaded to the SAC gallery.
+            Browse every photo uploaded to the SAC gallery.
           </p>
         </div>
 
@@ -329,15 +357,16 @@ export default function GalleryPage() {
                 <div className="relative aspect-square overflow-hidden rounded-xl border border-white/10 bg-slate-900">
                   <img
                     src={photo.imageUrl}
-                    alt={photo.title || "SAC Gallery Photograph"}
+                    alt={
+                      photo.title ||
+                      "SAC Gallery Photograph"
+                    }
                     className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                     loading="lazy"
                   />
 
-                  <div className="absolute inset-0 bg-black/0 transition group-hover:bg-black/20" />
-
                   {photo.title && (
-                    <div className="absolute bottom-0 left-0 right-0 translate-y-full bg-gradient-to-t from-black/90 to-transparent p-4 pt-10 transition duration-300 group-hover:translate-y-0">
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4 pt-10">
                       <p className="text-sm font-semibold text-white">
                         {photo.title}
                       </p>
@@ -350,7 +379,7 @@ export default function GalleryPage() {
         )}
       </section>
 
-      {/* EVENTS AND ACTIVITIES */}
+      {/* EVENTS */}
       {events.length > 0 && (
         <section className="border-t border-white/10 bg-slate-900/40 py-20">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -364,8 +393,8 @@ export default function GalleryPage() {
               </h2>
 
               <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-                Events and activities organized by the Student Activity
-                Council and its affiliated clubs.
+                Explore events and activities organized by the
+                Student Activity Council and its clubs.
               </p>
             </div>
 
@@ -397,7 +426,7 @@ export default function GalleryPage() {
                       </p>
                     )}
 
-                    <h3 className="mt-2 text-xl font-bold text-white">
+                    <h3 className="mt-2 text-xl font-bold">
                       {event.title}
                     </h3>
 
@@ -458,29 +487,30 @@ export default function GalleryPage() {
           <button
             type="button"
             onClick={() => setSelectedPhoto(null)}
-            className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-2xl text-white transition hover:bg-white/20"
+            className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/20"
             aria-label="Close"
           >
             ×
           </button>
 
           <div
-            className="relative max-h-full max-w-6xl"
+            className="w-full max-w-6xl"
             onClick={(event) => event.stopPropagation()}
           >
             <img
               src={selectedPhoto.imageUrl}
               alt={
-                selectedPhoto.title || "SAC Gallery Photograph"
+                selectedPhoto.title ||
+                "SAC Gallery Photograph"
               }
-              className="max-h-[80vh] max-w-full rounded-2xl object-contain shadow-2xl"
+              className="mx-auto max-h-[75vh] max-w-full rounded-2xl object-contain"
             />
 
             {(selectedPhoto.title ||
               selectedPhoto.description) && (
-              <div className="mt-4 rounded-xl border border-white/10 bg-slate-900/95 p-5">
+              <div className="mx-auto mt-4 max-w-3xl rounded-xl border border-white/10 bg-slate-900 p-5">
                 {selectedPhoto.title && (
-                  <h3 className="text-xl font-bold text-white">
+                  <h3 className="text-xl font-bold">
                     {selectedPhoto.title}
                   </h3>
                 )}
