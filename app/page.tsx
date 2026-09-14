@@ -41,13 +41,8 @@ export default function Home() {
           .limit(3),
       ]);
 
-      if (clubsData) {
-        setClubs(clubsData);
-      }
-
-      if (eventsData) {
-        setEvents(eventsData);
-      }
+      if (clubsData) setClubs(clubsData);
+      if (eventsData) setEvents(eventsData);
     };
 
     loadData();
@@ -58,44 +53,55 @@ export default function Home() {
 
       {/* HERO */}
       <section
-        className="relative min-h-[680px] overflow-hidden bg-cover bg-center bg-no-repeat pt-[76px]"
+        className="relative min-h-[700px] overflow-hidden bg-cover bg-center bg-no-repeat pt-[76px]"
         style={{
           backgroundImage: "url('/sac-campus.jpg')",
         }}
       >
-        <div className="absolute inset-0 bg-[#071a3d]/65" />
+        <div className="absolute inset-0 bg-[#061b40]/72" />
 
-        <div className="relative mx-auto flex min-h-[604px] max-w-7xl items-center justify-center px-6 py-24 text-center lg:px-10">
-          <div className="mx-auto max-w-4xl text-white">
+        <div className="relative mx-auto flex min-h-[624px] max-w-7xl items-center px-6 py-24 lg:px-10">
+          <div className="max-w-4xl text-white">
 
-            <p className="mb-5 text-sm font-bold uppercase tracking-[0.25em] text-orange-300">
-              Student Activity Council
-            </p>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold backdrop-blur-sm">
+              <span className="h-2 w-2 rounded-full bg-[#f47b20]" />
+              Student Activity Council • GEC Sheohar
+            </div>
 
-            <h1 className="text-5xl font-black leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl">
-              <span className="block">Empowering Student</span>
-              <span className="mt-2 block">Potential.</span>
+            <h1 className="text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
+              Empowering Student
+              <span className="block text-orange-300">
+                Potential.
+              </span>
             </h1>
 
-            <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-white/90 sm:text-xl">
-              A vibrant platform at Government Engineering College Sheohar
-              where students connect, create, lead and grow beyond the
-              classroom.
+            <p className="mt-7 max-w-3xl text-lg leading-8 text-white/90 sm:text-xl">
+              The Student Activity Council is the vibrant student community
+              of Government Engineering College Sheohar, created to help
+              students discover their talents, develop leadership qualities,
+              build meaningful connections and grow beyond the classroom.
             </p>
 
-            <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <p className="mt-4 max-w-3xl text-base leading-7 text-blue-100">
+              From technical innovation and science to literature, music,
+              dance, art, photography, social service and wellness, SAC gives
+              every student a platform to participate, create, lead and make
+              a difference.
+            </p>
+
+            <div className="mt-9 flex flex-col gap-4 sm:flex-row">
               <Link
                 href="/join"
-                className="rounded-full bg-[#f47b20] px-7 py-3.5 font-bold text-white shadow-lg shadow-orange-900/20 transition hover:-translate-y-1 hover:bg-[#d96512]"
+                className="rounded-full bg-[#f47b20] px-7 py-3.5 text-center font-bold text-white shadow-lg shadow-orange-900/20 transition hover:-translate-y-1 hover:bg-[#d96512]"
               >
                 Become a Member →
               </Link>
 
               <Link
-                href="/events"
-                className="rounded-full border border-white/40 bg-white/10 px-7 py-3.5 font-bold text-white backdrop-blur-sm transition hover:bg-white hover:text-[#1746a2]"
+                href="/clubs"
+                className="rounded-full border border-white/40 bg-white/10 px-7 py-3.5 text-center font-bold text-white backdrop-blur-sm transition hover:bg-white hover:text-[#1746a2]"
               >
-                Explore Events
+                Explore Our Clubs
               </Link>
             </div>
 
@@ -103,32 +109,160 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ABOUT SAC */}
+      {/* WHAT IS SAC */}
       <section className="section-container py-20">
-        <div className="mx-auto max-w-4xl text-center">
+        <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
 
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f47b20]">
-            About SAC
-          </p>
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f47b20]">
+              About SAC
+            </p>
 
-          <h2 className="mt-3 text-3xl font-black text-[#1746a2] sm:text-4xl">
-            Explore Student Activity Council
-          </h2>
+            <h2 className="mt-3 text-3xl font-black leading-tight text-[#1746a2] sm:text-4xl">
+              A platform where students discover, participate and lead.
+            </h2>
 
-          <p className="mt-6 text-lg leading-8 text-slate-600">
-            The Student Activity Council provides students with opportunities
-            to discover their talents, develop leadership skills, participate
-            in diverse activities and contribute meaningfully to campus life.
-            Through clubs, events, workshops and student-led initiatives, SAC
-            creates a community where every student can learn, express and
-            grow.
-          </p>
+            <div className="mt-6 space-y-5 text-base leading-8 text-slate-600">
+              <p>
+                The Student Activity Council (SAC) of Government Engineering
+                College Sheohar provides students with a platform to explore
+                interests and talents outside the regular academic curriculum.
+              </p>
 
+              <p>
+                SAC brings together a diverse range of student clubs and
+                activities covering technology, science, literature, arts,
+                music, dance, photography, social work, health awareness,
+                wellness and civic responsibility.
+              </p>
+
+              <p>
+                Through workshops, competitions, awareness programmes,
+                cultural activities, technical projects and student-led
+                initiatives, SAC encourages students to learn by doing and
+                become confident contributors to the college community.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2">
+
+            <div className="college-card p-6">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eaf1ff] text-2xl">
+                🎯
+              </div>
+              <h3 className="text-xl font-black text-[#1746a2]">
+                Our Mission
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                To create opportunities where students can develop creativity,
+                leadership, teamwork, communication and practical skills.
+              </p>
+            </div>
+
+            <div className="college-card p-6">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#fff1e6] text-2xl">
+                💡
+              </div>
+              <h3 className="text-xl font-black text-[#1746a2]">
+                Our Vision
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                To build an active, creative and inclusive campus where every
+                student gets the opportunity to learn, express and lead.
+              </p>
+            </div>
+
+            <div className="college-card p-6">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eaf1ff] text-2xl">
+                🤝
+              </div>
+              <h3 className="text-xl font-black text-[#1746a2]">
+                Community
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                SAC connects students through collaborative activities,
+                projects, events and experiences across different clubs.
+              </p>
+            </div>
+
+            <div className="college-card p-6">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#fff1e6] text-2xl">
+                🚀
+              </div>
+              <h3 className="text-xl font-black text-[#1746a2]">
+                Growth
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                Students gain practical exposure, confidence and experience
+                by taking part in real activities beyond the classroom.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* WHY SAC */}
+      <section className="bg-white py-20">
+        <div className="section-container">
+
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f47b20]">
+              Why Join SAC?
+            </p>
+
+            <h2 className="mt-3 text-3xl font-black text-[#1746a2] sm:text-4xl">
+              More than just extracurricular activities
+            </h2>
+
+            <p className="mt-5 leading-7 text-slate-600">
+              SAC is an opportunity to discover yourself, work with others and
+              develop skills that complement your academic journey.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+
+            <div className="college-card p-7">
+              <div className="text-3xl">🧠</div>
+              <h3 className="mt-5 text-xl font-black text-[#1746a2]">
+                Discover Your Talent
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                Explore new interests and find your strengths through
+                different clubs, events and activities.
+              </p>
+            </div>
+
+            <div className="college-card p-7">
+              <div className="text-3xl">👥</div>
+              <h3 className="mt-5 text-xl font-black text-[#1746a2]">
+                Build Connections
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                Work with students from different branches and semesters while
+                building teamwork and communication skills.
+              </p>
+            </div>
+
+            <div className="college-card p-7">
+              <div className="text-3xl">🏆</div>
+              <h3 className="mt-5 text-xl font-black text-[#1746a2]">
+                Create & Lead
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                Organise activities, participate in competitions and take
+                responsibility as a student leader.
+              </p>
+            </div>
+
+          </div>
         </div>
       </section>
 
       {/* CLUBS */}
-      <section className="section-container py-16">
+      <section className="section-container py-20">
 
         <div className="mb-10 flex items-end justify-between gap-4">
 
@@ -137,9 +271,14 @@ export default function Home() {
               Discover
             </p>
 
-            <h2 className="mt-2 text-3xl font-black text-[#1746a2]">
+            <h2 className="mt-2 text-3xl font-black text-[#1746a2] sm:text-4xl">
               Our Clubs
             </h2>
+
+            <p className="mt-3 max-w-2xl text-slate-600">
+              Explore the different communities of SAC and find the space
+              where your interests and ideas can grow.
+            </p>
           </div>
 
           <Link
@@ -157,37 +296,45 @@ export default function Home() {
             <Link
               key={club.id}
               href="/clubs"
-              className="college-card group p-6"
+              className="college-card group overflow-hidden"
             >
 
-              <div className="mb-5 flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-[#eaf1ff]">
-
-                {club.logo ? (
+              {club.logo ? (
+                <div className="image-hover h-52 bg-[#eaf1ff]">
                   <img
                     src={club.logo}
                     alt={club.name}
                     className="h-full w-full object-cover"
                   />
-                ) : (
-                  <span className="text-2xl font-black text-[#1746a2]">
+                </div>
+              ) : (
+                <div className="flex h-52 items-center justify-center bg-[#eaf1ff]">
+                  <span className="text-6xl font-black text-[#1746a2]">
                     {club.name?.charAt(0)}
                   </span>
-                )}
+                </div>
+              )}
+
+              <div className="p-6">
+
+                <p className="text-xs font-bold uppercase tracking-wider text-[#f47b20]">
+                  {club.category || "Student Club"}
+                </p>
+
+                <h3 className="mt-2 text-xl font-black text-[#1746a2] transition group-hover:text-[#f47b20]">
+                  {club.name}
+                </h3>
+
+                <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">
+                  {club.description ||
+                    "Explore activities, opportunities and experiences through this SAC club."}
+                </p>
+
+                <div className="mt-5 font-bold text-[#1746a2] transition group-hover:text-[#f47b20]">
+                  Explore Club →
+                </div>
 
               </div>
-
-              <p className="text-xs font-bold uppercase tracking-wider text-[#f47b20]">
-                {club.category || "Student Club"}
-              </p>
-
-              <h3 className="mt-2 text-xl font-black text-[#1746a2] transition group-hover:text-[#f47b20]">
-                {club.name}
-              </h3>
-
-              <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">
-                {club.description ||
-                  "Explore activities, opportunities and experiences through this SAC club."}
-              </p>
 
             </Link>
           ))}
@@ -203,6 +350,52 @@ export default function Home() {
 
       </section>
 
+      {/* SAC ACTIVITIES */}
+      <section className="bg-[#eaf1ff] py-20">
+        <div className="section-container">
+
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f47b20]">
+              What We Do
+            </p>
+
+            <h2 className="mt-3 text-3xl font-black text-[#1746a2] sm:text-4xl">
+              Learn. Create. Participate. Lead.
+            </h2>
+
+            <p className="mt-5 leading-7 text-slate-600">
+              SAC activities are designed to give students practical exposure
+              and meaningful opportunities to contribute to campus life.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+
+            {[
+              ["🔬", "Technical & Science", "Projects, workshops, experiments and technical innovation."],
+              ["🎨", "Arts & Culture", "Art, dance, music, literature and cultural expression."],
+              ["📸", "Media & Creativity", "Photography, videography, editing and digital content."],
+              ["❤️", "Social & Wellness", "Community service, awareness, wellness and responsible citizenship."],
+            ].map(([icon, title, description]) => (
+              <div
+                key={title}
+                className="rounded-2xl border border-white bg-white p-6 shadow-sm"
+              >
+                <div className="text-3xl">{icon}</div>
+                <h3 className="mt-4 font-black text-[#1746a2]">
+                  {title}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {description}
+                </p>
+              </div>
+            ))}
+
+          </div>
+
+        </div>
+      </section>
+
       {/* EVENTS */}
       <section className="bg-white py-20">
         <div className="section-container">
@@ -214,9 +407,14 @@ export default function Home() {
                 What&apos;s Happening
               </p>
 
-              <h2 className="mt-2 text-3xl font-black text-[#1746a2]">
+              <h2 className="mt-2 text-3xl font-black text-[#1746a2] sm:text-4xl">
                 Upcoming Events
               </h2>
+
+              <p className="mt-3 text-slate-600">
+                Stay updated with workshops, programmes, competitions and
+                activities happening through SAC.
+              </p>
             </div>
 
             <Link
@@ -300,29 +498,65 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEEDBACK */}
+      {/* JOIN CTA */}
       <section className="section-container py-20">
 
-        <div className="rounded-3xl bg-[#1746a2] p-8 text-white shadow-xl sm:p-12">
+        <div className="overflow-hidden rounded-3xl bg-[#1746a2] p-8 text-white shadow-xl sm:p-12">
+
+          <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center">
+
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-orange-300">
+                Be Part of SAC
+              </p>
+
+              <h2 className="mt-3 text-3xl font-black sm:text-4xl">
+                Your college journey is more than the classroom.
+              </h2>
+
+              <p className="mt-5 max-w-3xl leading-7 text-blue-100">
+                Join a club, participate in an event, share your ideas and
+                discover opportunities to build skills, friendships and
+                experiences that stay with you beyond college.
+              </p>
+            </div>
+
+            <Link
+              href="/join"
+              className="inline-flex items-center justify-center rounded-full bg-[#f47b20] px-7 py-3.5 font-bold text-white transition hover:bg-[#d96512]"
+            >
+              Join SAC →
+            </Link>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* FEEDBACK */}
+      <section className="section-container pb-20">
+
+        <div className="rounded-3xl border border-[#dce6f8] bg-[#eaf1ff] p-8 sm:p-12">
 
           <div className="mx-auto max-w-3xl text-center">
 
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-orange-300">
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f47b20]">
               Your Voice Matters
             </p>
 
-            <h2 className="mt-3 text-3xl font-black sm:text-4xl">
+            <h2 className="mt-3 text-3xl font-black text-[#1746a2] sm:text-4xl">
               Have a suggestion or concern?
             </h2>
 
-            <p className="mx-auto mt-5 max-w-2xl leading-7 text-blue-100">
+            <p className="mx-auto mt-5 max-w-2xl leading-7 text-slate-600">
               Share your ideas, suggestions or raise a ticket. Your feedback
               helps us make student activities better.
             </p>
 
             <Link
               href="/suggestions"
-              className="mt-7 inline-flex rounded-full bg-[#f47b20] px-7 py-3.5 font-bold text-white transition hover:bg-[#d96512]"
+              className="mt-7 inline-flex rounded-full bg-[#1746a2] px-7 py-3.5 font-bold text-white transition hover:bg-[#103575]"
             >
               Suggestions &amp; Support →
             </Link>
@@ -334,7 +568,7 @@ export default function Home() {
       </section>
 
       {/* SOCIAL */}
-      <section className="bg-[#eaf1ff] py-16">
+      <section className="bg-[#f0f4fb] py-16">
 
         <div className="section-container text-center">
 
@@ -345,6 +579,11 @@ export default function Home() {
           <h2 className="mt-2 text-3xl font-black text-[#1746a2]">
             Follow SAC GEC Sheohar
           </h2>
+
+          <p className="mx-auto mt-4 max-w-xl text-slate-600">
+            Follow our social channels for event updates, activities,
+            announcements and highlights from campus.
+          </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-4">
 
@@ -392,11 +631,11 @@ export default function Home() {
               Visit Us
             </p>
 
-            <h2 className="mt-2 text-3xl font-black text-[#1746a2]">
+            <h2 className="mt-2 text-3xl font-black text-[#1746a2] sm:text-4xl">
               Government Engineering College Sheohar
             </h2>
 
-            <p className="mt-5 leading-7 text-slate-600">
+            <p className="mt-5 max-w-xl leading-7 text-slate-600">
               Student Activity Council, Government Engineering College
               Sheohar, Bihar.
             </p>
