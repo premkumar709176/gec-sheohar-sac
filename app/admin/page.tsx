@@ -113,6 +113,7 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-4">
             <div className="relative">
               <div className="absolute inset-0 rounded-2xl bg-[#f47b20]/20 blur-md" />
+
               <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1746a2] text-sm font-black text-white shadow-md">
                 SAC
               </div>
@@ -205,6 +206,14 @@ export default function AdminDashboard() {
             icon="🖼️"
             buttonText="Manage Gallery"
             onClick={() => goTo("/admin/gallery")}
+          />
+
+          <AdminCard
+            title="Certificates"
+            description="Upload and manage student participation certificates linked to SAC events."
+            icon="🏆"
+            buttonText="Manage Certificates"
+            onClick={() => goTo("/admin/certificates")}
           />
 
           <AdminCard
