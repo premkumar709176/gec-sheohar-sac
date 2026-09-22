@@ -31,7 +31,6 @@ type EventItem = {
 type GalleryPhoto = {
   url: string;
   event: EventItem;
-  isPoster: boolean;
 };
 
 export default function GalleryPage() {
@@ -104,6 +103,14 @@ export default function GalleryPage() {
     };
   }, []);
 
+  /*
+   * ONLY REAL EVENT PHOTOS
+   *
+   * poster is intentionally NOT used.
+   * Gallery gets photos only from:
+   * 1. images[]
+   * 2. image
+   */
   const allPhotos = useMemo<GalleryPhoto[]>(() => {
     const photos: GalleryPhoto[] = [];
 
@@ -116,23 +123,12 @@ export default function GalleryPage() {
       .forEach((event) => {
         const added = new Set<string>();
 
-        if (event.poster) {
-          photos.push({
-            url: event.poster,
-            event,
-            isPoster: true,
-          });
-
-          added.add(event.poster);
-        }
-
         if (Array.isArray(event.images)) {
           event.images.forEach((url) => {
             if (url && !added.has(url)) {
               photos.push({
                 url,
                 event,
-                isPoster: false,
               });
 
               added.add(url);
@@ -144,7 +140,6 @@ export default function GalleryPage() {
           photos.push({
             url: event.image,
             event,
-            isPoster: false,
           });
         }
       });
@@ -156,23 +151,12 @@ export default function GalleryPage() {
     const photos: GalleryPhoto[] = [];
     const added = new Set<string>();
 
-    if (event.poster) {
-      photos.push({
-        url: event.poster,
-        event,
-        isPoster: true,
-      });
-
-      added.add(event.poster);
-    }
-
     if (Array.isArray(event.images)) {
       event.images.forEach((url) => {
         if (url && !added.has(url)) {
           photos.push({
             url,
             event,
-            isPoster: false,
           });
 
           added.add(url);
@@ -184,7 +168,6 @@ export default function GalleryPage() {
       photos.push({
         url: event.image,
         event,
-        isPoster: false,
       });
     }
 
@@ -196,9 +179,7 @@ export default function GalleryPage() {
 
     const photos = getEventPhotos(event);
 
-    setSelectedPhoto(
-      photo || event.poster || photos[0]?.url || null
-    );
+    setSelectedPhoto(photo || photos[0]?.url || null);
   }
 
   function closeModal() {
@@ -213,9 +194,11 @@ export default function GalleryPage() {
       {/* HERO */}
       <section className="relative overflow-hidden border-b border-slate-200">
         <div className="absolute inset-0 bg-gradient-to-br from-[#eaf1ff] via-[#f8f6f0] to-[#fff1e6]" />
+
         <div className="college-pattern absolute inset-0 opacity-70" />
 
         <div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[#1746a2]/10 blur-3xl" />
+
         <div className="absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-[#f47b20]/10 blur-3xl" />
 
         <div className="relative mx-auto max-w-7xl px-5 py-20 text-center lg:px-8">
@@ -228,13 +211,13 @@ export default function GalleryPage() {
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-            Moments, memories, achievements and celebrations from
-            Government Engineering College Sheohar.
+            Real moments, memories and activities from Government
+            Engineering College Sheohar.
           </p>
         </div>
       </section>
 
-      {/* GALLERY */}
+      {/* PHOTO GALLERY */}
       <section className="bg-[#f8f6f0] px-5 py-16 lg:px-8">
         <div className="mx-auto max-w-7xl">
 
@@ -250,8 +233,8 @@ export default function GalleryPage() {
               </h2>
 
               <p className="mt-3 max-w-2xl text-slate-500">
-                A visual collection of SAC activities, workshops,
-                competitions, cultural programmes and campus life.
+                A collection of real photographs from SAC events,
+                workshops, competitions and campus activities.
               </p>
             </div>
 
@@ -288,12 +271,14 @@ export default function GalleryPage() {
               </h3>
 
               <p className="mt-2 max-w-md text-sm text-slate-500">
-                Photos uploaded through the Events section will
-                automatically appear here.
+                Real event photos uploaded through the Events section
+                will automatically appear here.
               </p>
             </div>
           ) : (
-            /* MASONRY PHOTO WALL */
+            /*
+             * MASONRY PHOTO WALL
+             */
             <div className="columns-1 gap-6 sm:columns-2 lg:columns-3 xl:columns-4">
               {allPhotos.map((photo, index) => (
                 <button
@@ -311,7 +296,7 @@ export default function GalleryPage() {
                     className="h-auto w-full object-cover transition duration-700 ease-out group-hover:scale-110"
                   />
 
-                  {/* DARK HOVER */}
+                  {/* HOVER OVERLAY */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#061b40]/90 via-[#061b40]/20 to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
 
                   {/* PHOTO INFO */}
@@ -335,13 +320,6 @@ export default function GalleryPage() {
                     </div>
                   </div>
 
-                  {/* POSTER BADGE */}
-                  {photo.isPoster && (
-                    <span className="absolute left-4 top-4 rounded-full bg-[#f47b20] px-3 py-1.5 text-[10px] font-black tracking-wider text-white shadow-lg">
-                      POSTER
-                    </span>
-                  )}
-
                   {/* FLOATING BORDER */}
                   <div className="pointer-events-none absolute inset-0 rounded-3xl border border-white/0 transition duration-500 group-hover:border-white/50" />
                 </button>
@@ -362,6 +340,7 @@ export default function GalleryPage() {
               className="w-full max-w-6xl overflow-hidden rounded-3xl bg-white shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
+
               {/* MODAL HEADER */}
               <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 sm:px-7">
                 <div>
@@ -587,12 +566,6 @@ export default function GalleryPage() {
                                 }`}
                                 className="h-full w-full object-cover transition duration-300 hover:scale-105"
                               />
-
-                              {photo.isPoster && (
-                                <span className="absolute left-2 top-2 rounded-full bg-[#1746a2] px-2 py-1 text-[10px] font-bold text-white">
-                                  POSTER
-                                </span>
-                              )}
                             </button>
                           )
                         )}
