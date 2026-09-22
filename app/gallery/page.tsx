@@ -40,7 +40,6 @@ export default function GalleryPage() {
   const [error, setError] = useState("");
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
-  const [activeCategory, setActiveCategory] = useState("All");
 
   async function loadEvents() {
     setLoading(true);
@@ -105,29 +104,7 @@ export default function GalleryPage() {
     };
   }, []);
 
-  const categories = useMemo(() => {
-    const unique = new Set<string>();
-
-    events.forEach((event) => {
-      if (event.category?.trim()) {
-        unique.add(event.category.trim());
-      }
-    });
-
-    return ["All", ...Array.from(unique)];
-  }, [events]);
-
-  const filteredEvents = useMemo(() => {
-    if (activeCategory === "All") {
-      return events;
-    }
-
-    return events.filter(
-      (event) => event.category?.trim() === activeCategory
-    );
-  }, [events, activeCategory]);
-
-  const latestPhotos = useMemo<GalleryPhoto[]>(() => {
+  const allPhotos = useMemo<GalleryPhoto[]>(() => {
     const photos: GalleryPhoto[] = [];
 
     [...events]
@@ -137,33 +114,33 @@ export default function GalleryPage() {
           new Date(a.created_at).getTime()
       )
       .forEach((event) => {
+        const added = new Set<string>();
+
         if (event.poster) {
           photos.push({
             url: event.poster,
             event,
             isPoster: true,
           });
+
+          added.add(event.poster);
         }
 
-        const eventImages = Array.isArray(event.images)
-          ? event.images
-          : [];
+        if (Array.isArray(event.images)) {
+          event.images.forEach((url) => {
+            if (url && !added.has(url)) {
+              photos.push({
+                url,
+                event,
+                isPoster: false,
+              });
 
-        eventImages.forEach((url) => {
-          if (url && url !== event.poster) {
-            photos.push({
-              url,
-              event,
-              isPoster: false,
-            });
-          }
-        });
+              added.add(url);
+            }
+          });
+        }
 
-        if (
-          event.image &&
-          event.image !== event.poster &&
-          !eventImages.includes(event.image)
-        ) {
+        if (event.image && !added.has(event.image)) {
           photos.push({
             url: event.image,
             event,
@@ -172,11 +149,12 @@ export default function GalleryPage() {
         }
       });
 
-    return photos.slice(0, 20);
+    return photos;
   }, [events]);
 
   function getEventPhotos(event: EventItem): GalleryPhoto[] {
     const photos: GalleryPhoto[] = [];
+    const added = new Set<string>();
 
     if (event.poster) {
       photos.push({
@@ -184,27 +162,25 @@ export default function GalleryPage() {
         event,
         isPoster: true,
       });
+
+      added.add(event.poster);
     }
 
-    const images = Array.isArray(event.images)
-      ? event.images
-      : [];
+    if (Array.isArray(event.images)) {
+      event.images.forEach((url) => {
+        if (url && !added.has(url)) {
+          photos.push({
+            url,
+            event,
+            isPoster: false,
+          });
 
-    images.forEach((url) => {
-      if (url && url !== event.poster) {
-        photos.push({
-          url,
-          event,
-          isPoster: false,
-        });
-      }
-    });
+          added.add(url);
+        }
+      });
+    }
 
-    if (
-      event.image &&
-      event.image !== event.poster &&
-      !images.includes(event.image)
-    ) {
+    if (event.image && !added.has(event.image)) {
       photos.push({
         url: event.image,
         event,
@@ -215,44 +191,13 @@ export default function GalleryPage() {
     return photos;
   }
 
-  function formatDate(date: string | null) {
-    if (!date) return "Date not specified";
-
-    const parsed = new Date(date);
-
-    if (Number.isNaN(parsed.getTime())) {
-      return date;
-    }
-
-    return parsed.toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  }
-
-  function getStatusClass(status: string | null) {
-    const value = status?.toLowerCase();
-
-    if (value === "completed") {
-      return "bg-green-100 text-green-700";
-    }
-
-    if (value === "cancelled") {
-      return "bg-red-100 text-red-700";
-    }
-
-    if (value === "ongoing") {
-      return "bg-orange-100 text-orange-700";
-    }
-
-    return "bg-[#eaf1ff] text-[#1746a2]";
-  }
-
   function openEvent(event: EventItem, photo?: string) {
     setSelectedEvent(event);
+
+    const photos = getEventPhotos(event);
+
     setSelectedPhoto(
-      photo || event.poster || getEventPhotos(event)[0]?.url || null
+      photo || event.poster || photos[0]?.url || null
     );
   }
 
@@ -283,251 +228,124 @@ export default function GalleryPage() {
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-            A collection of memories, achievements, celebrations, workshops
-            and activities from GEC Sheohar.
+            Moments, memories, achievements and celebrations from
+            Government Engineering College Sheohar.
           </p>
         </div>
       </section>
 
-      {/* LATEST PHOTOS */}
-      <section className="overflow-hidden bg-white py-16">
-        <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <div className="mb-8 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+      {/* GALLERY */}
+      <section className="bg-[#f8f6f0] px-5 py-16 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+
+          {/* HEADER */}
+          <div className="mb-12 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
             <div>
-              <p className="text-sm font-bold uppercase tracking-widest text-[#1746a2]">
-                From Campus Life
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#1746a2]">
+                Campus Memories
               </p>
 
               <h2 className="mt-2 text-3xl font-black sm:text-4xl">
                 Moments That Matter
               </h2>
 
-              <p className="mt-2 max-w-2xl text-slate-500">
-                A glimpse of the latest memories, achievements and
-                celebrations at GEC Sheohar.
+              <p className="mt-3 max-w-2xl text-slate-500">
+                A visual collection of SAC activities, workshops,
+                competitions, cultural programmes and campus life.
               </p>
             </div>
 
-            <div className="rounded-full bg-[#eaf1ff] px-4 py-2 text-sm font-bold text-[#1746a2]">
-              {latestPhotos.length} Photos
+            <div className="rounded-full bg-white px-5 py-2.5 text-sm font-bold text-[#1746a2] shadow-sm">
+              {allPhotos.length} Photos
             </div>
           </div>
 
-          {loading ? (
-            <div className="flex h-64 items-center justify-center rounded-3xl bg-[#f8f6f0]">
-              <div className="text-sm font-semibold text-slate-500">
-                Loading memories...
-              </div>
-            </div>
-          ) : latestPhotos.length === 0 ? (
-            <div className="flex h-64 items-center justify-center rounded-3xl bg-[#f8f6f0] text-slate-500">
-              No photos available yet.
-            </div>
-          ) : (
-            <div className="group relative overflow-hidden rounded-3xl">
-              <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-20 bg-gradient-to-r from-white to-transparent" />
-              <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-20 bg-gradient-to-l from-white to-transparent" />
-
-              <div className="latest-photo-track flex w-max gap-5 py-4 group-hover:[animation-play-state:paused]">
-                {[...latestPhotos, ...latestPhotos].map(
-                  (photo, index) => (
-                    <button
-                      key={`${photo.url}-${index}`}
-                      type="button"
-                      onClick={() => openEvent(photo.event, photo.url)}
-                      className="group/photo relative h-52 w-72 shrink-0 overflow-hidden rounded-2xl bg-slate-200 shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl sm:h-60 sm:w-80"
-                    >
-                      <img
-                        src={photo.url}
-                        alt={photo.event.title}
-                        className="h-full w-full object-cover transition duration-500 group-hover/photo:scale-110"
-                      />
-
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 transition group-hover/photo:opacity-100" />
-
-                      <div className="absolute bottom-0 left-0 right-0 translate-y-3 p-5 text-left opacity-0 transition duration-300 group-hover/photo:translate-y-0 group-hover/photo:opacity-100">
-                        <p className="line-clamp-2 text-sm font-bold text-white">
-                          {photo.event.title}
-                        </p>
-
-                        <p className="mt-1 text-xs text-slate-300">
-                          {photo.event.category || "SAC Event"}
-                        </p>
-                      </div>
-                    </button>
-                  )
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* EXPLORE */}
-      <section className="bg-[#f8f6f0] py-20">
-        <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <div className="text-center">
-            <p className="text-sm font-bold uppercase tracking-widest text-[#1746a2]">
-              Explore
-            </p>
-
-            <h2 className="mt-2 text-3xl font-black sm:text-4xl">
-              Explore by Event
-            </h2>
-
-            <p className="mx-auto mt-3 max-w-2xl text-slate-500">
-              Discover complete photo collections from workshops, cultural
-              programmes, competitions and other SAC events.
-            </p>
-          </div>
-
-          {/* CATEGORIES */}
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
-            {categories.map((category) => (
-              <button
-                key={category}
-                type="button"
-                onClick={() => setActiveCategory(category)}
-                className={`rounded-full px-5 py-2.5 text-sm font-bold transition ${
-                  activeCategory === category
-                    ? "bg-[#1746a2] text-white shadow-lg shadow-blue-200"
-                    : "bg-white text-slate-600 shadow-sm hover:bg-[#eaf1ff] hover:text-[#1746a2]"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-
+          {/* ERROR */}
           {error && (
-            <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-red-200 bg-red-50 p-5 text-center text-sm text-red-700">
+            <div className="mb-8 rounded-2xl border border-red-200 bg-red-50 p-5 text-center text-sm text-red-700">
               {error}
             </div>
           )}
 
+          {/* LOADING */}
           {loading ? (
-            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3].map((item) => (
+            <div className="columns-1 gap-6 sm:columns-2 lg:columns-3 xl:columns-4">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
                 <div
                   key={item}
-                  className="h-96 animate-pulse rounded-3xl bg-white"
+                  className="mb-6 h-72 animate-pulse break-inside-avoid rounded-3xl bg-white"
                 />
               ))}
             </div>
-          ) : filteredEvents.length === 0 ? (
-            <div className="mt-12 rounded-3xl bg-white px-6 py-20 text-center shadow-sm">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eaf1ff] text-3xl">
+          ) : allPhotos.length === 0 ? (
+            <div className="flex min-h-[350px] flex-col items-center justify-center rounded-3xl bg-white px-6 text-center shadow-sm">
+              <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-[#eaf1ff] text-4xl">
                 📸
               </div>
 
-              <p className="mt-5 text-lg font-bold">
-                No event photos available.
-              </p>
+              <h3 className="mt-6 text-xl font-black">
+                No photos yet
+              </h3>
 
-              <p className="mt-2 text-sm text-slate-500">
-                Photos uploaded through the Events section will automatically
-                appear here.
+              <p className="mt-2 max-w-md text-sm text-slate-500">
+                Photos uploaded through the Events section will
+                automatically appear here.
               </p>
             </div>
           ) : (
-            <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredEvents.map((event) => {
-                const photos = getEventPhotos(event);
-                const cover = event.poster || photos[0]?.url;
+            /* MASONRY PHOTO WALL */
+            <div className="columns-1 gap-6 sm:columns-2 lg:columns-3 xl:columns-4">
+              {allPhotos.map((photo, index) => (
+                <button
+                  key={`${photo.url}-${index}`}
+                  type="button"
+                  onClick={() =>
+                    openEvent(photo.event, photo.url)
+                  }
+                  className="gallery-photo group relative mb-6 block w-full break-inside-avoid overflow-hidden rounded-3xl bg-white text-left shadow-md"
+                >
+                  <img
+                    src={photo.url}
+                    alt={photo.event.title}
+                    loading={index < 8 ? "eager" : "lazy"}
+                    className="h-auto w-full object-cover transition duration-700 ease-out group-hover:scale-110"
+                  />
 
-                return (
-                  <article
-                    key={event.id}
-                    className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
-                  >
-                    <button
-                      type="button"
-                      onClick={() => openEvent(event, cover)}
-                      className="relative block h-72 w-full overflow-hidden bg-slate-200 text-left"
-                    >
-                      {cover ? (
-                        <img
-                          src={cover}
-                          alt={event.title}
-                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center text-slate-400">
-                          No event image
-                        </div>
-                      )}
+                  {/* DARK HOVER */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#061b40]/90 via-[#061b40]/20 to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
 
-                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 pt-20">
-                        <div className="flex items-center justify-between gap-3">
-                          <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-[#1746a2]">
-                            {event.category || "SAC Event"}
-                          </span>
+                  {/* PHOTO INFO */}
+                  <div className="absolute bottom-0 left-0 right-0 translate-y-5 p-5 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+                    <div className="flex items-end justify-between gap-3">
+                      <div>
+                        <p className="line-clamp-2 text-sm font-black leading-5 text-white">
+                          {photo.event.title}
+                        </p>
 
-                          <span className="rounded-full bg-black/50 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
-                            {photos.length}{" "}
-                            {photos.length === 1 ? "Photo" : "Photos"}
-                          </span>
-                        </div>
-                      </div>
-                    </button>
-
-                    <div className="p-6">
-                      <div className="flex items-start justify-between gap-4">
-                        <h3 className="text-xl font-black leading-tight">
-                          {event.title}
-                        </h3>
-
-                        {event.status && (
-                          <span
-                            className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold capitalize ${getStatusClass(
-                              event.status
-                            )}`}
-                          >
-                            {event.status}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="mt-4 space-y-2 text-sm text-slate-500">
-                        {event.event_date && (
-                          <p>
-                            <span className="font-semibold text-slate-700">
-                              Date:
-                            </span>{" "}
-                            {formatDate(event.event_date)}
-                          </p>
-                        )}
-
-                        {event.venue && (
-                          <p>
-                            <span className="font-semibold text-slate-700">
-                              Venue:
-                            </span>{" "}
-                            {event.venue}
-                          </p>
-                        )}
-
-                        {event.conducted_by && (
-                          <p>
-                            <span className="font-semibold text-slate-700">
-                              Conducted by:
-                            </span>{" "}
-                            {event.conducted_by}
+                        {photo.event.category && (
+                          <p className="mt-1 text-xs font-medium text-white/70">
+                            {photo.event.category}
                           </p>
                         )}
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => openEvent(event, cover)}
-                        className="mt-6 w-full rounded-xl bg-[#1746a2] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#103575]"
-                      >
-                        View Event Gallery
-                      </button>
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/20 text-lg text-white backdrop-blur-md">
+                        ↗
+                      </span>
                     </div>
-                  </article>
-                );
-              })}
+                  </div>
+
+                  {/* POSTER BADGE */}
+                  {photo.isPoster && (
+                    <span className="absolute left-4 top-4 rounded-full bg-[#f47b20] px-3 py-1.5 text-[10px] font-black tracking-wider text-white shadow-lg">
+                      POSTER
+                    </span>
+                  )}
+
+                  {/* FLOATING BORDER */}
+                  <div className="pointer-events-none absolute inset-0 rounded-3xl border border-white/0 transition duration-500 group-hover:border-white/50" />
+                </button>
+              ))}
             </div>
           )}
         </div>
@@ -544,6 +362,7 @@ export default function GalleryPage() {
               className="w-full max-w-6xl overflow-hidden rounded-3xl bg-white shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* MODAL HEADER */}
               <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 sm:px-7">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest text-[#f47b20]">
@@ -565,9 +384,11 @@ export default function GalleryPage() {
               </div>
 
               <div className="max-h-[80vh] overflow-y-auto p-5 sm:p-7">
+
+                {/* MAIN PHOTO */}
                 {selectedPhoto && (
                   <div className="relative mb-8 overflow-hidden rounded-2xl bg-[#f8f6f0]">
-                    <div className="flex h-[280px] items-center justify-center sm:h-[480px]">
+                    <div className="flex h-[280px] items-center justify-center sm:h-[500px]">
                       <img
                         src={selectedPhoto}
                         alt={selectedEvent.title}
@@ -584,6 +405,8 @@ export default function GalleryPage() {
                 )}
 
                 <div className="grid gap-8 lg:grid-cols-[1fr_2fr]">
+
+                  {/* EVENT DETAILS */}
                   <div>
                     <h3 className="text-lg font-black text-[#1746a2]">
                       Event Details
@@ -595,7 +418,13 @@ export default function GalleryPage() {
                           <span className="font-bold text-slate-900">
                             Date:
                           </span>{" "}
-                          {formatDate(selectedEvent.event_date)}
+                          {new Date(
+                            selectedEvent.event_date
+                          ).toLocaleDateString("en-IN", {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          })}
                         </p>
                       )}
 
@@ -711,6 +540,7 @@ export default function GalleryPage() {
                     )}
                   </div>
 
+                  {/* DESCRIPTION + PHOTOS */}
                   <div>
                     {selectedEvent.description && (
                       <div>
@@ -790,6 +620,7 @@ export default function GalleryPage() {
               <p className="font-black text-[#1746a2]">
                 Student Activity Council
               </p>
+
               <p className="text-sm text-slate-500">
                 GEC Sheohar
               </p>
@@ -803,30 +634,53 @@ export default function GalleryPage() {
         </div>
       </footer>
 
+      {/* FLOATING GALLERY EFFECT */}
       <style jsx global>{`
-        @keyframes latestPhotoMarquee {
-          from {
-            transform: translateX(0);
-          }
-
-          to {
-            transform: translateX(-50%);
-          }
+        .gallery-photo {
+          transform: translateY(0) rotate(0deg);
+          transition:
+            transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.45s ease;
         }
 
-        .latest-photo-track {
-          animation: latestPhotoMarquee 45s linear infinite;
+        .gallery-photo:nth-child(3n) {
+          transform: translateY(4px) rotate(0.4deg);
+        }
+
+        .gallery-photo:nth-child(4n) {
+          transform: translateY(-3px) rotate(-0.5deg);
+        }
+
+        .gallery-photo:nth-child(5n) {
+          transform: translateY(2px) rotate(0.25deg);
+        }
+
+        .gallery-photo:hover {
+          z-index: 20;
+          transform: translateY(-12px) scale(1.025) rotate(0deg);
+          box-shadow:
+            0 25px 55px rgba(23, 70, 162, 0.18),
+            0 10px 25px rgba(15, 23, 42, 0.12);
         }
 
         @media (max-width: 640px) {
-          .latest-photo-track {
-            animation-duration: 35s;
+          .gallery-photo,
+          .gallery-photo:nth-child(3n),
+          .gallery-photo:nth-child(4n),
+          .gallery-photo:nth-child(5n) {
+            transform: none;
+          }
+
+          .gallery-photo:hover {
+            transform: translateY(-7px) scale(1.015);
           }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .latest-photo-track {
-            animation: none;
+          .gallery-photo,
+          .gallery-photo:hover {
+            transform: none;
+            transition: none;
           }
         }
       `}</style>
